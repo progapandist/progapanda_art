@@ -1,16 +1,17 @@
 // random_image_controller.js
 import { Controller } from "@hotwired/stimulus";
 
+let FORMAT = "avif";
+let RESIZE = "rs:fit:3000:2000";
 export default class extends Controller {
   static targets = ["imageDisplay"];
 
+  static values = {
+    slug: String,
+  };
+
   connect() {
-    const imageUrlArray = [
-      "http://localhost:8080/insecure/rs:fit:3000:2000/plain/local:///spam_render_1.png",
-      "http://localhost:8080/insecure/rs:fit:3000:2000/plain/local:///date_line.png",
-    ]; // Example image URL
-    const randomIndex = Math.floor(Math.random() * imageUrlArray.length);
-    this.imageDisplayTarget.src = imageUrlArray[randomIndex];
+    this.imageDisplayTarget.src = `http://localhost:8080/insecure/${RESIZE}/plain/local:///${this.slugValue}@${FORMAT}`;
     this.resize();
   }
 

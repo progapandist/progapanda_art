@@ -1,4 +1,8 @@
-<img data-controller="random-image" data-random-image-target="imageDisplay"/>
+<img
+  data-controller="random-image"
+  data-random-image-slug-value="<%= @work.slug %>"
+  data-random-image-target="imageDisplay"
+/>
 <div
   data-controller="draggable"
   data-action="
@@ -18,9 +22,9 @@
       sm:tracking-tight
     "
   >
-    Date Line
+    <%= @work.slug.humanize %>
   </h1>
   <p class="mt-2 text-base leading-6 text-white">
-    This is some description for work. And then some. And then some more.
+    <%= @work.description %>
   </p>
 </div>
