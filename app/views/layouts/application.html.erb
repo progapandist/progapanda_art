@@ -7,7 +7,33 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    <%= javascript_include_tag "application",
+    "data-turbo-track": "reload",
+    type: "module" %>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Additional styles if necessary */
+      body,
+      html {
+        overflow: hidden;
+        height: 100%;
+      }
+      .draggable-box {
+        cursor: grab; /* Default cursor to grab */
+        position: absolute; /* Required for dragging functionality */
+        z-index: 50; /* Ensure it is above other content */
+        user-select: none;
+      }
+      img {
+        object-fit: cover;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+      }
+    </style>
   </head>
 
   <body>

@@ -1,0 +1,86 @@
+{
+    "editor.inlineSuggest.enabled": true,
+    "github.copilot.enable": {
+      "*": true,
+      "plaintext": true,
+      "markdown": true,
+      "scminput": false
+    },
+    "workbench.colorTheme": "GitHub Dark",
+    "[ruby]": {
+      "editor.defaultFormatter": "testdouble.vscode-standard-ruby",
+      "editor.formatOnSave": true,
+      "editor.tabSize": 2
+    },
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.rulers": [120],
+    "security.workspace.trust.untrustedFiles": "open",
+    "redhat.telemetry.enabled": true,
+    "[yaml]": {
+      "editor.defaultFormatter": "redhat.vscode-yaml"
+    },
+    "go.toolsManagement.autoUpdate": true,
+    "workbench.editorAssociations": {
+      "*.db": "sqlite-viewer.option"
+    },
+    "cfnLint.appendRules": [],
+    "files.associations": {
+      "*.html": "html",
+      "*.mdx": "markdown",
+      "*.erb": "erb"
+    },
+    "[html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "emmet.includeLanguages": {
+      "erb": "html",
+      "*.html.erb": "html"
+    },
+    "[erb]": {
+      "editor.defaultFormatter": "elia.erb-formatter"
+    },
+    "editor.minimap.enabled": false,
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "rubyLsp.formatter": "rubocop",
+    "rubyLsp.enabledFeatures": {
+      "codeActions": true,
+      "diagnostics": false,
+      "documentHighlights": true,
+      "documentLink": true,
+      "documentSymbols": true,
+      "foldingRanges": true,
+      "formatting": true,
+      "hover": true,
+      "inlayHint": true,
+      "onTypeFormatting": true,
+      "selectionRanges": true,
+      "semanticHighlighting": true,
+      "completion": true,
+      "codeLens": true,
+      "definition": true,
+      "workspaceSymbol": true,
+      "references": true
+    },
+    "rubyLsp.rubyVersionManager": {
+      "identifier": "asdf"
+    },
+    "window.zoomLevel": 1,
+    "workbench.startupEditor": "none",
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+    "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "yaml.validate": false,
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+    "editor.formatOnSave": true
+  }

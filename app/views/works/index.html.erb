@@ -1,0 +1,26 @@
+<img data-controller="random-image" data-random-image-target="imageDisplay"/>
+<div
+  data-controller="draggable"
+  data-action="
+    mousedown->draggable#mousedown
+    mousemove->draggable#mousemove
+    mouseup->draggable#mouseup
+  "
+  class="
+    info-box draggable-box p-3 bg-black bg-opacity-50 text-white font-mono max-w-md
+    text-justify filter backdrop-blur-sm
+  "
+  style="position: absolute; top: 4rem; left: 4rem; width: 300px; height: 200px;"
+>
+  <h1
+    class="
+      text-2xl font-bold leading-7 text-white sm:truncate sm:text-3xl
+      sm:tracking-tight
+    "
+  >
+    Date Line
+  </h1>
+  <p class="mt-2 text-base leading-6 text-white">
+    This is some description for work. And then some. And then some more.
+  </p>
+</div>
