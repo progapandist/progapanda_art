@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  slug: MyString
+  creation_date: 2024-05-09
+  listing_price: 1
+  medium: MyString
+  description: MyText
+  dimensions: MyString
+
+two:
+  slug: MyString
+  creation_date: 2024-05-09
+  listing_price: 1
+  medium: MyString
+  description: MyText
+  dimensions: MyString
