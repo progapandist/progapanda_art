@@ -15,6 +15,16 @@ export default class extends Controller {
     this.imageDisplayTarget.src = `http://localhost:8080/insecure/${RESIZE}/plain/local:///${this.slugValue}@${FORMAT}`;
     this.resize();
 
+    // Update the page URL with the current slug value
+    // Update the page URL with the current slug value while keeping all query parameters
+    const currentSlug = this.slugValue;
+    const currentPath = window.location.pathname.replace(
+      /\/works\/\w+/,
+      `/works/${currentSlug}`
+    );
+    const currentURL = `${currentPath}${window.location.search}${window.location.hash}`;
+    window.history.replaceState({}, "", currentURL);
+
     // Add event listener to intercept clicks on the viewport
     document.addEventListener("click", this.handleClick.bind(this));
   }
