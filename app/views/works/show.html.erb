@@ -1,6 +1,6 @@
 <img
   data-controller="random-image"
-  data-random-image-slug-value="<%= @work.slug %>"
+  data-random-image-slug-value="<%= @slug %>"
   data-random-image-target="imageDisplay"
 />
 <div
@@ -22,9 +22,9 @@
       sm:tracking-tight
     "
   >
-    <%= @work.slug.humanize %>
+    <%= @slug.humanize %>
   </h1>
   <p class="mt-2 text-base leading-6 text-white">
-    <%= @work.description %>
+    <%= @description %>
   </p>
 </div>

@@ -2,7 +2,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 let FORMAT = "avif";
-let RESIZE = "rs:fit:3000:2000";
+let RESIZE = "rs:fit:4000:3000/gravity:sm";
 export default class extends Controller {
   static targets = ["imageDisplay"];
 

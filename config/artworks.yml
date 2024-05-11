@@ -1,0 +1,5 @@
+shared:
+  foo: bar
+  baz:
+    - qux
+    - quux
