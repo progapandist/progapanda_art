@@ -19,7 +19,8 @@ class WorksController < ApplicationController
   private
 
   def authenticate
-    user = User.new(id: SecureRandom.hex(8))
+    user_repo = UserRepository.instance
+    Current.user = user_repo.find(params[:session_id]) || user_repo.create(SecureRandom.hex(8))
   end
 
   def random_work

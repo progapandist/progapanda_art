@@ -11,11 +11,14 @@ export default class extends Controller {
     slug: String,
   };
 
+  static outlets = ["sessions"];
+
   connect() {
+    console.log(this.sessionsOutlet.sessionIdValue);
+
     this.imageDisplayTarget.src = `http://localhost:8080/insecure/${RESIZE}/plain/local:///${this.slugValue}@${FORMAT}`;
     this.resize();
 
-    // Update the page URL with the current slug value
     // Update the page URL with the current slug value while keeping all query parameters
     const currentSlug = this.slugValue;
     const currentPath = window.location.pathname.replace(
@@ -41,15 +44,25 @@ export default class extends Controller {
     if (!event.target.closest("[data-controller='draggable']")) {
       // Check if the click target is the image element
       if (event.target === this.imageDisplayTarget) {
-        // Send a Turbo visit request to works/rand if the previous slug is not present in query params
-        if (!this.slugValue) {
-          Turbo.visit("/works/rand");
-        } else {
-          // Send a Turbo visit request to works/rand with the previous slug in query params
-          Turbo.visit(`/works/rand?prev_slug=${this.slugValue}`, {
-            action: "replace",
-          });
+        // Get the current URL
+        const url = new URL(window.location.href);
+
+        // Check if session_id is already present in the query parameters
+        if (!url.searchParams.has("session_id")) {
+          // Append session_id to the query parameters
+          url.searchParams.append(
+            "session_id",
+            this.sessionsOutlet.sessionIdValue
+          );
         }
+
+        // Construct the new URL with the updated query parameters
+        const newURL = url.toString();
+
+        // Send a Turbo visit request to works/rand with the updated query parameters
+        Turbo.visit(newURL, {
+          action: "replace",
+        });
       }
     }
   }

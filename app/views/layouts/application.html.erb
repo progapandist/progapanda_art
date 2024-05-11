@@ -38,6 +38,12 @@
   </head>
 
   <body>
+    <div
+      data-controller="sessions"
+      class="session-hex"
+      data-sessions-session-id-value="<%= params[:session_id].presence || Current.user.id %>"
+    >
+    </div>
     <%= yield %>
   </body>
 </html>
