@@ -9,6 +9,7 @@ export default class extends Controller {
 
   static values = {
     slug: String,
+    prevSlug: String,
   };
 
   static outlets = ["sessions"];
@@ -40,6 +41,9 @@ export default class extends Controller {
   }
 
   handleClick(event) {
+    // Calculate the width of the left 20% of the screen
+    const leftBoundary = window.innerWidth * 0.2;
+
     // Check if the click target is the draggable box or its children
     if (!event.target.closest("[data-controller='draggable']")) {
       // Check if the click target is the image element
@@ -47,22 +51,46 @@ export default class extends Controller {
         // Get the current URL
         const url = new URL(window.location.href);
 
-        // Check if session_id is already present in the query parameters
-        if (!url.searchParams.has("session_id")) {
-          // Append session_id to the query parameters
-          url.searchParams.append(
-            "session_id",
-            this.sessionsOutlet.sessionIdValue
-          );
+        // Check if the click occurred in the left 20% of the screen
+        if (event.pageX < leftBoundary) {
+          // Extract the existing prev_slug and session_id values
+          const sessionId = url.searchParams.get("session_id");
+
+          // Update the session_id value if it's not already present
+          if (!sessionId) {
+            url.searchParams.set(
+              "session_id",
+              this.sessionsOutlet.sessionIdValue
+            );
+          }
+
+          // Construct the new URL with the updated query parameters
+          let newURL = `/works/${this.prevSlugValue}?prev_slug=${this.slugValue}&session_id=${sessionId || this.sessionsOutlet.sessionIdValue}`;
+          // Send a Turbo visit request to the updated URL
+          Turbo.visit(newURL, {
+            action: "replace",
+          });
+        } else {
+          // Extract the existing prev_slug and session_id values
+          const prevSlug = url.searchParams.get("prev_slug");
+          const sessionId = url.searchParams.get("session_id");
+
+          // Update the session_id value if it's not already present
+          if (!sessionId) {
+            url.searchParams.set(
+              "session_id",
+              this.sessionsOutlet.sessionIdValue
+            );
+          }
+
+          // Construct the new URL with the updated query parameters
+          let newURL = `/works/rand?prev_slug=${prevSlug || this.slugValue}&session_id=${sessionId || this.sessionsOutlet.sessionIdValue}`;
+
+          // Send a Turbo visit request to the new URL
+          Turbo.visit(newURL, {
+            action: "replace",
+          });
         }
-
-        // Construct the new URL with the updated query parameters
-        const newURL = url.toString();
-
-        // Send a Turbo visit request to works/rand with the updated query parameters
-        Turbo.visit(newURL, {
-          action: "replace",
-        });
       }
     }
   }
