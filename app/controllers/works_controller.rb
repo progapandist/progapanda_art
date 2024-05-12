@@ -7,10 +7,7 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.find_by(slug: params[:slug]) || random_work
-
-    if @work.slug == params[:prev_slug]
-      @work = Work.random.without_slugs([@work.slug]).first
-    end
+    @work = Work.random.without_slugs([@work.slug]).first if @work.slug == params[:prev_slug]
 
     current_user&.views&.unshift
     current_user&.views&.<< @work.slug
