@@ -1,5 +1,18 @@
 shared:
-  foo: bar
-  baz:
-    - qux
-    - quux
+  artworks:
+    - slug: bloom # automatically inferred from file name, documentation only
+      title: bloom # Can be infered from slug
+      # file_name: bloom.jpg # Override the file name
+      year: 2023
+      location: Berlin
+      listing_price: 1000
+      medium:
+        - "print"
+        - "Dibond"
+      dimensions:
+        - 90
+        - 60
+        - 0.5
+      description: >
+        Bloom is an interactive music generator that creates a unique
+        audio-visual experience each time it is played.

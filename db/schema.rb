@@ -13,11 +13,14 @@
 ActiveRecord::Schema[7.1].define(version: 2024_05_09_104614) do
   create_table "works", force: :cascade do |t|
     t.string "slug"
-    t.date "creation_date"
+    t.date "year"
     t.integer "listing_price"
-    t.string "medium"
+    t.string "title", default: "", null: false
+    t.string "location", default: "", null: false
     t.text "description"
-    t.string "dimensions"
+    t.text "medium", default: "{}", null: false
+    t.text "dimensions", default: "{}", null: false
+    t.text "meta", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -14,19 +14,27 @@
   "
   class="
     info-box draggable-box p-3 bg-black bg-opacity-50 text-white font-mono max-w-md
-    text-justify filter backdrop-blur-sm
+    text-left filter backdrop-blur-sm
   "
-  style="position: absolute; top: 4rem; left: 4rem; width: 300px; height: 200px;"
+  style="position: absolute; top: 4rem; left: 4rem; width: 800px; height: auto;"
 >
   <h1
     class="
-      text-2xl font-bold leading-7 text-white sm:truncate sm:text-3xl
-      sm:tracking-tight
+      text-2xl font-bold leading-7 text-white xs:truncate xs:text-3xl
+      xs:tracking-tight
     "
   >
     <%= @slug.humanize %>
   </h1>
+  <p>
+    📍 <%= @work.location %>
+    <br>
+    🗓️ <%= @work.year %>
+  </p>
   <p class="mt-2 text-base leading-6 text-white">
     <%= @description %>
   </p>
+  <div class="h-48">
+  </div>
+  <p><%= @work.height %> ╳ <%= @work.width %> ╳ <%= @work.depth %> cm</p>
 </div>
