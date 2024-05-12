@@ -24,7 +24,7 @@
       xs:tracking-tight
     "
   >
-    <%= @slug.humanize %>
+    <%= @slug.humanize.split.map(&:capitalize).join(" ") %>
   </h1>
   <p>
     📍 <%= @work.location %>
@@ -34,7 +34,8 @@
   <p class="mt-2 text-base leading-6 text-white">
     <%= @description %>
   </p>
-  <div class="h-48">
+  <div class="h-12">
   </div>
   <p><%= @work.height %> ╳ <%= @work.width %> ╳ <%= @work.depth %> cm</p>
+  <p>©️ Andy Barnow, Marina Naperstak</p>
 </div>
