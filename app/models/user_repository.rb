@@ -6,7 +6,7 @@ class UserRepository
   end
 
   def create(id)
-    user = User.new(id)
+    user = User.new(id, [])
     @users << user
     user
   end

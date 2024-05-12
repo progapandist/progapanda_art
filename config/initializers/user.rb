@@ -1,1 +1,1 @@
-User = Data.define(:id)
+User = Data.define(:id, :views)

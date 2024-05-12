@@ -1,3 +1,3 @@
 class Work < ApplicationRecord
-  scope :without_slug, ->(slug) { where.not(slug: slug) }
+  scope :without_slugs, ->(slugs) { where.not(slug: slugs) }
 end
