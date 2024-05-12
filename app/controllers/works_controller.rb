@@ -9,12 +9,11 @@ class WorksController < ApplicationController
     @work = Work.find_by(slug: params[:slug]) || random_work
 
     if @work.slug == params[:prev_slug]
-      @work = Work.without_slugs([@work.slug]).merge(Work.order(Arel.sql("RANDOM()"))).first
+      @work = Work.random.without_slugs([@work.slug]).first
     end
 
-    if current_user
-      current_user.views << @work.slug
-    end
+    current_user&.views&.unshift
+    current_user&.views&.<< @work.slug
 
     @slug = @work&.slug.presence || ""
     @description = @work&.description.presence || ""
@@ -34,15 +33,10 @@ class WorksController < ApplicationController
   def random_work
     if current_user
       without_seen_slugs = Work.without_slugs(current_user.views)
-      if without_seen_slugs.empty?
-        current_user.views.clear
-        Work.order(Arel.sql("RANDOM()")).first
-      else
-        without_seen_slugs.order(Arel.sql("RANDOM()")).first
-      end
-
+      current_user.views.clear if without_seen_slugs.empty?
+      without_seen_slugs.first_random.presence || Work.first_random
     else
-      Work.order(Arel.sql("RANDOM()")).first
+      Work.first_random.without_slugs(params[:prev_slug])
     end
   end
 end
