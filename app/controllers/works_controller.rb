@@ -13,10 +13,7 @@ class WorksController < ApplicationController
     current_user&.views&.uniq!&.sort!
     current_user&.views&.clear if current_user.views.size > 2 && current_user.views.map(&:to_s).sort.join == Work.pluck(:slug).sort.join
 
-    @slug = @work&.slug.presence || ""
-    @description = @work&.description.presence || ""
-
-    puts "🙏🙏🙏🙏🙏 Views: #{current_user&.views}"
+    puts "🙏🙏🙏🙏🙏 Views: #{current_user&.views&.sort}"
   end
 
   private

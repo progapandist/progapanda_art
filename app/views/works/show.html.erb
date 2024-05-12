@@ -1,6 +1,6 @@
 <img
   data-controller="random-image"
-  data-random-image-slug-value="<%= @slug %>"
+  data-random-image-slug-value="<%= @work.slug %>"
   data-random-image-prev-slug-value="<%= params[:prev_slug] %>"
   data-random-image-target="imageDisplay"
   data-random-image-sessions-outlet=".session-hex"
@@ -24,7 +24,7 @@
       xs:tracking-tight
     "
   >
-    <%= @slug.humanize.split.map(&:capitalize).join(" ") %>
+    <%= @work.slug.humanize.split.map(&:capitalize).join(" ") %>
   </h1>
   <p>
     📍 <%= @work.location %>
@@ -32,7 +32,7 @@
     🗓️ <%= @work.year %>
   </p>
   <p class="mt-2 text-base leading-6 text-white">
-    <%= @description %>
+    <%= @work.description %>
   </p>
   <div class="h-12">
   </div>

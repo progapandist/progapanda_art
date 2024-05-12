@@ -1,7 +1,6 @@
 shared:
   artworks:
     - slug: bloom # automatically inferred from file name, documentation only
-      title: bloom # Can be infered from slug
       # file_name: bloom.jpg # Override the file name
       year: 2023
       location: Berlin
@@ -14,5 +13,30 @@ shared:
         - 60
         - 0.5
       description: >
-        Bloom is an interactive music generator that creates a unique
-        audio-visual experience each time it is played.
+        Born from a LiDAR scan of a Sakura branch in the Spring of 2023 on the outskirts of Berlin.
+    - slug: bloom_print # automatically inferred from file name, documentation only
+      year: 2023
+      location: Berlin
+      listing_price: 1000
+      medium:
+        - "print"
+        - "Dibond"
+      dimensions:
+        - 90
+        - 60
+        - 0.5
+      description: >
+        Born from a LiDAR scan of a Sakura branch in the Spring of 2023 on the outskirts of Berlin.
+    - slug: headless_01 # automatically inferred from file name, documentation only
+      year: 2023
+      location: Berlin
+      listing_price: 1000
+      medium:
+        - "print"
+        - "Dibond"
+      dimensions:
+        - 90
+        - 60
+        - 0.5
+      description: >
+        No head! No problem! This piece was created by a neural network trained on a dataset of 100,000 headless statues.

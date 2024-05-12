@@ -15,7 +15,7 @@ class Seeder < Thor
     slugs = Dir.entries(ART_SOURCE_DIR).select { |f| File.file?(File.join(ART_SOURCE_DIR, f)) && !f.start_with?(".") }.sort
     say "Slugs: #{slugs} ", :yellow
     infos = Rails.application.config_for(:artworks)[:artworks].map { |artwork| {artwork[:slug] => artwork} }
-    say "Parsed infos: #{infos} ", :yellow
+    say "\nParsed infos: #{infos} ", :yellow
 
     slugs.each do |slug|
       # Remove file extension from the filename to use as the slug
@@ -24,13 +24,15 @@ class Seeder < Thor
 
       ActiveRecord::Base.transaction do
         work = Work.find_or_initialize_by(slug: slug_name)
-        info = infos.find(slug_name).first.fetch(slug_name, {})
+        info = infos.flat_map(&:values).find { |rec| rec[:slug] == slug_name }
         if info.present?
+          info[:title] = slug_name.humanize if info[:title].blank?
           work.update!(info)
           say "Done enriching #{pp slug_name} with #{pp info}", :green
         else
           work.update!(
-            description: "A #{slug_name.humanize} model.",
+            description: infos.flat_map(&:values).find { |rec| rec[:slug] == slug_name }.presence ||
+              "A #{slug_name.humanize} model.",
             title: slug.humanize,
             location: DEFAULT_CITY,
             year: DEFAULT_YEAR
