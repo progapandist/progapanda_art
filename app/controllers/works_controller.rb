@@ -7,13 +7,16 @@ class WorksController < ApplicationController
 
   def show
     @work = Work.find_by(slug: params[:slug]) || random_work
-    @work = Work.random.without_slugs([@work.slug]).first if @work.slug == params[:prev_slug]
+    @work = Work.random.without_slugs([@work.slug]).first if @work.slug == params[:prev_slug] || current_user&.views&.include?(@work.slug)
 
-    current_user&.views&.unshift
     current_user&.views&.<< @work.slug
+    current_user&.views&.uniq!&.sort!
+    current_user&.views&.clear if current_user.views.size > 2 && current_user.views.map(&:to_s).sort.join == Work.pluck(:slug).sort.join
 
     @slug = @work&.slug.presence || ""
     @description = @work&.description.presence || ""
+
+    puts "🙏🙏🙏🙏🙏 Views: #{current_user&.views}"
   end
 
   private
