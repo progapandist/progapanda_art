@@ -20,7 +20,16 @@ build-prod:
 push:
 	docker push $(IMAGE_NAME):$(VERSION)
 
+deploy:
+	kamal deploy
+
 build-push-prod: build-prod push
 
 prod-console:
 	kamal app exec 'bin/rails c' -i --reuse
+
+sqlite-db-prepare:
+	kamal app exec 'bin/rails db:migrate db:seed' --reuse
+
+bash:
+	kamal app exec 'bash' -i --reuse

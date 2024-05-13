@@ -1,24 +1,19 @@
 require "thor"
-
+# Specify the directory path where the files are located
+ART_SOURCE_DIR = "/root/progapanda_art-imgproxy/progapanda_art_sources/"
 DEFAULT_CITY = "Berlin"
 DEFAULT_YEAR = Time.current.year
-
-UNSEEEDEABLE_SLUGS = %w[.DS_Store Dockerfile Makefile README.md]
 
 class Seeder < Thor
   include Thor::Actions
 
   desc "go_seed", "Seed the database with works"
+
   def go_seed
     Work.destroy_all
-    # Specify the directory path where the files are located
-    art_dir = "/Users/progapandist/progapanda_art_sources"
-    art_dir = "/progapanda_art_sources" if Rails.env.production?
 
     # Get an array of filenames from the specified directory
-
-    slugs = Dir.entries(art_dir).select { |f| File.file?(File.join(art_dir, f)) && !f.start_with?(".") }.sort
-    slugs = slugs.reject { |slug| UNSEEEDEABLE_SLUGS.include?(slug) }
+    slugs = Dir.entries(ART_SOURCE_DIR).select { |f| File.file?(File.join(ART_SOURCE_DIR, f)) && !f.start_with?(".") }.sort
     say "Slugs: #{slugs} ", :yellow
     infos = Rails.application.config_for(:artworks)[:artworks].map { |artwork| {artwork[:slug] => artwork} }
     say "\nParsed infos: #{infos} ", :yellow
@@ -48,31 +43,10 @@ class Seeder < Thor
     end
   end
 
-  begin
-    Seeder.new.go_seed
-  rescue Errno::ENOENT => e
-    puts "🙏🙏🙏🙏  Error: #{e}"
-  end
-
-  artworks = Rails.application.config_for(:artworks)
-  pp artworks
-
-  # Enriched from YAML shaped like this:
-  #
-  # - slug: bloom # automatically inferred from file name, documentation only
-  #   title: bloom # Can be infered from slug
-  #   # file_name: bloom.jpg # Override the file name
-  #   year: 2023
-  #   location: Berlin
-  #   listing_price: 1000
-  #   medium:
-  #     - "print"
-  #     - "Dibond"
-  #   dimensions:
-  #     - 90
-  #     - 60
-  #     - 0.5
-  #   description: >
-  #     Bloom is an interactive music generator that creates a unique
-  #     audio-visual experience each time it is played.
+  Seeder.new.go_seed
+rescue Errno::ENOENT, Errno::ENOACCES => e
+  puts "🙏🙏🙏🙏  Error: #{e}"
 end
+
+artworks = Rails.application.config_for(:artworks)
+pp artworks

@@ -30,8 +30,10 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     directories:
-      - progapanda_art_sources:/progapanda_art_sources
+      - progapanda_art_sources:/root/progapanda_art-imgproxy/progapanda_art_sources
       - storage:/rails/storage
+    volumes:
+      - progapanda_art_sources:/progapanda_art_sources
 
 # Credentials for your image host.
 registry:
