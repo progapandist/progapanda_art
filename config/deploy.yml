@@ -2,7 +2,7 @@
 service: progapanda_art
 
 # Name of the container image.
-image: progapandist/presail-demo
+image: progapandist/progapanda-art
 
 # Deploy to these servers.
 servers:

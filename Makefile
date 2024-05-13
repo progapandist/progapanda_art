@@ -1,7 +1,7 @@
 IMGPROXY_ENV_FILE := imgproxy.env
 LOCAL_FOLDER := /Users/progapandist/progapanda_art_sources
 
-IMAGE_NAME := progapandist/presail-demo
+IMAGE_NAME := progapandist/progapanda-art
 VERSION ?= latest
 
 # Specify the Dockerfile for development and production
