@@ -10,11 +10,11 @@ servers:
     hosts:
       - 206.189.242.207
     labels:
-      traefik.http.routers.kiqr_cloud.rule: Host(`artshow.progapanda.org`)
-      traefik.http.routers.kiqr_cloud_secure.entrypoints: websecure
-      traefik.http.routers.kiqr_cloud_secure.rule: Host(`artshow.progapanda.org`)
-      traefik.http.routers.kiqr_cloud_secure.tls: true
-      traefik.http.routers.kiqr_cloud_secure.tls.certresolver: letsencrypt
+      traefik.http.routers.progapanda_art.rule: Host(`artshow.progapanda.org`)
+      traefik.http.routers.progapanda_art_secure.entrypoints: websecure
+      traefik.http.routers.progapanda_art_secure.rule: Host(`artshow.progapanda.org`)
+      traefik.http.routers.progapanda_art_secure.tls: true
+      traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     volumes:
       - "progapanda_art_sources:/Users/progapandist/progapanda_art_sources"
       - "storage:/rails/storage"
