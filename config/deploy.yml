@@ -1,6 +1,22 @@
+# Define the imgproxy service
+service: imgproxy
+image: imgproxy/imgproxy
+servers:
+  web:
+    labels:
+      traefik.http.routers.imgproxy.rule: Host(`imgproxy.progapanda.org`)
+      traefik.http.routers.imgproxy.entrypoints: web
+    volumes:
+      - "$(IMGPROXY_ENV_FILE):/envfile"
+      - "$(LOCAL_FOLDER):/progapanda_art_sources"
+    command: ["imgproxy", "-env-file", "/envfile"]
+env:
+  - IMGPROXY_ENV_FILE
+  - LOCAL_FOLDER
+
+
 # Name of your application. Used to uniquely configure containers.
 service: progapanda_art
-
 # Name of the container image.
 image: progapandist/progapanda-art
 
@@ -117,16 +133,3 @@ traefik:
 # useful for more complex deploy configurations.
 #
 allow_empty_roles: true
-
-# Define the imgproxy service
-service: imgproxy
-image: imgproxy/imgproxy
-servers:
-  web:
-    labels:
-      traefik.http.routers.imgproxy.rule: Host(`imgproxy.progapanda.org`)
-      traefik.http.routers.imgproxy.entrypoints: web
-    volumes:
-      - "$(IMGPROXY_ENV_FILE):/envfile"
-      - "$(LOCAL_FOLDER):/progapanda_art_sources"
-    command: ["imgproxy", "-env-file", "/envfile"]
