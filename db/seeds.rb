@@ -45,7 +45,7 @@ class Seeder < Thor
   begin
     Seeder.new.go_seed
   rescue Errno::ENOENT => e
-    say "Error: #{e}", :red
+    puts "🙏🙏🙏🙏  Error: #{e}"
   end
 
   artworks = Rails.application.config_for(:artworks)
