@@ -33,7 +33,7 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     directories:
       - storage:/rails/storage
-      - progapanda_art_files:/propaganda_art_sources
+      - progapanda_art_sources:/rails/propaganda_art_files
     volumes:
       - /run/containerd/containerd.sock:/run/containerd/containerd.sock
 
