@@ -1,12 +1,20 @@
 # Name of your application. Used to uniquely configure containers.
-service: my-app
+service: progapanda_art
 
 # Name of the container image.
-image: user/my-app
+image: progapandist/presail-demo
 
 # Deploy to these servers.
 servers:
-  - 192.168.0.1
+  web:
+    hosts:
+      - 206.189.242.207
+    labels:
+      traefik.http.routers.kiqr_cloud.rule: Host(`art.progapanda.org`)
+      traefik.http.routers.kiqr_cloud_secure.entrypoints: websecure
+      traefik.http.routers.kiqr_cloud_secure.rule: Host(`art.progapanda.org`)
+      traefik.http.routers.kiqr_cloud_secure.tls: true
+      traefik.http.routers.kiqr_cloud_secure.tls.certresolver: letsencrypt
 
 # Credentials for your image host.
 registry:
@@ -17,7 +25,6 @@ registry:
   # Always use an access token rather than real password when possible.
   password:
     - KAMAL_REGISTRY_PASSWORD
-
 # Inject ENV variables into containers (secrets come from .env).
 # Remember to run `kamal env push` after making changes!
 # env:
