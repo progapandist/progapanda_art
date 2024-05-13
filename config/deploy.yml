@@ -16,9 +16,8 @@ servers:
       traefik.http.routers.kiqr_cloud_secure.tls: true
       traefik.http.routers.kiqr_cloud_secure.tls.certresolver: letsencrypt
     volumes:
-      - progapanda_art_sources:/Users/progapandist/progapanda_art_sources
+      - "progapanda_art_sources:/Users/progapandist/progapanda_art_sources"
       - "storage:/rails/storage"
-      - "/Users/progapandist/progapanda_art_sources:progapanda_art_sources"
 
 # Credentials for your image host.
 registry:
