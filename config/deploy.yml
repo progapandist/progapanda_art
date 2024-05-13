@@ -13,7 +13,7 @@ accessories:
     directories:
       # START WITH LEADING SLASH TO CREATE ABSOLUTE PATH!
       # https://github.com/basecamp/kamal/pull/507
-      - /progapanda_art_sources:/rails/progapanda_art_sources
+      - progapanda_art_sources:/rails/progapanda_art_sources
     roles:
       - web
     # options:
@@ -33,7 +33,7 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     directories:
       - storage:/rails/storage
-      - /progapanda_art_sources:/rails/progapanda_art_sources
+      - progapanda_art_sources:/rails/progapanda_art_sources
 
     volumes:
       - /run/containerd/containerd.sock:/run/containerd/containerd.sock
