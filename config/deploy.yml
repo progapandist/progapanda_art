@@ -9,7 +9,6 @@ accessories:
     port: 8080
     env:
       clear:
-        LOCAL_FOLDER: /progapanda_art_sources
         IMGPROXY_ENV_FILE: imgproxy.env
     directories:
       - progapanda_art_sources:/progapanda_art_sources
@@ -30,10 +29,9 @@ servers:
       traefik.http.routers.progapanda_art_secure.rule: Host(`artshow.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
-    volumes:
-      - "storage:/rails/storage"
     directories:
       - progapanda_art_sources:/progapanda_art_sources
+      - storage:/rails/storage
 
 # Credentials for your image host.
 registry:
@@ -48,7 +46,6 @@ registry:
 env:
   secret:
     - SECRET_KEY_BASE
-    - LOCAL_FOLDER
 
 # Configure custom arguments for Traefik
 traefik:
