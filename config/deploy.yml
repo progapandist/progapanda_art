@@ -35,7 +35,7 @@ servers:
       - storage:/rails/storage
       - progapanda_art_files:/propaganda_art_sources
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /run/containerd/containerd.sock:/run/containerd/containerd.sock
 
 # Credentials for your image host.
 registry:
