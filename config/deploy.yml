@@ -9,10 +9,10 @@ accessories:
     port: 8080
     env:
       clear:
-        LOCAL_FOLDER: "/Users/progapandist/progapanda_art_sources"
+        LOCAL_FOLDER: /progapanda_art_sources
         IMGPROXY_ENV_FILE: imgproxy.env
-    volumes:
-      - "/Users/progapandist/progapanda_art_sources:/progapanda_art_sources"
+    directories:
+      - progapanda_art_sources:/progapanda_art_sources
     roles:
       - web
     # options:
@@ -31,8 +31,9 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     volumes:
-      - "$(LOCAL_FOLDER):/progapanda_art_sources"
       - "storage:/rails/storage"
+    directories:
+      - progapanda_art_sources:/progapanda_art_sources
 
 # Credentials for your image host.
 registry:
