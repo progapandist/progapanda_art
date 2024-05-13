@@ -10,8 +10,10 @@ accessories:
     env:
       clear:
         IMGPROXY_ENV_FILE: imgproxy.env
-    directories:
-      - progapanda_art_sources:/progapanda_art_sources
+    volumes:
+      # START WITH LEADING SLASH TO CREATE ABSOLUTE PATH!
+      # https://github.com/basecamp/kamal/pull/507
+      - /progapanda_art_sources:/progapanda_art_sources
     roles:
       - web
     # options:
@@ -22,16 +24,16 @@ accessories:
 servers:
   web:
     hosts:
-      - 146.190.207.79
+      - 159.223.243.169
     labels:
       traefik.http.routers.progapanda_art.rule: Host(`artshow.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.entrypoints: websecure
       traefik.http.routers.progapanda_art_secure.rule: Host(`artshow.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
-    directories:
-      - progapanda_art_sources:/root/progapanda_art-imgproxy/progapanda_art_sources
+    volumes:
       - storage:/rails/storage
+      - /progapanda_art_sources:/progapanda_art_sources
 
 # Credentials for your image host.
 registry:

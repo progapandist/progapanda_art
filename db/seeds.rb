@@ -1,6 +1,6 @@
 require "thor"
 # Specify the directory path where the files are located
-ART_SOURCE_DIR = "/root/progapanda_art-imgproxy/progapanda_art_sources"
+ART_SOURCE_DIR = "/progapanda_art_sources"
 DEFAULT_CITY = "Berlin"
 DEFAULT_YEAR = Time.current.year
 
