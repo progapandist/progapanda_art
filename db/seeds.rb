@@ -42,7 +42,11 @@ class Seeder < Thor
     end
   end
 
-  Seeder.new.go_seed
+  begin
+    Seeder.new.go_seed
+  rescue Errno::ENOENT => e
+    say "Error: #{e}", :red
+  end
 
   artworks = Rails.application.config_for(:artworks)
   pp artworks
