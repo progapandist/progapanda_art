@@ -32,8 +32,6 @@ servers:
     directories:
       - progapanda_art_sources:/root/progapanda_art-imgproxy/progapanda_art_sources
       - storage:/rails/storage
-    volumes:
-      - progapanda_art_sources:/progapanda_art_sources
 
 # Credentials for your image host.
 registry:
