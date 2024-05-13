@@ -8,7 +8,7 @@ image: progapandist/progapanda-art
 servers:
   web:
     hosts:
-      - 206.189.242.207
+      - 146.190.207.79
     labels:
       traefik.http.routers.progapanda_art.rule: Host(`artshow.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.entrypoints: websecure
