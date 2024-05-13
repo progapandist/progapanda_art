@@ -6,31 +6,29 @@ image: progapandist/progapanda-art
 accessories:
   imgproxy:
     image: darthsim/imgproxy
-    host: 159.223.243.169
+    host: 165.232.72.204
     port: 8080
     env:
       clear:
         IMGPROXY_ENV_FILE: imgproxy.env
-    directories:
-      - progapanda_art_sources:/rails/progapanda_art_sources
+    volumes:
+      # - "/local/path:/container/path"
+      - "/progapanda_art_sources:/progapanda_art_sources"
 
 # Deploy to these servers.
 servers:
   web:
     hosts:
-      - 159.223.243.169
+      - 165.232.72.204
     labels:
-      traefik.http.routers.progapanda_art.rule: Host(`artshow.progapanda.org`)
+      traefik.http.routers.progapanda_art.rule: Host(`art.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.entrypoints: websecure
-      traefik.http.routers.progapanda_art_secure.rule: Host(`artshow.progapanda.org`)
+      traefik.http.routers.progapanda_art_secure.rule: Host(`art.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
-    directories:
-      - storage:/rails/storage
-      - progapanda_art_sources:/rails/progapanda_art_sources
-
     volumes:
-      - /run/containerd/containerd.sock:/run/containerd/containerd.sock
+      - "/progapanda_art_sources:/progapanda_art_sources"
+      - "storage:/rails/storage"
 
 # Credentials for your image host.
 registry:
