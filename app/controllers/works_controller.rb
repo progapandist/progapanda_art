@@ -6,7 +6,7 @@ class WorksController < ApplicationController
   end
 
   def show
-    render json, {message: "Hello, World!"}, status: 200
+    render json: {message: "Hello, World!"}, status: :ok
     # @work = Work.find_by(slug: params[:slug]) || random_work
     # @work = Work.random.without_slugs([@work.slug]).first if @work.slug == params[:prev_slug] || current_user&.views&.include?(@work.slug)
 
