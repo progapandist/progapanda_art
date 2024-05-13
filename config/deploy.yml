@@ -1,24 +1,23 @@
-# Define the imgproxy service
-service: imgproxy
-image: imgproxy/imgproxy
-servers:
-  web:
-    labels:
-      traefik.http.routers.imgproxy.rule: Host(`imgproxy.progapanda.org`)
-      traefik.http.routers.imgproxy.entrypoints: web
-    volumes:
-      - "$(IMGPROXY_ENV_FILE):/envfile"
-      - "$(LOCAL_FOLDER):/progapanda_art_sources"
-    command: ["imgproxy", "-env-file", "/envfile"]
-env:
-  - IMGPROXY_ENV_FILE
-  - LOCAL_FOLDER
-
-
 # Name of your application. Used to uniquely configure containers.
 service: progapanda_art
 # Name of the container image.
 image: progapandist/progapanda-art
+
+accessories:
+  imgproxy:
+    image: darthsim/imgproxy
+    port: 8080
+    env:
+      clear:
+        LOCAL_FOLDER: "/Users/progapandist/progapanda_art_sources"
+        IMGPROXY_ENV_FILE: imgproxy.env
+    volumes:
+      - "/Users/progapandist/progapanda_art_sources:/progapanda_art_sources"
+    roles:
+      - web
+    # options:
+    #   env_file:
+    #     - imgproxy.env
 
 # Deploy to these servers.
 servers:
@@ -28,7 +27,6 @@ servers:
     labels:
       traefik.http.routers.progapanda_art.rule: Host(`artshow.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.entrypoints: websecure
-      traefik.http.routers.progapanda_art.middlewares: progapanda_art_stripprefix
       traefik.http.routers.progapanda_art_secure.rule: Host(`artshow.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
@@ -47,9 +45,9 @@ registry:
     - KAMAL_REGISTRY_PASSWORD
 
 env:
-  - LOCAL_FOLDER
   secret:
     - SECRET_KEY_BASE
+    - LOCAL_FOLDER
 
 # Configure custom arguments for Traefik
 traefik:
