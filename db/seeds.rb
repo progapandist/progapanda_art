@@ -4,6 +4,8 @@ ART_SOURCE_DIR = "/Users/progapandist/progapanda_art_sources"
 DEFAULT_CITY = "Berlin"
 DEFAULT_YEAR = Time.current.year
 
+UNSEEEDEABLE_SLUGS = %w[.DS_Store Dockerfile Makefile README.md]
+
 class Seeder < Thor
   include Thor::Actions
 
@@ -13,6 +15,7 @@ class Seeder < Thor
 
     # Get an array of filenames from the specified directory
     slugs = Dir.entries(ART_SOURCE_DIR).select { |f| File.file?(File.join(ART_SOURCE_DIR, f)) && !f.start_with?(".") }.sort
+    slugs = slugs.reject { |slug| UNSEEEDEABLE_SLUGS.include?(slug) }
     say "Slugs: #{slugs} ", :yellow
     infos = Rails.application.config_for(:artworks)[:artworks].map { |artwork| {artwork[:slug] => artwork} }
     say "\nParsed infos: #{infos} ", :yellow

@@ -6,15 +6,14 @@ class WorksController < ApplicationController
   end
 
   def show
-    render json: {message: "Hello, World!"}, status: :ok
-    # @work = Work.find_by(slug: params[:slug]) || random_work
-    # @work = Work.random.without_slugs([@work.slug]).first if @work.slug == params[:prev_slug] || current_user&.views&.include?(@work.slug)
+    @work = Work.find_by(slug: params[:slug]) || random_work
+    @work = Work.random.without_slugs([@work.slug]).first if @work.slug == params[:prev_slug] || current_user&.views&.include?(@work.slug)
 
-    # current_user&.views&.<< @work.slug
-    # current_user&.views&.uniq!&.sort!
-    # current_user&.views&.clear if current_user.views.size > 2 && current_user.views.map(&:to_s).sort.join == Work.pluck(:slug).sort.join
+    current_user&.views&.<< @work.slug
+    current_user&.views&.uniq!&.sort!
+    current_user&.views&.clear if current_user.views.size > 2 && current_user.views.map(&:to_s).sort.join == Work.pluck(:slug).sort.join
 
-    # puts "🙏🙏🙏🙏🙏 Views: #{current_user&.views&.sort}"
+    puts "🙏🙏🙏🙏🙏 Views: #{current_user&.views&.sort}"
   end
 
   private
