@@ -1,6 +1,4 @@
-# Name of your application. Used to uniquely configure containers.
 service: progapanda_art
-# Name of the container image.
 image: progapandist/progapanda-art
 
 accessories:
@@ -12,11 +10,10 @@ accessories:
       clear:
         IMGPROXY_ENV_FILE: imgproxy.env
     volumes:
-      - "/root/art_sources:/rails/art_sources"
+      - "/root/art_sources:/rails/art_sources:ro"
     labels:
       traefik.http.routers.progapanda_imgproxy.rule: Host(`imgproxy.progapanda.org`)
 
-# Deploy to these servers.
 servers:
   web:
     hosts:
@@ -28,10 +25,9 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     volumes:
-      - "/root/art_sources:/rails/art_sources"
-      - "/root/storage:/rails/storage"
+      - "/root/art_sources:/rails/art_sources:ro"
+      - "/root/storage:/rails/storage:ro"
 
-# Credentials for your image host.
 registry:
   username: progapandist
   password:
