@@ -13,8 +13,7 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
-
-# Throw-away build stage to reduce size of final image
+# Throwaway build stage to reduce size of final image
 FROM base as build
 
 # Install packages needed to build gems
@@ -41,7 +40,6 @@ COPY . .
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-
 # Final stage for app image
 FROM base
 
@@ -54,11 +52,13 @@ RUN apt-get update -qq && \
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
 
-# Run and own only the runtime files. Use root as I need to test smth!
-# TODO: CHANGE!
-RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp /root /rails
-USER rails:rails
+# Change to root user to test
+USER root:root
+
+# Handle permissions for runtime directories, including mounted volumes
+RUN chown -R root:root /rails && \
+    mkdir -p /rails/art_sources /rails/storage && \
+    chown -R root:root /rails/art_sources /rails/storage
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

@@ -12,10 +12,9 @@ accessories:
       clear:
         IMGPROXY_ENV_FILE: imgproxy.env
     volumes:
-      # - "/local/path:/container/path"
       - "/root/art_sources:/rails/art_sources"
     labels:
-      traefik.http.routers.progapanda_art.rule: Host(`imgproxy.progapanda.org`)
+      traefik.http.routers.progapanda_imgproxy.rule: Host(`imgproxy.progapanda.org`)
 
 # Deploy to these servers.
 servers:
@@ -30,7 +29,7 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     volumes:
       - "/root/art_sources:/rails/art_sources"
-      - "storage:/rails/storage"
+      - "/root/storage:/rails/storage"
 
 # Credentials for your image host.
 registry:
