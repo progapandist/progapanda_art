@@ -14,6 +14,7 @@ class Seeder < Thor
 
     # Get an array of filenames from the specified directory
     slugs = Dir.entries(ART_SOURCE_DIR).select { |f| File.file?(File.join(ART_SOURCE_DIR, f)) && !f.start_with?(".") }.sort
+    say ART_SOURCE_DIR.to_s, :red
     say "Slugs: #{slugs} ", :yellow
     infos = Rails.application.config_for(:artworks)[:artworks].map { |artwork| {artwork[:slug] => artwork} }
     say "\nParsed infos: #{infos} ", :yellow
