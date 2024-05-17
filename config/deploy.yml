@@ -25,7 +25,7 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     volumes:
-      - "/root/art_sources:/rails/art_sources:ro"
+      - "/root/art_sources:ro:/rails/art_sources:ro"
       - "/root/storage:/rails/storage:ro"
 
 registry:
