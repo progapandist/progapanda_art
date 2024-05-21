@@ -12,6 +12,10 @@ class Seeder < Thor
   def go_seed
     Work.destroy_all
 
+    say "Checking directory: #{ART_SOURCE_DIR}", :red
+    say "Directory contents:", :green
+    Dir.entries(ART_SOURCE_DIR).each { |entry| say entry, :blue }
+
     # Get an array of filenames from the specified directory
     slugs = Dir.entries(ART_SOURCE_DIR).select { |f| File.file?(File.join(ART_SOURCE_DIR, f)) && !f.start_with?(".") }.sort
     say ART_SOURCE_DIR.to_s, :red
