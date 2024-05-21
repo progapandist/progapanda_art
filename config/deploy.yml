@@ -24,9 +24,6 @@ servers:
       traefik.http.routers.progapanda_art_secure.rule: Host(`art.progapanda.org`)
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
-    volumes:
-      - "/data/art_sources:/rails/art_sources:ro"
-      - "/data/storage:/rails/storage:ro"
 
 registry:
   username: progapandist
@@ -36,6 +33,12 @@ registry:
 env:
   secret:
     - SECRET_KEY_BASE
+
+volumes:
+  - "/data/art_sources:/rails/art_sources:ro"
+  - progapanda-art-db:/rails/db
+
+asset_path: /rails/public/assets
 
 traefik:
   options:
