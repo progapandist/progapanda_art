@@ -14,6 +14,10 @@ accessories:
       - "/data/art_sources:/rails/imgproxy_sources:ro"
     labels:
       traefik.http.routers.progapanda_imgproxy.rule: Host(`imgproxy.progapanda.org`)
+      traefik.http.routers.progapanda_imgproxy_secure.entrypoints: websecure
+      traefik.http.routers.progapanda_imgproxy_secure.rule: Host(`imgproxy.progapanda.org`)
+      traefik.http.routers.progapanda_imgproxy_secure.tls: true
+      traefik.http.routers.progapanda_imgproxy_secure.tls.certresolver: letsencrypt
 
 servers:
   web:
@@ -39,7 +43,7 @@ volumes:
   - "/data/art_sources:/rails/art_sources:ro"
   - progapanda-art-db:/rails/db
 
-# asset_path: /rails/public/assets
+asset_path: /rails/public/assets
 
 traefik:
   options:

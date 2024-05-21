@@ -8389,7 +8389,7 @@ class random_image_controller_default extends Controller {
   static outlets = ["sessions"];
   connect() {
     console.log(this.sessionsOutlet.sessionIdValue);
-    this.imageDisplayTarget.src = `http://localhost:8080/insecure/${RESIZE}/plain/local:///${this.slugValue}@${FORMAT}`;
+    this.imageDisplayTarget.src = `https://imgproxy.progapanda.org/insecure/${RESIZE}/plain/local:///${this.slugValue}@${FORMAT}`;
     this.resize();
     const currentSlug = this.slugValue;
     const currentPath = window.location.pathname.replace(/\/works\/\w+/, `/works/${currentSlug}`);
@@ -8453,4 +8453,4 @@ application.register("hello", hello_controller_default);
 application.register("random-image", random_image_controller_default);
 application.register("sessions", sessions_controller_default);
 
-//# debugId=4174429066EBE4A264756e2164756e21
+//# debugId=68C8249ADD03412164756e2164756e21
