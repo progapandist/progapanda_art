@@ -38,7 +38,7 @@ volumes:
   - "/data/art_sources:/rails/art_sources:ro"
   - progapanda-art-db:/rails/db
 
-asset_path: /rails/public/assets
+# asset_path: /rails/public/assets
 
 traefik:
   options:
