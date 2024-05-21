@@ -9,6 +9,7 @@ accessories:
     env:
       clear:
         IMGPROXY_ENV_FILE: imgproxy.env
+        IMGPROXY_LOCAL_FILESYSTEM_ROOT: /rails/imgproxy_sources
     volumes:
       - "/data/art_sources:/rails/imgproxy_sources:ro"
     labels:
