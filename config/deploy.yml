@@ -10,7 +10,7 @@ accessories:
       clear:
         IMGPROXY_ENV_FILE: imgproxy.env
     volumes:
-      - "/data/art_sources:/rails/art_sources:ro"
+      - "/data/art_sources:/rails/imgproxy_sources:ro"
     labels:
       traefik.http.routers.progapanda_imgproxy.rule: Host(`imgproxy.progapanda.org`)
 
