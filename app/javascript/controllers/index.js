@@ -4,14 +4,14 @@
 
 import { application } from "./application";
 
-import SessionsController from "./sessions_controller";
-application.register("sessions", SessionsController);
+import DraggableController from "./draggable_controller";
+application.register("draggable", DraggableController);
 
 import HelloController from "./hello_controller";
 application.register("hello", HelloController);
 
-import DraggableController from "./draggable_controller";
-application.register("draggable", DraggableController);
-
 import RandomImageController from "./random_image_controller";
 application.register("random-image", RandomImageController);
+
+import SessionsController from "./sessions_controller";
+application.register("sessions", SessionsController);
