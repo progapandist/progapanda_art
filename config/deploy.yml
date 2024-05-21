@@ -10,9 +10,7 @@ accessories:
       clear:
         IMGPROXY_ENV_FILE: imgproxy.env
     volumes:
-      - type: bind
-        source: "/root/art_sources"
-        target: "/rails/art_sources"
+      - "/data/art_sources:/rails/art_sources:ro"
     labels:
       traefik.http.routers.progapanda_imgproxy.rule: Host(`imgproxy.progapanda.org`)
 
@@ -27,12 +25,8 @@ servers:
       traefik.http.routers.progapanda_art_secure.tls: true
       traefik.http.routers.progapanda_art_secure.tls.certresolver: letsencrypt
     volumes:
-      - type: bind
-        source: "/root/art_sources"
-        target: "/rails/art_sources"
-      - type: bind
-        source: "/root/storage"
-        target: "/rails/storage"
+      - "/data/art_sources:/rails/art_sources:ro"
+      - "/data/storage:/rails/storage:ro"
 
 registry:
   username: progapandist

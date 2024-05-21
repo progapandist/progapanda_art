@@ -57,8 +57,8 @@ USER root:root
 
 # Handle permissions for runtime directories, including mounted volumes
 RUN chown -R root:root /rails && \
-    mkdir -p /rails/art_sources /rails/storage && \
-    chown -R root:root /rails/art_sources /rails/storage
+    mkdir -p /data/art_sources /rails/storage && \
+    chown -R root:root /data/art_sources /rails/storage
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
