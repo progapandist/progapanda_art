@@ -30,6 +30,7 @@ export default class extends Controller {
 
   mousemove(e) {
     if (!this.draggingValue) return;
+    e.preventDefault(); // Prevent default behavior
     const event = e.type === "touchmove" ? e.touches[0] : e;
     const x = event.clientX - this.startXValue;
     const y = event.clientY - this.startYValue;
