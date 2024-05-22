@@ -10,24 +10,29 @@ export default class extends Controller {
     this.element.style.position = "absolute"; // This is critical for absolute movement
 
     console.log("Hello from DraggableController");
+
+    this.element.addEventListener("mousedown", this.mousedown.bind(this));
+    this.element.addEventListener("touchstart", this.mousedown.bind(this));
+    document.addEventListener("mousemove", this.mousemove.bind(this));
+    document.addEventListener("touchmove", this.mousemove.bind(this));
+    document.addEventListener("mouseup", this.mouseup.bind(this));
+    document.addEventListener("touchend", this.mouseup.bind(this));
   }
 
   mousedown(e) {
     this.draggingValue = true;
-    // Compute the initial difference between click location and element's top-left corner
-    this.startXValue = e.clientX - this.element.offsetLeft;
-    this.startYValue = e.clientY - this.element.offsetTop;
+    const event = e.type === "touchstart" ? e.touches[0] : e;
+    this.startXValue = event.clientX - this.element.offsetLeft;
+    this.startYValue = event.clientY - this.element.offsetTop;
     this.element.style.cursor = "grabbing";
     this.element.style.filter = "invert(1)";
   }
+
   mousemove(e) {
     if (!this.draggingValue) return;
-
-    // Position the element based on cursor location minus the initial offsets
-    const x = e.clientX - this.startXValue;
-    const y = e.clientY - this.startYValue;
-
-    // Update position, ensuring the box stays in bounds
+    const event = e.type === "touchmove" ? e.touches[0] : e;
+    const x = event.clientX - this.startXValue;
+    const y = event.clientY - this.startYValue;
     const maxX = window.innerWidth - this.element.offsetWidth;
     const maxY = window.innerHeight - this.element.offsetHeight;
 
