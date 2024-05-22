@@ -34,4 +34,5 @@
 /node_modules/
 !/app/assets/builds/.keep
 !/app/assets/builds/.gitkeep
+!/app/assets/builds/application.css
 /public/assets
