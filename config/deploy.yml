@@ -42,6 +42,8 @@ registry:
 env:
   secret:
     - SECRET_KEY_BASE
+    - IMGPROXY_KEY
+    - IMGPROXY_SALT
 
 volumes:
   - "/data/art_sources:/rails/art_sources:ro"

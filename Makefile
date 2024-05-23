@@ -21,7 +21,7 @@ push:
 	docker push $(IMAGE_NAME):$(VERSION)
 
 deploy:
-	kamal deploy
+	kamal deploy -v
 	kamal app boot
 
 build-push-prod: build-prod push
