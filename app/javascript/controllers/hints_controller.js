@@ -30,11 +30,12 @@ export default class extends Controller {
     // Create text element
     const text = document.createElement("div");
     text.innerText =
-      "WELCOME EARTHLING. DRAG CORNER OR TURN PHONE TO RESIZE. END OF MESSAGE. ENJOY.";
-    text.style.color = "white";
-    text.style.fontSize = "8em";
-    text.style.fontWeight = "900"; // Heavy script
+      "👋 EARTHLING. REMINDER! DRAG WINDOW CORNER ⇲ OR TURN PHONE TO RESIZE. CLICK TO SEE MORE. EOF. ENJOY ⇲ ⇲ ⇲ ⇲";
+    text.style.color = "magenta";
+    text.style.fontSize = "6em";
+    text.style.fontWeight = "1000"; // Heavy script
     text.style.fontFamily = "system-ui, sans-serif"; // Optional: for better font rendering
+    text.style.animation = "flashing 1s infinite"; // Add animation
 
     // Append text to overlay
     overlay.appendChild(text);
@@ -42,9 +43,19 @@ export default class extends Controller {
     // Append overlay to body
     document.body.appendChild(overlay);
 
-    // Remove the overlay after 3 seconds
+    // Remove the overlay after 4.5 seconds
     setTimeout(() => {
       document.body.removeChild(overlay);
-    }, 3000);
+    }, 4500);
+
+    // CSS Styles for flashing animation
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes flashing {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.1; }
+      }
+    `;
+    document.head.appendChild(style);
   }
 }
