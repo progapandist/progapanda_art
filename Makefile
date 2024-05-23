@@ -22,6 +22,7 @@ push:
 
 deploy:
 	kamal deploy
+	kamal app boot
 
 build-push-prod: build-prod push
 
@@ -33,3 +34,6 @@ sqlite-db-prepare:
 
 bash:
 	kamal app exec 'bash' -i --reuse
+
+imgproxy-bash:
+	kamal accessory exec imgproxy 'bash' -i --reuse

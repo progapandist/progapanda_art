@@ -10,6 +10,7 @@ export default class extends Controller {
   static values = {
     slug: String,
     prevSlug: String,
+    appEnv: String,
   };
 
   static outlets = ["sessions"];
@@ -17,7 +18,12 @@ export default class extends Controller {
   connect() {
     console.log(this.sessionsOutlet.sessionIdValue);
 
-    this.imageDisplayTarget.src = `https://imgproxy.progapanda.org/insecure/${RESIZE}/plain/${this.slugValue}@${FORMAT}`;
+    if (this.appEnvValue === "production") {
+      this.imageDisplayTarget.src = `https://imgproxy.progapanda.org/insecure/${RESIZE}/plain/${this.slugValue}@${FORMAT}`;
+    } else {
+      this.imageDisplayTarget.src = `http://localhost:8080/insecure/${RESIZE}/plain/${this.slugValue}@${FORMAT}`;
+    }
+
     this.resize();
 
     // Update the page URL with the current slug value while keeping all query parameters

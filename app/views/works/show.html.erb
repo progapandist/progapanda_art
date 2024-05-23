@@ -3,6 +3,7 @@
   data-random-image-slug-value="<%= @work.slug %>"
   data-random-image-prev-slug-value="<%= params[:prev_slug] %>"
   data-random-image-target="imageDisplay"
+  data-random-image-app-env-value="<%= Rails.env %>"
   data-random-image-sessions-outlet=".session-hex"
 />
 <div
@@ -27,15 +28,21 @@
     <%= @work.slug.humanize.split.map(&:capitalize).join(" ") %>
   </h1>
   <p>
-    📍 <%= @work.location %>
+    📍
+    <%= @work.location %>
     <br>
-    🗓️ <%= @work.year %>
+    🗓️
+    <%= @work.year %>
   </p>
   <p class="mt-2 text-base leading-6 text-white">
     <%= @work.description %>
   </p>
   <div class="h-12">
   </div>
-  <p><%= @work.height %> ╳ <%= @work.width %> ╳ <%= @work.depth %> cm</p>
+  <p><%= @work.height %>
+    ╳
+    <%= @work.width %>
+    <%= @work.depth %>
+    cm</p>
   <p>©️ Andy Barnow, Marina Naperstak</p>
 </div>
