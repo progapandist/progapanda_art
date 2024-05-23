@@ -11,6 +11,7 @@ export default class extends Controller {
     slug: String,
     prevSlug: String,
     appEnv: String,
+    imgproxyUrl: String,
   };
 
   static outlets = ["sessions"];
@@ -18,11 +19,11 @@ export default class extends Controller {
   connect() {
     console.log(this.sessionsOutlet.sessionIdValue);
 
-    if (this.appEnvValue === "production") {
-      this.imageDisplayTarget.src = `https://imgproxy.progapanda.org/insecure/${RESIZE}/plain/${this.slugValue}@${FORMAT}`;
-    } else {
-      this.imageDisplayTarget.src = `http://localhost:8080/insecure/${RESIZE}/plain/${this.slugValue}@${FORMAT}`;
-    }
+    console.log(
+      "Hello from RandomImageController, imgproxyUrl:",
+      this.imgproxyUrlValue
+    );
+    this.imageDisplayTarget.src = this.imgproxyUrlValue;
 
     this.resize();
 
