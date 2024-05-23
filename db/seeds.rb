@@ -1,6 +1,6 @@
 require "thor"
 # Specify the directory path where the files are located
-ART_SOURCE_DIR = Rails.root.join("art_sources")
+ART_SOURCE_DIR = Rails.env.production? ? Rails.root.join("art_sources") : "/Users/progapandist/progapanda_art_sources"
 DEFAULT_CITY = "Berlin"
 DEFAULT_YEAR = Time.current.year
 

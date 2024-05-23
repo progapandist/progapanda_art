@@ -17,7 +17,7 @@ export default class extends Controller {
   connect() {
     console.log(this.sessionsOutlet.sessionIdValue);
 
-    this.imageDisplayTarget.src = `https://imgproxy.progapanda.org/insecure/${RESIZE}/plain/local:///${this.slugValue}@${FORMAT}`;
+    this.imageDisplayTarget.src = `https://imgproxy.progapanda.org/insecure/${RESIZE}/plain/${this.slugValue}@${FORMAT}`;
     this.resize();
 
     // Update the page URL with the current slug value while keeping all query parameters
