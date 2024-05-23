@@ -48,6 +48,7 @@ group :development, :test do
   gem "erb-formatter"
   gem "standard"
   gem "pry-rails"
+  gem "dotenv"
 end
 
 group :development do
