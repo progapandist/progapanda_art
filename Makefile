@@ -1,5 +1,5 @@
 IMGPROXY_ENV_FILE := imgproxy.env
-LOCAL_FOLDER := /progapanda_art_sources
+LOCAL_FOLDER := /Users/progapandist/progapanda_art_sources
 
 IMAGE_NAME := progapandist/progapanda-art
 VERSION ?= latest

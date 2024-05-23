@@ -8,7 +8,6 @@ accessories:
     port: 8080
     env:
       clear:
-        IMGPROXY_ENV_FILE: imgproxy.env
         IMGPROXY_LOCAL_FILESYSTEM_ROOT: /rails/art_sources
         IMGPROXY_MAX_SRC_RESOLUTION: 9999999
     volumes:

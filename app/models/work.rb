@@ -1,5 +1,5 @@
 class Work < ApplicationRecord
-  scope :without_slugs, ->(slugs) { where.not(slug: slugs) }
+  scope :excluding_slugs, ->(slugs) { where.not(slug: slugs) }
   scope :random, -> { order(Arel.sql("RANDOM()")) }
 
   serialize :medium, JSON

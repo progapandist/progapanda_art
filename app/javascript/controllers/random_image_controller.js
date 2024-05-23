@@ -51,46 +51,22 @@ export default class extends Controller {
         // Get the current URL
         const url = new URL(window.location.href);
 
-        // Check if the click occurred in the left 20% of the screen
-        if (event.pageX < leftBoundary) {
-          // Extract the existing prev_slug and session_id values
-          const sessionId = url.searchParams.get("session_id");
+        // Extract the existing prev_slug and session_id values
+        const prevSlug = url.searchParams.get("ps");
+        const sessionId = url.searchParams.get("i");
 
-          // Update the session_id value if it's not already present
-          if (!sessionId) {
-            url.searchParams.set(
-              "session_id",
-              this.sessionsOutlet.sessionIdValue
-            );
-          }
-
-          // Construct the new URL with the updated query parameters
-          let newURL = `/works/${this.prevSlugValue}?prev_slug=${this.slugValue}&session_id=${sessionId || this.sessionsOutlet.sessionIdValue}`;
-          // Send a Turbo visit request to the updated URL
-          Turbo.visit(newURL, {
-            action: "replace",
-          });
-        } else {
-          // Extract the existing prev_slug and session_id values
-          const prevSlug = url.searchParams.get("prev_slug");
-          const sessionId = url.searchParams.get("session_id");
-
-          // Update the session_id value if it's not already present
-          if (!sessionId) {
-            url.searchParams.set(
-              "session_id",
-              this.sessionsOutlet.sessionIdValue
-            );
-          }
-
-          // Construct the new URL with the updated query parameters
-          let newURL = `/works/rand?prev_slug=${prevSlug || this.slugValue}&session_id=${sessionId || this.sessionsOutlet.sessionIdValue}`;
-
-          // Send a Turbo visit request to the new URL
-          Turbo.visit(newURL, {
-            action: "replace",
-          });
+        // Update the session_id value if it's not already present
+        if (!sessionId) {
+          url.searchParams.set("i", this.sessionsOutlet.sessionIdValue);
         }
+
+        // Construct the new URL with the updated query parameters
+        let newURL = `/works/rand?ps=${prevSlug || this.slugValue}&i=${sessionId || this.sessionsOutlet.sessionIdValue}`;
+
+        // Send a Turbo visit request to the new URL
+        Turbo.visit(newURL, {
+          action: "replace",
+        });
       }
     }
   }

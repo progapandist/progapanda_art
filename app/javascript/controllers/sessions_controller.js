@@ -19,7 +19,7 @@ export default class extends Controller {
     const url = new URL(window.location.href);
 
     // Append the session id as a query parameter
-    url.searchParams.set("session_id", currentSessionId);
+    url.searchParams.set("i", currentSessionId);
 
     // Replace the current URL with the updated URL
     window.history.replaceState({}, "", url.toString());
