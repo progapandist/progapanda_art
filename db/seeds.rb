@@ -47,9 +47,9 @@ class Seeder < Thor
         work.update!(imgproxy_url:
           Imgproxy.url_for(
             slug_name,
-            width: 4000,
-            height: 3000,
-            resizing_type: :fill,
+            width: 3840,
+            height: 2160,
+            resizing_type: :fit,
             gravity: :sm,
             format: :avif
           ))
