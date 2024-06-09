@@ -31,12 +31,25 @@ export default class extends Controller {
 
     // Update the page URL with the current slug value while keeping all query parameters
     const currentSlug = this.slugValue;
-    const currentPath = window.location.pathname.replace(
-      /\/works\/\w+/,
-      `/works/${currentSlug}`
-    );
-    const currentURL = `${currentPath}${window.location.search}${window.location.hash}`;
-    window.history.replaceState({}, "", currentURL);
+    console.log("slug value", currentSlug);
+
+    let currentPath = window.location.pathname;
+
+    if (/\/works\/\w+/.test(currentPath)) {
+      // If "/works/smth" is present, replace it with "/works/${currentSlug}"
+      currentPath = currentPath.replace(
+        /\/works\/\w+/,
+        `/works/${currentSlug}`
+      );
+    } else {
+      // Otherwise, prepend "/works/${currentSlug}" to the current path
+      currentPath = `/works/${currentSlug}${currentPath}`;
+    }
+
+    console.log("currentPath", currentPath);
+
+    const newURL = `${window.location.origin}${currentPath}${window.location.search}${window.location.hash}`;
+    window.history.replaceState({}, "", newURL);
   }
 
   handleClick(event) {
