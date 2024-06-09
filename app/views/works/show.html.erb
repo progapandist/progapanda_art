@@ -35,10 +35,16 @@
     🗓️
     <%= @work.year %>
   </p>
-  <p class="mt-2 text-base leading-6 text-white">
-    <%= @work.description %>
-  </p>
-  <div class="h-12">
+
+
+  <% if @work.description.present? %>
+    <p class="mt-2 text-base leading-6 text-black">
+      <%= @work.description %>
+    </p>
+  <% end %>
+
+
+  <div class="h-8">
   </div>
 
   <% if @work.dimensions.present? %>
