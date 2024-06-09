@@ -31,13 +31,15 @@ export default class extends Controller {
 
     // Update the page URL with the current slug value while keeping all query parameters
     const currentSlug = this.slugValue;
-    console.log("slug value ", currentSlug);
+    const currentPath = window.location.pathname.replace(
+      /\/works\/\w+/,
+      `/works/${currentSlug}`
+    );
+    const currentURL = `${currentPath}${window.location.search}${window.location.hash}`;
+    window.history.replaceState({}, "", currentURL);
 
-    const currentPath = `/works/${currentSlug}${window.location.pathname}`;
-    console.log("currentPath", currentPath);
-
-    const newURL = `${currentPath}${window.location.search}${window.location.hash}`;
-    window.history.replaceState({}, "", newURL);
+    // Add event listener to intercept clicks on the viewport
+    document.addEventListener("click", this.handleClick.bind(this));
   }
 
   handleClick(event) {
