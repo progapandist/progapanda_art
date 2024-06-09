@@ -37,8 +37,7 @@ class Seeder < Thor
           say "Done enriching #{pp slug_name} with #{pp info}", :green
         else
           work.update!(
-            description: infos.flat_map(&:values).find { |rec| rec[:slug] == slug_name }.presence ||
-              "A #{slug_name.humanize} model.",
+            description: infos.flat_map(&:values).find { |rec| rec[:slug] == slug_name }.presence || "",
             title: slug.humanize,
             location: DEFAULT_CITY,
             year: DEFAULT_YEAR

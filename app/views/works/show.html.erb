@@ -16,7 +16,7 @@
   "
   class="
     info-box draggable-box p-3 bg-black bg-opacity-50 text-white font-mono max-w-md
-    text-left filter backdrop-blur-sm
+    text-left filter backdrop-blur-sm text-sm
   "
   style="position: absolute; top: 4rem; left: 4rem; width: 800px; height: auto;"
 >
@@ -40,10 +40,14 @@
   </p>
   <div class="h-12">
   </div>
-  <p><%= @work.height %>
+
+  <% if @work.dimensions.present? %>
+    <p><%= @work.height %>
     ╳
     <%= @work.width %>
     <%= @work.depth %>
-    cm</p>
+    cm
+    </p>
+  <% end %>
   <p>©️ Andy Barnow, Marina Naperstak</p>
 </div>
