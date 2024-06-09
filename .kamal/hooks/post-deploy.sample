@@ -12,3 +12,4 @@
 # KAMAL_RUNTIME
 
 echo "$KAMAL_PERFORMER deployed $KAMAL_VERSION to $KAMAL_DESTINATION in $KAMAL_RUNTIME seconds"
+bin/rails db:migrate db:seed
