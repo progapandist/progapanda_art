@@ -16,5 +16,8 @@ application.register("hints", HintsController)
 import RandomImageController from "./random_image_controller"
 application.register("random-image", RandomImageController)
 
+import ResizeController from "./resize_controller"
+application.register("resize", ResizeController)
+
 import SessionsController from "./sessions_controller"
 application.register("sessions", SessionsController)

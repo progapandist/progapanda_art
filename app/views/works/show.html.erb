@@ -1,11 +1,13 @@
 <img
-  data-controller="random-image"
+  data-controller="random-image resize"
   data-random-image-slug-value="<%= @work.slug %>"
   data-random-image-imgproxy-url-value="<%= @work.imgproxy_url %>"
   data-random-image-prev-slug-value="<%= params[:prev_slug] %>"
   data-random-image-target="imageDisplay"
   data-random-image-app-env-value="<%= Rails.env %>"
   data-random-image-sessions-outlet=".session-hex"
+  data-resize-random-image-outlet=".image-display"
+  class="image-display"
 />
 <div
   data-controller="draggable"
