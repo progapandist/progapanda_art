@@ -10,8 +10,15 @@ export default class extends Controller {
   }
 
   addHintMessage() {
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    console.log(isMobile);
+
     this.hint = document.createElement("div");
-    this.hint.innerText = "drag corner to resize ⇲";
+
+    this.hint.innerText = isMobile
+      ? "flip phone to resize"
+      : "drag corner to resize ⇲";
+
     this.hint.style.position = "fixed";
     this.hint.style.bottom = "10px";
     this.hint.style.right = "10px";
