@@ -49,7 +49,7 @@ class Seeder < Thor
             slug_name,
             width: 3840,
             height: 2160,
-            resizing_type: :fit,
+            resizing_type: :auto,
             gravity: :sm,
             format: :avif
           ))
