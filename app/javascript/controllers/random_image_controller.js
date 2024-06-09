@@ -37,9 +37,6 @@ export default class extends Controller {
     );
     const currentURL = `${currentPath}${window.location.search}${window.location.hash}`;
     window.history.replaceState({}, "", currentURL);
-
-    // Add event listener to intercept clicks on the viewport
-    document.addEventListener("click", this.handleClick.bind(this));
   }
 
   handleClick(event) {
