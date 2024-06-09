@@ -23,28 +23,21 @@ export default class extends Controller {
       "Hello from RandomImageController, imgproxyUrl:",
       this.imgproxyUrlValue
     );
+
     this.imageDisplayTarget.src = this.imgproxyUrlValue;
-
-    this.resize();
-
-    // Update the page URL with the current slug value while keeping all query parameters
-    const currentSlug = this.slugValue;
-    const currentPath = window.location.pathname.replace(
-      /\/works\/\w+/,
-      `/works/${currentSlug}`
-    );
-    const currentURL = `${currentPath}${window.location.search}${window.location.hash}`;
-    window.history.replaceState({}, "", currentURL);
 
     // Add event listener to intercept clicks on the viewport
     document.addEventListener("click", this.handleClick.bind(this));
-  }
 
-  resize() {
-    window.addEventListener("resize", () => {
-      this.imageDisplayTarget.style.width = `${window.innerWidth}px`;
-      this.imageDisplayTarget.style.height = `${window.innerHeight}px`;
-    });
+    // Update the page URL with the current slug value while keeping all query parameters
+    const currentSlug = this.slugValue;
+    console.log("slug value ", currentSlug);
+
+    const currentPath = `/works/${currentSlug}${window.location.pathname}`;
+    console.log("currentPath", currentPath);
+
+    const newURL = `${currentPath}${window.location.search}${window.location.hash}`;
+    window.history.replaceState({}, "", newURL);
   }
 
   handleClick(event) {
