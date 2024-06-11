@@ -5,6 +5,7 @@ class WorksController < ApplicationController
     # We always pick one work
     @pagy, works = pagy(Work.all, items: 1)
     @work = works.sole
+    @max_page = @pagy.pages
   end
 
   def show

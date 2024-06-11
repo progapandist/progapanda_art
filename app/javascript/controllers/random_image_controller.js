@@ -2,8 +2,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 
-let FORMAT = "avif";
-let RESIZE = "rs:fit:4000:3000/gravity:sm";
 export default class extends Controller {
   static targets = ["imageDisplay"];
 
@@ -12,6 +10,7 @@ export default class extends Controller {
     prevSlug: String,
     appEnv: String,
     imgproxyUrl: String,
+    maxPage: Number,
   };
 
   static outlets = ["sessions"];
@@ -62,8 +61,8 @@ export default class extends Controller {
     const page = url.searchParams.get("page");
     this.pageValue = parseInt(page);
 
-    if (!this.pageValue) {
-      this.pageValue = 1;
+    if (!this.pageValue || this.pageValue === this.maxPageValue) {
+      this.pageValue = 0;
     }
 
     let newPage = this.pageValue + 1;

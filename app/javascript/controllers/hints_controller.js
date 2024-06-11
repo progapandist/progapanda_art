@@ -11,7 +11,6 @@ export default class extends Controller {
 
   addHintMessage() {
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-    console.log(isMobile);
 
     this.hint = document.createElement("div");
 
