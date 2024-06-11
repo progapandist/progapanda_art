@@ -17,26 +17,14 @@ export default class extends Controller {
   static outlets = ["sessions"];
 
   connect() {
-    console.log(this.sessionsOutlet.sessionIdValue);
-
-    console.log(
-      "Hello from RandomImageController, imgproxyUrl:",
-      this.imgproxyUrlValue
-    );
-
     this.imageDisplayTarget.src = this.imgproxyUrlValue;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (!urlParams.has("page")) {
-      urlParams.set("page", 1);
-    }
     // Add event listener to intercept clicks on the viewport
     document.addEventListener("click", this.handleClick.bind(this));
   }
 
   handleClick(event) {
-    // Calculate the width of the left 50% of the screen
-    const leftBoundary = window.innerWidth * 0.5;
+    // Calculate the width of the left 20% of the screen
+    const leftBoundary = window.innerWidth * 0.2;
 
     // Check if the click target is the draggable box or its children
     if (!event.target.closest("[data-controller='draggable']")) {

@@ -15,7 +15,7 @@ export default class extends Controller {
 
     this.hint = document.createElement("div");
 
-    this.hint.innerText = "click to go =>, click left edge to go <=";
+    this.hint.innerText = "click to 👉, click left edge to 👈";
 
     this.hint.innerText += isMobile
       ? " | flip phone to resize"
