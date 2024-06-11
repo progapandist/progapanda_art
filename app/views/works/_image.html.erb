@@ -20,7 +20,7 @@
     info-box draggable-box p-3 bg-white bg-opacity-20 text-black font-mono max-w-md
     text-left filter backdrop-blur-lg text-sm
   "
-  style="position: absolute; top: 4rem; left: 4rem; width: auto; height: auto;"
+  style="position: absolute; top: 4rem; left: 4rem; height: auto;"
 >
   <h1
     class="
@@ -36,6 +36,8 @@
     <br>
     🗓️
     <%= @work.year %>
+    <br>
+    🔗 <%= link_to "Permalink", work_path(@work.slug), class: "underline underline-offset-2 hover:underline-offset-4" %>
   </p>
 
 
@@ -57,5 +59,6 @@
     cm
     </p>
   <% end %>
+
   <p>©️ Andy Barnow, Marina Naperstak</p>
 </div>
