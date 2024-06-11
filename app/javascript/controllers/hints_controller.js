@@ -24,7 +24,6 @@ export default class extends Controller {
     this.hint.style.bottom = "10px";
     this.hint.style.right = "10px";
     this.hint.style.fontFamily = "monospace";
-    this.hint.style.mixBlendMode = "difference"; // For better visibility
     this.hint.style.backgroundColor = "rgba(255, 0, 255, 100)"; // Fuchsia with opacity
     this.hint.style.color = "white";
     this.hint.style.padding = "5px";
