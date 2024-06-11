@@ -15,9 +15,11 @@ export default class extends Controller {
 
     this.hint = document.createElement("div");
 
-    this.hint.innerText = isMobile
-      ? "flip phone to resize"
-      : "drag corner to resize ⇲";
+    this.hint.innerText = "click to go =>, click left edge to go <=";
+
+    this.hint.innerText += isMobile
+      ? " | flip phone to resize"
+      : " | drag corner to resize ⇲";
 
     this.hint.style.position = "fixed";
     this.hint.style.bottom = "10px";

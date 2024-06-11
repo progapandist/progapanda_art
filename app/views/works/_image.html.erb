@@ -1,0 +1,61 @@
+<img
+  data-controller="random-image resize"
+  data-random-image-slug-value="<%= @work.slug %>"
+  data-random-image-imgproxy-url-value="<%= @work.imgproxy_url %>"
+  data-random-image-prev-slug-value="<%= params[:prev_slug] %>"
+  data-random-image-target="imageDisplay"
+  data-random-image-app-env-value="<%= Rails.env %>"
+  data-random-image-sessions-outlet=".session-hex"
+  data-resize-random-image-outlet=".image-display"
+  class="image-display"
+/>
+<div
+  data-controller="draggable"
+  data-action="
+    mousedown->draggable#mousedown
+    mousemove->draggable#mousemove
+    mouseup->draggable#mouseup
+  "
+  class="
+    info-box draggable-box p-3 bg-white bg-opacity-20 text-black font-mono max-w-md
+    text-left filter backdrop-blur-lg text-sm
+  "
+  style="position: absolute; top: 4rem; left: 4rem; width: auto; height: auto;"
+>
+  <h1
+    class="
+      text-2xl font-bold leading-7 text-black xs:truncate xs:text-3xl
+      xs:tracking-tight
+    "
+  >
+    <%= @work.slug.humanize.split.map(&:capitalize).join(" ") %>
+  </h1>
+  <p>
+    📍
+    <%= @work.location %>
+    <br>
+    🗓️
+    <%= @work.year %>
+  </p>
+
+
+  <% if @work.description.present? %>
+    <p class="mt-2 text-base leading-6 text-black">
+      <%= @work.description %>
+    </p>
+  <% end %>
+
+
+  <div class="h-8">
+  </div>
+
+  <% if @work.dimensions.present? %>
+    <p><%= @work.height %>
+    ╳
+    <%= @work.width %>
+    <%= @work.depth %>
+    cm
+    </p>
+  <% end %>
+  <p>©️ Andy Barnow, Marina Naperstak</p>
+</div>

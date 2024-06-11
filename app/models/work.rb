@@ -2,9 +2,9 @@ class Work < ApplicationRecord
   scope :excluding_slugs, ->(slugs) { where.not(slug: slugs) }
   scope :random, -> { order(Arel.sql("RANDOM()")) }
 
-  serialize :medium, JSON
-  serialize :dimensions, JSON
-  serialize :meta, JSON
+  serialize :medium, coder: JSON
+  serialize :dimensions, coder: JSON
+  serialize :meta, coder: JSON
 
   validates :title, presence: true
   validates :location, presence: true

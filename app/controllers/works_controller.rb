@@ -2,7 +2,9 @@ class WorksController < ApplicationController
   before_action :authenticate, only: [:show, :index]
 
   def index
-    @work = random_work
+    # We always pick one work
+    @pagy, works = pagy(Work.all, items: 1)
+    @work = works.sole
   end
 
   def show
