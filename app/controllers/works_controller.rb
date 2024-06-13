@@ -3,7 +3,7 @@ class WorksController < ApplicationController
 
   def index
     # We always pick one work
-    @pagy, works = pagy(Work.all.random, items: 1)
+    @pagy, works = pagy(Work.all, items: 1)
     @work = works.sole
     @max_page = @pagy.pages
   end
