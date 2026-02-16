@@ -1,6 +1,5 @@
 class Work < ApplicationRecord
   scope :excluding_slugs, ->(slugs) { where.not(slug: slugs) }
-  scope :random, -> { order(Arel.sql("RANDOM()")) }
 
   serialize :medium, coder: JSON
   serialize :dimensions, coder: JSON
@@ -10,18 +9,18 @@ class Work < ApplicationRecord
   validates :location, presence: true
 
   def self.first_random
-    random.first
+    order(Arel.sql("RANDOM()")).first
   end
 
   def height
-    dimensions[0]
+    dimensions&.dig(0)
   end
 
   def width
-    dimensions[1]
+    dimensions&.dig(1)
   end
 
   def depth
-    dimensions[2]
+    dimensions&.dig(2)
   end
 end

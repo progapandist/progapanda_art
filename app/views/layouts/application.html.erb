@@ -7,24 +7,20 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_include_tag "application",
-    "data-turbo-track": "reload",
-    type: "module" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap"
       rel="stylesheet"
     />
     <style>
-      /* Additional styles if necessary */
-      body,
-      html {
+      body, html {
         overflow: hidden;
         height: 100%;
       }
       .draggable-box {
-        cursor: grab; /* Default cursor to grab */
-        position: absolute; /* Required for dragging functionality */
-        z-index: 50; /* Ensure it is above other content */
+        cursor: grab;
+        position: absolute;
+        z-index: 50;
         user-select: none;
       }
       img {
@@ -42,9 +38,8 @@
     <div
       data-controller="sessions"
       class="session-hex"
-      data-sessions-session-id-value="<%= params[:session_id].presence || Current.user.id %>"
-    >
-    </div>
+      data-sessions-session-id-value="<%= Current.user&.id %>"
+    ></div>
     <%= yield %>
     <div data-controller="hints"></div>
   </body>

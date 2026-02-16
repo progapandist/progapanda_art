@@ -1,4 +1,3 @@
-// random_image_controller.js
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 
@@ -7,8 +6,6 @@ export default class extends Controller {
 
   static values = {
     slug: String,
-    prevSlug: String,
-    appEnv: String,
     imgproxyUrl: String,
     maxPage: Number,
   };
@@ -17,60 +14,45 @@ export default class extends Controller {
 
   connect() {
     this.imageDisplayTarget.src = this.imgproxyUrlValue;
-    // Add event listener to intercept clicks on the viewport
-    document.addEventListener("click", this.handleClick.bind(this));
+    this.clickHandler = this.handleClick.bind(this);
+    document.addEventListener("click", this.clickHandler);
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this.clickHandler);
   }
 
   handleClick(event) {
-    // Calculate the width of the left 20% of the screen
-    const leftBoundary = window.innerWidth * 0.2;
+    if (event.target.closest("[data-controller='draggable']")) return;
 
-    // Check if the click target is the draggable box or its children
-    if (!event.target.closest("[data-controller='draggable']")) {
-      // Check if the click occurred on the left half of the document
-      if (event.clientX < leftBoundary) {
-        this.navigateBack();
-      } else {
-        this.navigateForward();
-      }
+    const leftBoundary = window.innerWidth * 0.2;
+    if (event.clientX < leftBoundary) {
+      this.navigateBack();
+    } else {
+      this.navigateForward();
     }
   }
 
   navigateBack() {
-    const url = new URL(window.location.href);
-    const page = url.searchParams.get("page");
-    this.pageValue = parseInt(page);
+    const page = this.currentPage;
+    if (!page || page <= 1) return;
 
-    if (!this.pageValue) {
-      return;
-    }
-
-    if (this.pageValue > 1) {
-      let newPage = this.pageValue - 1;
-      Turbo.visit(
-        `/works?page=${newPage}&i=${this.sessionsOutlet.sessionIdValue}`,
-        {
-          action: "replace",
-        }
-      );
-    }
+    this.visitPage(page - 1);
   }
 
   navigateForward() {
+    const page = this.currentPage;
+    const nextPage = !page || page >= this.maxPageValue ? 1 : page + 1;
+    this.visitPage(nextPage);
+  }
+
+  get currentPage() {
     const url = new URL(window.location.href);
-    const page = url.searchParams.get("page");
-    this.pageValue = parseInt(page);
+    return parseInt(url.searchParams.get("page")) || 0;
+  }
 
-    if (!this.pageValue || this.pageValue === this.maxPageValue) {
-      this.pageValue = 0;
-    }
-
-    let newPage = this.pageValue + 1;
-    Turbo.visit(
-      `/works?page=${newPage}&i=${this.sessionsOutlet.sessionIdValue}`,
-      {
-        action: "replace",
-      }
-    );
+  visitPage(page) {
+    const sessionId = this.sessionsOutlet.sessionIdValue;
+    Turbo.visit(`/works?page=${page}&i=${sessionId}`, { action: "replace" });
   }
 }
