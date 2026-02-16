@@ -1,68 +1,54 @@
 import { Controller } from "@hotwired/stimulus";
 
-// Connects to data-controller="resize"
 export default class extends Controller {
   static outlets = ["random-image"];
 
   connect() {
-    // Initial resize to set correct dimensions
     this.updateImageDimensions();
-    // Resize event listener with throttling
-    const throttledResize = this.throttle(
+    this.resizeHandler = this.throttle(
       this.updateImageDimensions.bind(this),
-      500
+      500,
     );
-    window.addEventListener("resize", throttledResize);
-    this.cleanup = () => {
-      window.removeEventListener("resize", throttledResize);
-    };
+    window.addEventListener("resize", this.resizeHandler);
   }
 
   disconnect() {
-    this.cleanup && this.cleanup();
+    window.removeEventListener("resize", this.resizeHandler);
   }
 
   updateImageDimensions() {
-    const randomImageController = this.randomImageOutlet;
-    if (randomImageController) {
-      // Parse and update the image URL
-      const url = new URL(randomImageController.imgproxyUrlValue);
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
+    if (!this.hasRandomImageOutlet) return;
 
-      // Regex to find resize parameters, regardless of their specific value
-      const resizeRegex = /rs:\w+:\d+:\d+/;
+    const controller = this.randomImageOutlet;
+    const url = controller.imgproxyUrlValue;
+    const resizeRegex = /rs:\w+:\d+:\d+/;
 
-      const newUrl = url.href.replace(resizeRegex, (match) => {
-        const parts = match.split(":");
-        parts[2] = viewportWidth * 2;
-        parts[3] = viewportHeight * 2;
-        return parts.join(":");
-      });
+    const newUrl = url.replace(resizeRegex, (match) => {
+      const parts = match.split(":");
+      parts[2] = window.innerWidth * 2;
+      parts[3] = window.innerHeight * 2;
+      return parts.join(":");
+    });
 
-      randomImageController.imageDisplayTarget.src = newUrl;
-    }
+    controller.imageDisplayTarget.src = newUrl;
   }
 
   throttle(func, wait) {
     let timeout = null;
     let lastCall = 0;
 
-    return function (...args) {
-      const now = new Date().getTime();
+    return (...args) => {
+      const now = Date.now();
 
       if (lastCall + wait <= now) {
         lastCall = now;
         func(...args);
       } else {
         clearTimeout(timeout);
-        timeout = setTimeout(
-          () => {
-            lastCall = new Date().getTime();
-            func(...args);
-          },
-          wait - (now - lastCall)
-        );
+        timeout = setTimeout(() => {
+          lastCall = Date.now();
+          func(...args);
+        }, wait - (now - lastCall));
       }
     };
   }

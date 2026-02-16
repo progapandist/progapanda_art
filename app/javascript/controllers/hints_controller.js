@@ -1,42 +1,34 @@
 import { Controller } from "@hotwired/stimulus";
+
 export default class extends Controller {
   connect() {
     this.addHintMessage();
-    window.addEventListener("resize", this.updatePosition.bind(this));
   }
 
   disconnect() {
-    window.removeEventListener("resize", this.updatePosition.bind(this));
+    this.hint?.remove();
   }
 
   addHintMessage() {
     const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
     this.hint = document.createElement("div");
+    this.hint.textContent = isMobile
+      ? "tap to \u{1F449}, tap left edge to \u{1F448} | flip phone to resize"
+      : "click to \u{1F449}, click left edge to \u{1F448} | drag corner to resize \u21F2";
 
-    this.hint.innerText = "click to 👉, click left edge to 👈";
-
-    this.hint.innerText += isMobile
-      ? " | flip phone to resize"
-      : " | drag corner to resize ⇲";
-
-    this.hint.style.position = "fixed";
-    this.hint.style.bottom = "10px";
-    this.hint.style.right = "10px";
-    this.hint.style.fontFamily = "monospace";
-    this.hint.style.backgroundColor = "rgba(255, 0, 255, 100)"; // Fuchsia with opacity
-    this.hint.style.color = "white";
-    this.hint.style.padding = "5px";
-    this.hint.style.borderRadius = "5px";
-    this.hint.style.zIndex = "1000"; // Ensures it's on top of other elements if required
+    this.hint.style.cssText = `
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-family: monospace;
+      background-color: rgba(255, 0, 255, 0.8);
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+      z-index: 1000;
+    `;
 
     document.body.appendChild(this.hint);
-  }
-
-  updatePosition() {
-    if (this.hint) {
-      this.hint.style.bottom = "10px";
-      this.hint.style.right = "10px";
-    }
   }
 }
