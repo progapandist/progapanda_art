@@ -31,7 +31,6 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile --trace
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails css:build
 
 # Final stage
 FROM base

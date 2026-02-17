@@ -73,7 +73,8 @@ Rails.application.configure do
 
   config.hosts = [
     /.*\.ngrok\.app/,
-    "localhost:3000",
-    "localhost:8080"
+    "localhost",
+    "127.0.0.1",
+    "::1"
   ]
 end
