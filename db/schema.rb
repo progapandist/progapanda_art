@@ -10,20 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_23_175919) do
+ActiveRecord::Schema[8.1].define(version: 2024_05_23_175919) do
   create_table "works", force: :cascade do |t|
-    t.string "slug"
-    t.date "year"
-    t.integer "listing_price"
-    t.string "title", default: "", null: false
-    t.string "location", default: "", null: false
-    t.text "description"
-    t.text "medium", default: "{}", null: false
-    t.text "dimensions", default: "{}", null: false
-    t.text "meta", default: "{}", null: false
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.text "description"
+    t.text "dimensions", default: "{}", null: false
     t.string "imgproxy_url"
+    t.integer "listing_price"
+    t.string "location", default: "", null: false
+    t.text "medium", default: "{}", null: false
+    t.text "meta", default: "{}", null: false
+    t.string "slug"
+    t.string "title", default: "", null: false
+    t.datetime "updated_at", null: false
+    t.date "year"
   end
-
 end

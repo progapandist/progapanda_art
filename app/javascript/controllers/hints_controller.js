@@ -2,11 +2,13 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   connect() {
+    if (localStorage.getItem("gallery-hints-seen")) return;
     this.addHintMessage();
   }
 
   disconnect() {
     this.hint?.remove();
+    clearTimeout(this.fadeTimer);
   }
 
   addHintMessage() {
@@ -14,21 +16,31 @@ export default class extends Controller {
 
     this.hint = document.createElement("div");
     this.hint.textContent = isMobile
-      ? "tap to \u{1F449}, tap left edge to \u{1F448} | flip phone to resize"
-      : "click to \u{1F449}, click left edge to \u{1F448} | drag corner to resize \u21F2";
+      ? "swipe or tap to navigate | press i for info"
+      : "click or arrow keys to navigate | press i to toggle info";
 
     this.hint.style.cssText = `
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      font-family: monospace;
-      background-color: rgba(255, 0, 255, 0.8);
-      color: white;
-      padding: 5px;
-      border-radius: 5px;
-      z-index: 1000;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: rgba(255, 255, 255, 0.7);
+      padding: 6px 14px;
+      border-radius: 4px;
+      z-index: 200;
+      transition: opacity 1s ease;
+      pointer-events: none;
     `;
 
     document.body.appendChild(this.hint);
+
+    this.fadeTimer = setTimeout(() => {
+      this.hint.style.opacity = "0";
+      localStorage.setItem("gallery-hints-seen", "true");
+      setTimeout(() => this.hint?.remove(), 1000);
+    }, 4000);
   }
 }

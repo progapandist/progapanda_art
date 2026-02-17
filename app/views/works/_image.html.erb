@@ -1,48 +1,75 @@
-<img
-  data-controller="random-image resize"
-  data-random-image-slug-value="<%= @work.slug %>"
-  data-random-image-imgproxy-url-value="<%= @work.imgproxy_url %>"
-  data-random-image-target="imageDisplay"
-  data-random-image-max-page-value="<%= @max_page %>"
-  data-random-image-sessions-outlet=".session-hex"
-  data-resize-random-image-outlet=".image-display"
-  class="image-display"
-/>
 <div
-  data-controller="draggable"
-  class="
-    info-box draggable-box p-3 bg-white/20 text-black font-mono max-w-md
-    text-left backdrop-blur-lg text-sm
-  "
-  style="position: absolute; top: 4rem; left: 4rem; height: auto;"
+  data-controller="gallery"
+  data-gallery-slug-value="<%= @work.slug %>"
+  data-gallery-imgproxy-url-value="<%= @work.imgproxy_url %>"
+  data-gallery-max-page-value="<%= @max_page %>"
+  data-gallery-current-page-value="<%= @pagy&.page || 1 %>"
+  data-gallery-title-value="<%= @work.slug.humanize.split.map(&:capitalize).join(' ') %>"
+  data-gallery-location-value="<%= @work.location %>"
+  data-gallery-year-value="<%= @work.year %>"
+  data-gallery-description-value="<%= @work.description %>"
+  data-gallery-dimensions-value="<%= [@work.height, @work.width, @work.depth].compact.join(' x ') if @work.dimensions.present? %>"
+  data-gallery-permalink-value="<%= work_path(@work.slug) %>"
+  class="gallery-scene"
 >
-  <h1
-    class="
-      text-2xl font-bold leading-7 text-black xs:truncate xs:text-3xl
-      xs:tracking-tight
-    "
-  >
-    <%= @work.slug.humanize.split.map(&:capitalize).join(" ") %>
-  </h1>
-  <p>
-    <%= @work.location %>
-    <br>
-    <%= @work.year %>
-    <br>
-    <%= link_to "Permalink", work_path(@work.slug), class: "underline underline-offset-2 hover:underline-offset-4" %>
-  </p>
+  <!-- Current artwork layer -->
+  <div class="artwork-layer" data-gallery-target="currentLayer">
+    <img class="artwork-bg" data-gallery-target="currentBg" />
+    <img class="artwork-main" data-gallery-target="currentMain" />
+  </div>
 
-  <% if @work.description.present? %>
-    <p class="mt-2 text-base leading-6 text-black">
+  <!-- Incoming artwork layer (for crossfade) -->
+  <div class="artwork-layer" style="opacity: 0;" data-gallery-target="incomingLayer">
+    <img class="artwork-bg" data-gallery-target="incomingBg" />
+    <img class="artwork-main" data-gallery-target="incomingMain" />
+  </div>
+
+  <!-- Info card -->
+  <div
+    data-controller="draggable"
+    data-gallery-target="infoCard"
+    class="
+      info-box draggable-box p-3 bg-white/20 text-black font-mono max-w-md
+      text-left backdrop-blur-lg text-sm transition-opacity duration-300
+    "
+    style="position: absolute; top: 4rem; left: 4rem; height: auto; z-index: 50;"
+  >
+    <h1
+      data-gallery-target="infoTitle"
+      class="
+        text-2xl font-bold leading-7 text-black xs:truncate xs:text-3xl
+        xs:tracking-tight
+      "
+    >
+      <%= @work.slug.humanize.split.map(&:capitalize).join(" ") %>
+    </h1>
+    <p>
+      <span data-gallery-target="infoLocation"><%= @work.location %></span>
+      <br>
+      <span data-gallery-target="infoYear"><%= @work.year %></span>
+      <br>
+      <a data-gallery-target="infoPermalink" class="underline underline-offset-2 hover:underline-offset-4" href="<%= work_path(@work.slug) %>">Permalink</a>
+    </p>
+
+    <p data-gallery-target="infoDescription" class="mt-2 text-base leading-6 text-black <%= 'hidden' unless @work.description.present? %>">
       <%= @work.description %>
     </p>
-  <% end %>
 
-  <div class="h-8"></div>
+    <div class="h-8"></div>
 
-  <% if @work.dimensions.present? %>
-    <p><%= @work.height %> x <%= @work.width %> <%= @work.depth %> cm</p>
-  <% end %>
+    <p data-gallery-target="infoDimensions" class="<%= 'hidden' unless @work.dimensions.present? %>">
+      <% if @work.dimensions.present? %>
+        <%= @work.height %> x <%= @work.width %> <%= @work.depth %> cm
+      <% end %>
+    </p>
 
-  <p>Andy Barnow, Marina Naperstak</p>
+    <p>Andy Barnow, Marina Naperstak</p>
+  </div>
+
+  <!-- Progress bar -->
+  <div
+    data-gallery-target="progressBar"
+    class="progress-bar"
+    style="width: <%= ((@pagy&.page || 1).to_f / (@max_page || 1) * 100) %>%;"
+  ></div>
 </div>
