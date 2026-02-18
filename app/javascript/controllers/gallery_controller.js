@@ -41,9 +41,9 @@ export default class extends Controller {
     this.currentMainTarget.src = this.mainUrl(url)
     this.currentLayerTarget.style.opacity = "1"
 
-    // Apply info visibility preference
+    // Info card starts hidden (opacity: 0 in HTML); reveal once bg image loads
+    // so backdrop-blur has actual image content to blur (not just black body).
     if (!this.infoVisible) {
-      this.infoCardTarget.style.opacity = "0"
       this.infoCardTarget.style.pointerEvents = "none"
     }
 
@@ -65,7 +65,19 @@ export default class extends Controller {
     document.addEventListener("dblclick", this.onDblclick)
     window.addEventListener("resize", this.onResize)
 
-    // Preload next after current loads
+    // Reveal info card (if visible) only after the bg image has loaded,
+    // so backdrop-blur blurs the actual artwork instead of the black body.
+    this.currentBgTarget.addEventListener(
+      "load",
+      () => {
+        if (this.infoVisible) {
+          this.infoCardTarget.style.opacity = "1"
+        }
+      },
+      { once: true }
+    )
+
+    // Preload next after main image loads
     this.currentMainTarget.addEventListener("load", () => this.preloadNext(), {
       once: true,
     })
