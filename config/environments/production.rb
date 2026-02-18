@@ -47,6 +47,8 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
+  # Keep HTTPS enforcement while allowing Kamal proxy health checks over HTTP.
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -88,9 +90,9 @@ Rails.application.configure do
   config.hosts = [
     "localhost:3000",
     "localhost:8080",  # Allow requests from example.com
-    /.*\.progapanda\.org/ # Allow requests from subdomains like `www.example.com`
+    /.*\.progapanda\.org/, # Allow requests from subdomains like `www.example.com`
+    /\A[a-f0-9]{12}(:\d+)?\z/ # Allow Kamal container-id health checks
   ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  config.active_record.sqlite3_production_warning = false
 end

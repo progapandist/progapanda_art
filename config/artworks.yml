@@ -1,42 +1,193 @@
 shared:
   artworks:
-    - slug: bloom # automatically inferred from file name, documentation only
-      # file_name: bloom.jpg # Override the file name
+    - slug: all_eyes_freestyle_render
+      year: 2024
+      location: Berlin
+      description: >
+        A scanned studio chair carries a clipped pink painting, turning furniture into a stage for restless marks and collage-like memory.
+
+    - slug: annointment_mounted_on_white_wall
+      year: 2024
+      location: Berlin
+      description: >
+        A portrait on a white wall is scraped and overpainted into a face that flickers between glamour, damage, and reinvention.
+
+    - slug: beton
+      year: 2024
+      location: Berlin
+      description: >
+        A seated, weathered figure emerges from deep black, lit like a relic on the brink of disappearance.
+
+    - slug: bloom
       year: 2023
       location: Berlin
       listing_price: 1000
       medium:
-        - "print"
-        - "Dibond"
+        - print
+        - Dibond
       dimensions:
         - 90
         - 60
         - 0.5
       description: >
-        Born from a LiDAR scan of a Sakura branch in the Spring of 2023 on the outskirts of Berlin.
-    - slug: bloom_print # automatically inferred from file name, documentation only
+        A domestic scene washed in lilac and blue where couch, books, and hanging artwork become an intimate altar of everyday life.
+
+    - slug: bloom_print
       year: 2023
       location: Berlin
       listing_price: 1000
       medium:
-        - "print"
-        - "Dibond"
+        - print
+        - Dibond
       dimensions:
         - 90
         - 60
         - 0.5
       description: >
-        Born from a LiDAR scan of a Sakura branch in the Spring of 2023 on the outskirts of Berlin.
-    - slug: headless_01 # automatically inferred from file name, documentation only
+        A monochrome floral mass unfolds like carved smoke, balancing softness and geological weight.
+
+    - slug: color_suite_on_the_easel
+      year: 2023
+      location: Berlin
+      description: >
+        A dark field pierced by ember-like color, as if a hidden fire were breathing beneath matte black paint.
+
+    - slug: crow
+      year: 2024
+      location: Berlin
+      description: >
+        A floating paper-body marked with gestural black strokes, suspended in space like a torn drawing come alive.
+
+    - slug: date_line
+      year: 2024
+      location: Berlin
+      description: >
+        A nocturnal scan-fragment where chalk-white forms and red linework read like scattered witnesses caught in a flash of memory.
+
+    - slug: echo_chamber
+      year: 2023
+      location: Berlin
+      description: >
+        A blurred procession of figures in ink-blue and black, evoking public movement as a collective shadow.
+
+    - slug: flat2
+      year: 2024
+      location: Berlin
+      description: >
+        A domestic interior pulled through scan turbulence, where ordinary space buckles into memory and distortion.
+
+    - slug: glass_boy
+      year: 2024
+      location: Berlin
+      description: >
+        A glass-like seated figure, stripped of detail and presence at once, poised between icon and artifact.
+
+    - slug: golden_pinkboy
+      year: 2024
+      location: Berlin
+      description: >
+        A headless street statue recast in warm pink-gold tones, where monumentality bends toward tenderness.
+
+    - slug: headless_01
       year: 2023
       location: Berlin
       listing_price: 1000
       medium:
-        - "print"
-        - "Dibond"
+        - print
+        - Dibond
       dimensions:
         - 90
         - 60
         - 0.5
       description: >
-        No head! No problem! This piece was created by a neural network trained on a dataset of 100,000 headless statues.
+        A molten bust in orange on cobalt, balancing softness and fracture in a single unresolved profile.
+
+    - slug: interpretation_of_symbols
+      year: 2024
+      location: Berlin
+      description: >
+        A cap series becomes wearable mythology, each badge suggesting private symbols and invented affiliations.
+
+    - slug: jane_03
+      year: 2024
+      location: Berlin
+      description: >
+        A white figure emerging from darkness like a half-remembered statue, held between grace and digital ruin.
+
+    - slug: part_eight
+      year: 2024
+      location: Berlin
+      description: >
+        An abstract composition of violet vectors and yellow light, sketching motion as layered emotional geometry.
+
+    - slug: red squares
+      year: 2023
+      location: Berlin
+      description: >
+        A body lit from within by red panels, transforming anatomy into architecture and intimacy into signal.
+
+    - slug: red_lipstick
+      year: 2024
+      location: Berlin
+      description: >
+        A veiled portrait behind horizontal waves, where visibility turns rhythmic and identity becomes frequency.
+
+    - slug: redhead_one
+      year: 2023
+      location: Berlin
+      description: >
+        A soft-focus red-haired apparition, painted as memory rather than likeness.
+
+    - slug: sasha_1
+      year: 2023
+      location: Berlin
+      description: >
+        A faceted crimson portrait partly eclipsed by another form, staging identity as obstruction and reveal.
+
+    - slug: spam
+      year: 2024
+      location: Berlin
+      description: >
+        A subway interior dissolved by scan drift, where public infrastructure warps into cinematic abstraction.
+
+    - slug: sparrow
+      year: 2024
+      location: Berlin
+      description: >
+        A crow carcass electrified with neon traces, turning decay into signal and omen into ornament.
+
+    - slug: subcu_01
+      year: 2024
+      location: Berlin
+      description: >
+        A diptych of clouded blue and stitched skin, linking atmospheric softness with the sharp index of healing.
+
+    - slug: sunflower_sutra
+      year: 2024
+      location: Berlin
+      description: >
+        Two white reliefs on black ground, alternating between volcanic mass and draped membrane.
+
+    - slug: temptation
+      year: 2024
+      location: Berlin
+      description: >
+        A baroque figure fragmented by scan interference, where sacred iconography flickers through digital noise.
+
+    - slug: the_drip
+      year: 2023
+      location: Berlin
+      description: >
+        A spectral white drape stretched over void, like a ghost-architecture caught mid-collapse.
+
+    - slug: the_fall
+      year: 2023
+      location: Berlin
+      description: >
+        A synthetic-green chamber with violet bodies in free fall, turning desire into color-field physics.
+
+    - slug: truecolor_01
+      year: 2024
+      location: Berlin
+      description: >
+        A portrait remixed with mirrored shards, preserving beauty while breaking the surface into new planes.

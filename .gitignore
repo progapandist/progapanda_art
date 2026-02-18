@@ -43,3 +43,6 @@
 /node_modules
 
 /config/credentials/production.key
+
+# Kamal secret files
+/.kamal/secrets*
