@@ -17,9 +17,6 @@ gem "jsbundling-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
 
-# CSS bundling [https://github.com/rails/cssbundling-rails]
-gem "cssbundling-rails"
-
 gem "tzinfo-data", platforms: %i[windows jruby]
 
 gem "thor"

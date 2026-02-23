@@ -26,7 +26,7 @@ RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
 COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile
+RUN bun install --frozen-lockfile --production
 
 COPY . .
 

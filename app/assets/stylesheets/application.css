@@ -1,0 +1,333 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: #000;
+}
+
+body.grid-page {
+  overflow: auto;
+  background: #111;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.draggable-box {
+  cursor: grab;
+  position: absolute;
+  z-index: 50;
+  user-select: none;
+}
+
+.gallery-scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.artwork-layer {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.6s ease;
+}
+
+.artwork-bg {
+  position: absolute;
+  inset: -40px;
+  width: calc(100% + 80px);
+  height: calc(100% + 80px);
+  object-fit: cover;
+  object-position: center;
+  filter: blur(40px) brightness(0.7);
+  transform: scale(1.1);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.artwork-main {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.info-box {
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  padding: 0.75rem;
+  width: min(28rem, calc(100vw - 2rem));
+  max-width: 28rem;
+  max-height: 70vh;
+  overflow: auto;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-info-card {
+  color: #000;
+  font-family: "Roboto Mono", monospace;
+  text-align: left;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.gallery-info-title {
+  color: #000;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.75rem;
+  margin: 0;
+}
+
+.gallery-info-description {
+  margin-top: 0.5rem;
+  color: #000;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.gallery-info-permalink {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: text-underline-offset 0.15s ease;
+}
+
+.gallery-info-permalink:hover {
+  text-underline-offset: 4px;
+}
+
+.gallery-info-spacer {
+  height: 2rem;
+}
+
+.info-box.draggable-box {
+  top: 4rem;
+  left: 4rem;
+}
+
+.info-box-handle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: -0.25rem 0 0.45rem;
+  cursor: grab;
+  touch-action: none;
+}
+
+.info-box-handle span {
+  width: 2.3rem;
+  height: 0.3rem;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.28);
+  display: block;
+}
+
+.gallery-controls {
+  position: fixed;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 100;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.gallery-action-btn {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  text-decoration: none;
+  opacity: 0.85;
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gallery-action-btn:hover,
+.gallery-action-btn:focus-visible {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.55);
+  transform: translateY(-1px);
+}
+
+.gallery-action-btn[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+
+.gallery-action-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.progress-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.4);
+  z-index: 100;
+  transition: width 0.6s ease;
+  pointer-events: none;
+}
+
+.grid-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(17, 17, 17, 0.88);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+.grid-nav a {
+  color: #fff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  opacity: 0.65;
+  transition: opacity 0.2s ease;
+}
+
+.grid-nav a:hover {
+  opacity: 1;
+}
+
+.grid-nav .sep {
+  opacity: 0.3;
+}
+
+.works-grid {
+  columns: 3 280px;
+  column-gap: 0;
+  padding: 0;
+}
+
+.work-tile {
+  break-inside: avoid;
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: #222;
+  text-decoration: none;
+}
+
+.work-tile img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.work-tile:hover img {
+  transform: scale(1.04);
+}
+
+.work-tile-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem 0.8rem 0.7rem;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: #fff;
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(5px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  pointer-events: none;
+}
+
+.work-tile:hover .work-tile-info {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.work-tile-title {
+  display: block;
+  font-weight: bold;
+  font-size: 0.82rem;
+  margin-bottom: 0.1rem;
+}
+
+.work-tile-meta {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .gallery-controls {
+    top: 0.6rem;
+    right: 0.6rem;
+    gap: 0.35rem;
+  }
+
+  .gallery-action-btn {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .info-box.draggable-box {
+    top: auto;
+    bottom: 1rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+    max-width: none;
+    max-height: 44vh;
+    padding: 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .info-box-handle {
+    margin-top: 0;
+  }
+
+  .info-box .gallery-info-title {
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+  }
+
+  .info-box .gallery-info-description {
+    font-size: 0.85rem;
+    line-height: 1.35;
+  }
+}

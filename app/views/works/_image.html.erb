@@ -30,7 +30,7 @@
   <div
     data-controller="draggable"
     data-gallery-target="infoCard"
-    class="info-box draggable-box text-black font-mono text-left text-sm"
+    class="info-box draggable-box gallery-info-card"
     style="position: absolute; height: auto; z-index: 50; opacity: 0;"
   >
     <div class="info-box-handle" data-draggable-target="handle" aria-hidden="true">
@@ -39,7 +39,7 @@
 
     <h1
       data-gallery-target="infoTitle"
-      class="gallery-info-title text-2xl font-bold leading-7 text-black xs:truncate xs:text-3xl xs:tracking-tight"
+      class="gallery-info-title"
     >
       <%= @work.title %>
     </h1>
@@ -48,14 +48,14 @@
       <br>
       <span data-gallery-target="infoYear"><%= @work.year %></span>
       <br>
-      <a data-gallery-target="infoPermalink" class="underline underline-offset-2 hover:underline-offset-4" href="<%= work_path(@work.slug) %>">Permalink</a>
+      <a data-gallery-target="infoPermalink" class="gallery-info-permalink" href="<%= work_path(@work.slug) %>">Permalink</a>
     </p>
 
-    <p data-gallery-target="infoDescription" class="gallery-info-description mt-2 text-base leading-6 text-black <%= 'hidden' unless @work.description.present? %>">
+    <p data-gallery-target="infoDescription" class="gallery-info-description <%= 'hidden' unless @work.description.present? %>">
       <%= @work.description %>
     </p>
 
-    <div class="h-8"></div>
+    <div class="gallery-info-spacer"></div>
 
     <p data-gallery-target="infoDimensions" class="<%= 'hidden' unless @work.dimensions.present? %>">
       <% if @work.dimensions.present? %>
