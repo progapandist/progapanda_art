@@ -15,6 +15,7 @@ export default class extends Controller {
     "infoDescription",
     "infoDimensions",
     "infoPermalink",
+    "gridLink",
     "progressBar",
   ];
 
@@ -80,6 +81,8 @@ export default class extends Controller {
     this.currentMainTarget.addEventListener("load", () => this.preloadNext(), {
       once: true,
     });
+
+    this.updateGridLink();
   }
 
   disconnect() {
@@ -234,6 +237,8 @@ export default class extends Controller {
       this.positionValue = data.position;
       this.totalValue = data.total;
 
+      this.updateGridLink();
+
       this.preloadNext();
     } catch (e) {
       console.error("Gallery navigation failed:", e);
@@ -278,6 +283,11 @@ export default class extends Controller {
     } else {
       this.infoDimensionsTarget.classList.add("hidden");
     }
+  }
+
+  updateGridLink() {
+    if (!this.hasGridLinkTarget || !this.slugValue) return;
+    this.gridLinkTarget.href = `/grid?from=${encodeURIComponent(this.slugValue)}`;
   }
 
   // --- Info card toggle ---
