@@ -44,3 +44,4 @@
 
 # Kamal secret files
 /.kamal/secrets*
+/_scratchpad

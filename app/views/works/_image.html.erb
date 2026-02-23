@@ -2,9 +2,11 @@
   data-controller="gallery"
   data-gallery-slug-value="<%= @work.slug %>"
   data-gallery-imgproxy-url-value="<%= @work.imgproxy_url %>"
-  data-gallery-max-page-value="<%= @max_page %>"
-  data-gallery-current-page-value="<%= @pagy&.page || 1 %>"
-  data-gallery-title-value="<%= @work.slug.humanize.split.map(&:capitalize).join(' ') %>"
+  data-gallery-prev-slug-value="<%= @prev_slug %>"
+  data-gallery-next-slug-value="<%= @next_slug %>"
+  data-gallery-position-value="<%= @position %>"
+  data-gallery-total-value="<%= @total %>"
+  data-gallery-title-value="<%= @work.title %>"
   data-gallery-location-value="<%= @work.location %>"
   data-gallery-year-value="<%= @work.year %>"
   data-gallery-description-value="<%= @work.description %>"
@@ -38,7 +40,7 @@
         xs:tracking-tight
       "
     >
-      <%= @work.slug.humanize.split.map(&:capitalize).join(" ") %>
+      <%= @work.title %>
     </h1>
     <p>
       <span data-gallery-target="infoLocation"><%= @work.location %></span>
@@ -67,6 +69,32 @@
   <div
     data-gallery-target="progressBar"
     class="progress-bar"
-    style="width: <%= ((@pagy&.page || 1).to_f / (@max_page || 1) * 100) %>%;"
+    style="width: <%= (@position.to_f / @total * 100) %>%;"
   ></div>
+
+  <!-- Grid view link -->
+  <a
+    href="<%= grid_path %>"
+    title="All works"
+    style="
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 100;
+      opacity: 0.4;
+      transition: opacity 0.2s ease;
+      color: white;
+      line-height: 0;
+      text-decoration: none;
+    "
+    onmouseover="this.style.opacity='1'"
+    onmouseout="this.style.opacity='0.4'"
+  >
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="All works grid">
+      <rect x="3" y="3" width="7" height="7"/>
+      <rect x="14" y="3" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/>
+    </svg>
+  </a>
 </div>
