@@ -42,5 +42,8 @@ class WorksController < ApplicationController
 
   def grid
     @works = Work.all
+    return_slug = params[:from].presence
+    @return_slug = Work.exists?(slug: return_slug) ? return_slug : nil
+    @return_path = @return_slug ? work_path(@return_slug) : root_path
   end
 end

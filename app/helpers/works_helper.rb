@@ -15,4 +15,12 @@ module WorksHelper
       format: :avif
     )
   end
+
+  def thumbnail_dimensions(work, width: 600)
+    source_width = work.width.to_f
+    source_height = work.height.to_f
+    return [width, width] if source_width <= 0 || source_height <= 0
+
+    [width, (width * source_height / source_width).round]
+  end
 end

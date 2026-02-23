@@ -41,13 +41,13 @@
 
     .works-grid {
       columns: 3 280px;
-      column-gap: 3px;
-      padding: 3px;
+      column-gap: 0;
+      padding: 0;
     }
 
     .work-tile {
       break-inside: avoid;
-      margin-bottom: 3px;
+      margin-bottom: 0;
       position: relative;
       overflow: hidden;
       display: block;
@@ -102,7 +102,7 @@
 <% end %>
 
 <nav class="grid-nav">
-  <a href="<%= root_path %>">
+  <a href="<%= @return_path %>">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <polyline points="15 18 9 12 15 6"/>
     </svg>
@@ -114,12 +114,14 @@
 
 <div class="works-grid">
   <% @works.each do |work| %>
+    <% thumb_width, thumb_height = thumbnail_dimensions(work) %>
     <a href="<%= work_path(work.slug) %>" class="work-tile">
       <img
         src="<%= thumbnail_url(work) %>"
         alt="<%= work.title %>"
         loading="lazy"
-        width="600"
+        width="<%= thumb_width %>"
+        height="<%= thumb_height %>"
       />
       <div class="work-tile-info">
         <span class="work-tile-title"><%= work.title %></span>
