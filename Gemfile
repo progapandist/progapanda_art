@@ -8,7 +8,7 @@ gem "rails", "~> 8.0"
 gem "propshaft"
 
 gem "sqlite3", "~> 2.0"
-gem "puma", "~> 6.0"
+gem "puma", "~> 7.0"
 
 # JavaScript bundling [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
