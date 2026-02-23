@@ -31,14 +31,15 @@
     data-controller="draggable"
     data-gallery-target="infoCard"
     class="info-box draggable-box text-black font-mono text-left text-sm"
-    style="position: absolute; top: 4rem; left: 4rem; height: auto; z-index: 50; opacity: 0;"
+    style="position: absolute; height: auto; z-index: 50; opacity: 0;"
   >
+    <div class="info-box-handle" data-draggable-target="handle" aria-hidden="true">
+      <span></span>
+    </div>
+
     <h1
       data-gallery-target="infoTitle"
-      class="
-        text-2xl font-bold leading-7 text-black xs:truncate xs:text-3xl
-        xs:tracking-tight
-      "
+      class="gallery-info-title text-2xl font-bold leading-7 text-black xs:truncate xs:text-3xl xs:tracking-tight"
     >
       <%= @work.title %>
     </h1>
@@ -50,7 +51,7 @@
       <a data-gallery-target="infoPermalink" class="underline underline-offset-2 hover:underline-offset-4" href="<%= work_path(@work.slug) %>">Permalink</a>
     </p>
 
-    <p data-gallery-target="infoDescription" class="mt-2 text-base leading-6 text-black <%= 'hidden' unless @work.description.present? %>">
+    <p data-gallery-target="infoDescription" class="gallery-info-description mt-2 text-base leading-6 text-black <%= 'hidden' unless @work.description.present? %>">
       <%= @work.description %>
     </p>
 
@@ -72,30 +73,36 @@
     style="width: <%= (@position.to_f / @total * 100) %>%;"
   ></div>
 
-  <!-- Grid view link -->
-  <a
-    href="<%= grid_path(from: @work.slug) %>"
-    data-gallery-target="gridLink"
-    title="All works"
-    style="
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 100;
-      opacity: 0.4;
-      transition: opacity 0.2s ease;
-      color: white;
-      line-height: 0;
-      text-decoration: none;
-    "
-    onmouseover="this.style.opacity='1'"
-    onmouseout="this.style.opacity='0.4'"
-  >
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="All works grid">
-      <rect x="3" y="3" width="7" height="7"/>
-      <rect x="14" y="3" width="7" height="7"/>
-      <rect x="3" y="14" width="7" height="7"/>
-      <rect x="14" y="14" width="7" height="7"/>
-    </svg>
-  </a>
+  <div class="gallery-controls">
+    <button
+      type="button"
+      data-gallery-target="infoToggle"
+      data-action="click->gallery#toggleInfoFromButton"
+      class="gallery-action-btn"
+      title="Show or hide info"
+      aria-label="Show or hide info"
+      aria-pressed="true"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="16" x2="12" y2="12"/>
+        <line x1="12" y1="8" x2="12.01" y2="8"/>
+      </svg>
+    </button>
+
+    <a
+      href="<%= grid_path(from: @work.slug) %>"
+      data-gallery-target="gridLink"
+      class="gallery-action-btn"
+      title="All works"
+      aria-label="All works"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7"/>
+        <rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/>
+      </svg>
+    </a>
+  </div>
 </div>

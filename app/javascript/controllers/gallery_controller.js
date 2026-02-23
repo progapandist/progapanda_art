@@ -15,6 +15,7 @@ export default class extends Controller {
     "infoDescription",
     "infoDimensions",
     "infoPermalink",
+    "infoToggle",
     "gridLink",
     "progressBar",
   ];
@@ -54,8 +55,11 @@ export default class extends Controller {
     this.onTouchstart = this.handleTouchstart.bind(this);
     this.onTouchend = this.handleTouchend.bind(this);
     this.onDblclick = this.handleDblclick.bind(this);
+    this.onInfoboxDragStart = this.handleInfoboxDragStart.bind(this);
+    this.onInfoboxDragEnd = this.handleInfoboxDragEnd.bind(this);
     this.resizeTimer = null;
     this.onResize = this.handleResizeDebounced.bind(this);
+    this.suppressNavigationUntil = 0;
 
     document.addEventListener("click", this.onClick);
     document.addEventListener("keydown", this.onKeydown);
@@ -64,6 +68,8 @@ export default class extends Controller {
     });
     document.addEventListener("touchend", this.onTouchend, { passive: true });
     document.addEventListener("dblclick", this.onDblclick);
+    document.addEventListener("infobox:dragstart", this.onInfoboxDragStart);
+    document.addEventListener("infobox:dragend", this.onInfoboxDragEnd);
     window.addEventListener("resize", this.onResize);
 
     // Reveal info card only after bg image loads so backdrop-blur has content
@@ -83,6 +89,7 @@ export default class extends Controller {
     });
 
     this.updateGridLink();
+    this.updateInfoToggleButton();
   }
 
   disconnect() {
@@ -91,6 +98,8 @@ export default class extends Controller {
     document.removeEventListener("touchstart", this.onTouchstart);
     document.removeEventListener("touchend", this.onTouchend);
     document.removeEventListener("dblclick", this.onDblclick);
+    document.removeEventListener("infobox:dragstart", this.onInfoboxDragStart);
+    document.removeEventListener("infobox:dragend", this.onInfoboxDragEnd);
     window.removeEventListener("resize", this.onResize);
     clearTimeout(this.resizeTimer);
   }
@@ -98,7 +107,9 @@ export default class extends Controller {
   // --- Navigation ---
 
   handleClick(event) {
+    if (Date.now() < this.suppressNavigationUntil) return;
     if (event.target.closest("[data-controller='draggable']")) return;
+    if (event.target.closest("button")) return;
     if (event.target.closest("a")) return; // let link clicks navigate normally
     if (event.detail > 1) return; // ignore double-clicks
 
@@ -131,6 +142,7 @@ export default class extends Controller {
   }
 
   handleTouchstart(event) {
+    if (Date.now() < this.suppressNavigationUntil) return;
     if (event.target.closest("[data-controller='draggable']")) return;
     const touch = event.touches[0];
     this.touchStartX = touch.clientX;
@@ -158,8 +170,17 @@ export default class extends Controller {
   }
 
   handleDblclick(event) {
+    if (Date.now() < this.suppressNavigationUntil) return;
     if (event.target.closest("[data-controller='draggable']")) return;
     this.toggleInfo();
+  }
+
+  handleInfoboxDragStart() {
+    this.suppressNavigationUntil = Date.now() + 900;
+  }
+
+  handleInfoboxDragEnd() {
+    this.suppressNavigationUntil = Date.now() + 900;
   }
 
   navigateForward() {
@@ -303,6 +324,27 @@ export default class extends Controller {
       this.infoCardTarget.style.opacity = "0";
       this.infoCardTarget.style.pointerEvents = "none";
     }
+
+    this.updateInfoToggleButton();
+  }
+
+  toggleInfoFromButton(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.toggleInfo();
+  }
+
+  updateInfoToggleButton() {
+    if (!this.hasInfoToggleTarget) return;
+    this.infoToggleTarget.setAttribute(
+      "aria-pressed",
+      this.infoVisible ? "true" : "false",
+    );
+    this.infoToggleTarget.title = this.infoVisible ? "Hide info" : "Show info";
+    this.infoToggleTarget.setAttribute(
+      "aria-label",
+      this.infoVisible ? "Hide info" : "Show info",
+    );
   }
 
   // --- Responsive resize (debounced — only fires once after resize settles) ---
