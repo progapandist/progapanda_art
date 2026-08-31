@@ -8,6 +8,9 @@ import { loadWorks, loadAbout, urlSlug } from "./content.js";
 import { imgproxyUrl, placeholder, BREAKPOINTS, FORMATS } from "./imgproxy.js";
 
 const SITE = process.env.SITE || "https://art.progapanda.org";
+// Cloudflare Web Analytics site token — not a secret (it ships in plain
+// HTML on every page by design, same as pasting the snippet manually).
+const CF_ANALYTICS_TOKEN = "7ea997cc094c44ff95757e808d509065";
 // No default: local dev must build against the local imgproxy container and
 // production must build against the production one, and getting that mixed
 // up silently would mean shipping localhost URLs or previewing 404s. The
@@ -104,6 +107,7 @@ function layout({ title, description, canonical, ogImage, body, active }) {
 ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="${ogImage}">` : ""}
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="${STAMPED.css}">
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${CF_ANALYTICS_TOKEN}"}'></script>
 </head>
 <body>
 <header>
