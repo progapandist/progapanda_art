@@ -44,13 +44,17 @@ const started = Date.now();
 
 await mapLimit(combos, 6, async (c) => {
   const url = imgproxyUrl({ endpoint: ORIGIN, key: KEY, salt: SALT, ...c });
-  const res = await fetch(url).catch(() => null);
+  // Without a timeout, one genuinely hung connection parks a worker slot
+  // forever — with 6 workers, six unlucky hangs stalls the whole run
+  // permanently, indistinguishable from "just slow" until someone gives up
+  // waiting on it.
+  const res = await fetch(url, { signal: AbortSignal.timeout(60_000) }).catch(() => null);
   done++;
   if (!res || !res.ok) {
     misses++;
-    console.log(`  miss: ${c.slug} ${c.width}w ${c.format} -> ${res?.status ?? "network error"}`);
+    console.log(`  miss: ${c.slug} ${c.width}w ${c.format} -> ${res?.status ?? "timeout/network error"}`);
   }
-  if (done % 50 === 0) console.log(`  ${done}/${combos.length}`);
+  if (done % 10 === 0) console.log(`  ${done}/${combos.length}`);
 });
 
 console.log(`done: ${done} warmed, ${misses} misses, ${((Date.now() - started) / 1000).toFixed(0)}s`);
