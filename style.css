@@ -112,7 +112,9 @@ a:focus-visible, button:focus-visible {
   border-bottom: var(--hair);
   text-decoration: none;
   overflow: hidden;
-  background: var(--paper-2);
+  background-color: var(--paper-2);
+  background-size: cover;
+  background-position: center;
 }
 
 .tile img {
@@ -170,7 +172,12 @@ main.work { padding-bottom: 60px; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--paper-2);
+  background-color: var(--paper-2);
+  /* A blurred placeholder (inline style, per-work) covers this — it stays
+     visible in the letterboxed margins around the contained image even
+     after it loads, the same idea the old gallery's blurred backdrop had. */
+  background-size: cover;
+  background-position: center;
   border-bottom: var(--rule);
   height: min(82vh, 900px);
 }
@@ -194,12 +201,15 @@ h2.title {
 
 .forms {
   display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
+  /* The value column caps itself so a long one doesn't run the page wide;
+     it doesn't need the whole grid narrowed, which previously made the
+     border-top above stop dead in the middle of a wide viewport instead of
+     spanning the same width as the frame and pager. */
+  grid-template-columns: max-content minmax(0, 46rem);
   gap: 8px 28px;
   margin: 26px 0 0;
   padding: 22px 0 0;
   border-top: var(--rule);
-  max-width: 46rem;
 }
 
 .forms dt { padding-top: 3px; }

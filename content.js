@@ -40,16 +40,16 @@ export function loadAbout(path) {
   return parseFrontmatter(readFileSync(path, "utf8"));
 }
 
-// Same transform as Rails' String#humanize on these slugs: underscores to
-// spaces, first letter capitalised, rest lowercased. Some source files carry
-// a real image extension — strip it before humanizing so a title never ends
-// up reading "Ix.jpg".
-function stripExt(slug) {
+// Some source files carry a real image extension (newer additions do, the
+// original batch doesn't) — strip it for anything user-facing: a title, or
+// the public /works/<slug>/ URL. The real filename (with extension, if any)
+// stays the lookup key for the actual imgproxy source, in imgproxy.js.
+export function urlSlug(slug) {
   return slug.replace(/\.(jpe?g|png|webp|avif|tiff?|heic)$/i, "");
 }
 
 export function humanize(slug) {
-  const s = stripExt(slug).replace(/_id$/, "").replace(/_/g, " ").trim();
+  const s = urlSlug(slug).replace(/_id$/, "").replace(/_/g, " ").trim();
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }
 

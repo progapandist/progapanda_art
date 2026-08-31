@@ -4,8 +4,8 @@
 // pages, content-hash the assets, done.
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from "node:fs";
-import { loadWorks, loadAbout } from "./content.js";
-import { imgproxyUrl, BREAKPOINTS, FORMATS } from "./imgproxy.js";
+import { loadWorks, loadAbout, urlSlug } from "./content.js";
+import { imgproxyUrl, placeholder, BREAKPOINTS, FORMATS } from "./imgproxy.js";
 
 const SITE = process.env.SITE || "https://art.progapanda.org";
 // No default: local dev must build against the local imgproxy container and
@@ -33,6 +33,40 @@ const img = (work, width, format) =>
   imgproxyUrl({ endpoint: ENDPOINT, key: KEY, salt: SALT, slug: work.slug, width, format });
 
 const srcset = (work, format) => BREAKPOINTS.map((w) => `${img(work, w, format)} ${w}w`).join(", ");
+
+// Fetching a source image is nearly as expensive as fetching any resize of
+// it — imgproxy has to decode the whole thing regardless of target size —
+// so 45 placeholder fetches in parallel would pile onto the same origin the
+// real thumbnails already load. A small worker pool caps that; a per-slug
+// cache means a --watch rebuild only ever fetches a placeholder once.
+const placeholderCache = new Map();
+
+async function mapLimit(items, limit, fn) {
+  const results = new Array(items.length);
+  let i = 0;
+  async function worker() {
+    while (i < items.length) {
+      const idx = i++;
+      results[idx] = await fn(items[idx]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+async function loadPlaceholders(works) {
+  const placeholders = new Map();
+  await mapLimit(works, 4, async (w) => {
+    if (!placeholderCache.has(w.slug)) {
+      placeholderCache.set(
+        w.slug,
+        await placeholder({ endpoint: ENDPOINT, key: KEY, salt: SALT, slug: w.slug }).catch(() => null),
+      );
+    }
+    placeholders.set(w.slug, placeholderCache.get(w.slug));
+  });
+  return placeholders;
+}
 
 // ---- shared page shell -----------------------------------------------------
 // "home" drops the "all works" link (it would just point at itself); every
@@ -75,17 +109,19 @@ ${body}
 }
 
 // ---- the grid / home page ---------------------------------------------------
-function gridPage(works) {
+function gridPage(works, placeholders) {
   const tiles = works
-    .map(
-      (w) => `  <a class="tile" href="/works/${encodeURIComponent(w.slug)}/">
+    .map((w) => {
+      const ph = placeholders.get(w.slug);
+      const style = ph ? ` style="background-image:url('${ph}')"` : "";
+      return `  <a class="tile" href="/works/${encodeURIComponent(urlSlug(w.slug))}/"${style}>
     <img src="${img(w, 480, "avif")}" alt="${escape(w.title)}" loading="lazy">
     <span class="tile-info">
       <span class="tile-title">${escape(w.title)}</span>
       <span class="tile-meta">${escape([w.location, w.year].filter(Boolean).join(", "))}</span>
     </span>
-  </a>`,
-    )
+  </a>`;
+    })
     .join("\n");
 
   const body = `<main>
@@ -132,7 +168,7 @@ function dimensionsText(work) {
   return work.dimensions.filter((n) => n !== null && n !== undefined).join(" × ") + " cm";
 }
 
-function workPage(work, prev, next) {
+function workPage(work, prev, next, ph) {
   const dims = dimensionsText(work);
   const rows = [
     work.location && ["location", escape(work.location)],
@@ -156,12 +192,13 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
   const formats = `<ul class="chips">${FORMATS.map((f) => `<li><a href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul>`;
 
   const pager = `<nav class="pager">
-    ${prev ? `<a rel="prev" href="/works/${encodeURIComponent(prev.slug)}/">&larr; ${escape(prev.title)}</a>` : `<span></span>`}
-    ${next ? `<a class="next" rel="next" href="/works/${encodeURIComponent(next.slug)}/">${escape(next.title)} &rarr;</a>` : `<span></span>`}
+    ${prev ? `<a rel="prev" href="/works/${encodeURIComponent(urlSlug(prev.slug))}/">&larr; ${escape(prev.title)}</a>` : `<span></span>`}
+    ${next ? `<a class="next" rel="next" href="/works/${encodeURIComponent(urlSlug(next.slug))}/">${escape(next.title)} &rarr;</a>` : `<span></span>`}
   </nav>`;
 
+  const frameStyle = ph ? ` style="background-image:url('${ph}')"` : "";
   const body = `<main class="work">
-  <div class="frame">
+  <div class="frame"${frameStyle}>
     <picture>
       <source type="image/avif" srcset="${srcset(work, "avif")}" sizes="100vw">
       <source type="image/webp" srcset="${srcset(work, "webp")}" sizes="100vw">
@@ -185,7 +222,7 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
   return layout({
     title: `${escape(work.title)} — ${ARTIST}`,
     description: work.description || `${work.title}, ${[work.location, work.year].filter(Boolean).join(", ")}.`,
-    canonical: `${SITE}/works/${encodeURIComponent(work.slug)}/`,
+    canonical: `${SITE}/works/${encodeURIComponent(urlSlug(work.slug))}/`,
     ogImage: img(work, 1200, "jpg"),
     body,
     active: "work",
@@ -206,7 +243,7 @@ function notFoundPage() {
 // ---- write -------------------------------------------------------------------
 let STAMPED;
 
-function build() {
+async function build() {
   rmSync(dist, { recursive: true, force: true });
   mkdirSync(dist, { recursive: true });
 
@@ -224,23 +261,27 @@ function build() {
   cpSync("robots.txt", dist + "robots.txt");
 
   const works = loadWorks(SOURCES_DIR, CONTENT_PATH);
+  const placeholders = await loadPlaceholders(works);
 
-  writeFileSync(dist + "index.html", gridPage(works));
+  writeFileSync(dist + "index.html", gridPage(works, placeholders));
   writeFileSync(dist + "404.html", notFoundPage());
   mkdirSync(dist + "artist/", { recursive: true });
   writeFileSync(dist + "artist/index.html", artistPage());
 
   for (let i = 0; i < works.length; i++) {
-    const dir = `${dist}works/${works[i].slug}/`;
+    const dir = `${dist}works/${urlSlug(works[i].slug)}/`;
     mkdirSync(dir, { recursive: true });
-    writeFileSync(dir + "index.html", workPage(works[i], works[i - 1] || null, works[i + 1] || null));
+    writeFileSync(
+      dir + "index.html",
+      workPage(works[i], works[i - 1] || null, works[i + 1] || null, placeholders.get(works[i].slug)),
+    );
   }
 
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     { loc: `${SITE}/`, priority: "1.0" },
     { loc: `${SITE}/artist/`, priority: "0.5" },
-    ...works.map((w) => ({ loc: `${SITE}/works/${encodeURIComponent(w.slug)}/`, priority: "0.8" })),
+    ...works.map((w) => ({ loc: `${SITE}/works/${encodeURIComponent(urlSlug(w.slug))}/`, priority: "0.8" })),
   ];
   writeFileSync(
     dist + "sitemap.xml",
@@ -254,7 +295,7 @@ ${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${today}</lastmod><priorit
   console.log(`dist: ${works.length} works, endpoint ${ENDPOINT}`);
 }
 
-build();
+await build();
 
 if (process.argv.includes("--watch")) {
   const { watch } = await import("node:fs");
