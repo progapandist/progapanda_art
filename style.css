@@ -20,8 +20,11 @@
   color-scheme: light;
 }
 
+/* System preference, unless the reader has picked a theme explicitly (the
+   button in the header nav) — :not([data-theme="light"]) lets an explicit
+   light choice win even when the system is dark. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --paper: #15151a;
     --paper-2: #1d1d21;
     --ink: #e9e6dd;
@@ -30,6 +33,27 @@
     --shadow: rgba(0, 0, 0, 0.85);
     color-scheme: dark;
   }
+}
+
+/* The explicit choice, so it wins regardless of system preference. */
+:root[data-theme="dark"] {
+  --paper: #15151a;
+  --paper-2: #1d1d21;
+  --ink: #e9e6dd;
+  --dim: #8b867c;
+  --hairline: rgba(233, 230, 221, 0.16);
+  --shadow: rgba(0, 0, 0, 0.85);
+  color-scheme: dark;
+}
+
+/* Native cross-document view transitions: a plain <a> navigation between
+   two pages on this site cross-fades instead of hard-cutting, with zero
+   JS — this is a full page load every time (no SPA router), so without
+   this there's no way to animate between "old page" and "new page" at
+   all. Chromium/Safari apply it automatically; browsers that don't
+   support it just navigate instantly, same as before this existed. */
+@view-transition {
+  navigation: auto;
 }
 
 * { box-sizing: border-box; }
@@ -96,6 +120,20 @@ h1.wordmark a { text-decoration: none; }
 
 .contrib:hover { color: var(--ink); }
 
+.theme-toggle {
+  font: inherit;
+  font-size: 13px;
+  color: var(--dim);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: inset 0 -6px 0 var(--paper-2);
+  white-space: nowrap;
+}
+
+.theme-toggle:hover { color: var(--ink); }
+
 a:focus-visible, button:focus-visible {
   outline: 3px solid var(--ink);
   outline-offset: 2px;
@@ -133,8 +171,13 @@ a:focus-visible, button:focus-visible {
   position: absolute;
   inset: auto 0 0 0;
   padding: 10px 12px;
-  background: linear-gradient(to top, var(--shadow), transparent);
-  color: var(--paper);
+  /* Fixed, not theme tokens — this sits on top of an arbitrary photograph,
+     not the page background, so it can't flip with light/dark mode the way
+     --paper/--ink do. var(--paper) here meant near-white text in light mode
+     but near-BLACK text in dark mode (paper flips dark), on a scrim that's
+     dark in both — illegible in dark mode specifically. */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+  color: #fff;
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -175,6 +218,15 @@ main.work { padding-bottom: 60px; }
   background-color: var(--paper-2);
   border-bottom: var(--rule);
   height: min(82vh, 900px);
+  cursor: pointer;
+}
+
+/* Instant tap feedback that doesn't depend on the View Transition below —
+   works in every browser, registers before the page navigation even
+   starts, so a tap never feels like it did nothing. */
+.frame:active .placeholder,
+.frame:active picture img {
+  opacity: 0.85;
 }
 
 /* The placeholder and the real picture occupy the identical box — same

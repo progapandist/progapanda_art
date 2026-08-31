@@ -86,6 +86,7 @@ function layout({ title, description, canonical, ogImage, body, active, preload 
   const links = [
     `<a class="contrib" href="/artist/">artist</a>`,
     active !== "home" && `<a class="contrib" href="/">all works</a>`,
+    `<button class="theme-toggle" type="button">dark mode</button>`,
   ]
     .filter(Boolean)
     .join("");
@@ -107,6 +108,10 @@ ${preload || ""}
 <meta property="og:description" content="${escape(description)}">
 ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:image" content="${ogImage}">` : ""}
 <link rel="icon" href="data:,">
+<!-- Classic script, not a module: runs and blocks before the stylesheet
+     is even parsed, so a saved theme choice applies before first paint —
+     a module here would run too late and flash the wrong theme first. -->
+<script src="${STAMPED.theme}"></script>
 <link rel="stylesheet" href="${STAMPED.css}">
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "${CF_ANALYTICS_TOKEN}"}'></script>
 </head>
@@ -116,6 +121,7 @@ ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitte
   <nav class="header-nav">${links}</nav>
 </header>
 ${body}
+<script type="module" src="${STAMPED.nav}"></script>
 </body>
 </html>
 `;
@@ -234,8 +240,7 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     ${description}
   </div>
   ${pager}
-</main>
-<script type="module" src="${STAMPED.nav}"></script>`;
+</main>`;
 
   // The hero image is the LCP element on this page — a preload hint lets the
   // browser start fetching it while still parsing <head>, instead of only
@@ -277,9 +282,11 @@ async function build() {
   STAMPED = {
     css: `/style.css?v=${hash("style.css")}`,
     nav: `/nav.js?v=${hash("nav.js")}`,
+    theme: `/theme.js?v=${hash("theme.js")}`,
   };
   cpSync("style.css", dist + "style.css");
   cpSync("nav.js", dist + "nav.js");
+  cpSync("theme.js", dist + "theme.js");
   cpSync("_headers", dist + "_headers");
   cpSync("_redirects", dist + "_redirects");
   cpSync("robots.txt", dist + "robots.txt");
@@ -324,7 +331,7 @@ await build();
 if (process.argv.includes("--watch")) {
   const { watch } = await import("node:fs");
   console.log(`watching ${CONTENT_PATH}, style.css, nav.js, ${SOURCES_DIR}...`);
-  for (const path of [CONTENT_PATH, "style.css", "nav.js"]) {
+  for (const path of [CONTENT_PATH, "style.css", "nav.js", "theme.js"]) {
     watch(path, () => build());
   }
   // Not recursive: a new or deleted file directly in the sources folder is

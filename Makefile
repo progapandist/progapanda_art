@@ -9,14 +9,14 @@ LOCAL_IMGPROXY := http://localhost:8080
 # domain either: a shared third-party-looking CDN domain is exactly the kind
 # of thing Safari's tracking/fingerprinting protection reacts to. IMGPROXY_ORIGIN
 # is where the build itself fetches placeholder bytes from — always the real
-# origin, since the /i/ proxy doesn't exist to fetch from until this deploy
-# finishes.
+# origin, since it's a build-time-only fetch that doesn't need (and during a
+# first-ever deploy, can't reach) the /i/ proxy.
 PROD_IMGPROXY := https://art.progapanda.org/i
 IMGPROXY_ORIGIN := https://imgproxy.progapanda.org
 LOAD_DOTENV := set -a; [ -f .env ] && . ./.env; set +a;
 export SOURCES_DIR
 
-.PHONY: run-imgproxy stop-imgproxy dev test dist deploy deploy-frontend deploy-imgproxy sync-sources warm-cache warm-remote clean
+.PHONY: run-imgproxy stop-imgproxy dev test dist deploy deploy-frontend deploy-imgproxy sync-sources warm-cache clean
 
 # ---- local dev: always against the LOCAL imgproxy container ---------------
 
@@ -57,41 +57,36 @@ deploy: deploy-imgproxy deploy-frontend
 # openrsync, which doesn't support the GNU F644 syntax) makes every file
 # world-readable regardless of local permissions (a couple of the source
 # files are owner-only on disk) — imgproxy's container process needs to read
-# every file here regardless.
+# every file here regardless. Renaming a file is its own separate problem
+# this doesn't solve (content.md's reconciliation sees a rename as a delete
+# + an add, losing that work's copy) — see the README.
 sync-sources:
 	rsync -av --delete $(SOURCES_DIR)/ root@$(DROPLET_IP):/data/art_sources/
 	doctl compute ssh $(DROPLET) --ssh-command "chmod a+r /data/art_sources/*"
 
-# Pre-warms imgproxy's origin cache with every URL the site generates, so
-# the first real visitor never pays a cold multi-second AVIF encode — that
-# cost lands here instead. An already-warm URL is just a cache-hit fetch
-# (fast). Local-network variant, for testing against a locally-running
-# imgproxy; the one deploy-imgproxy actually uses runs on the droplet
-# itself (see warm-remote below), which is what makes it fast enough to
-# run synchronously as a normal deploy step instead of needing to be
-# backgrounded.
+# imgproxy has no result cache to warm — the internal cache is a Pro-only
+# feature, not present on the open-source build this runs (confirmed by
+# testing: the same signed URL fetched twice took the same ~2s both times).
+# What this actually warms is Cloudflare's edge cache in front of the public
+# /i/ proxy — the only cache that helps at all — which only activates for
+# requests that go through that exact path, so this has to hit the real
+# production URL, not the droplet directly. Every request still pays
+# imgproxy's real CPU-bound encode cost once; this just makes that first
+# visitor be this script instead of whoever's browser gets there first.
+# Doubles as a smoke test — a slug or processing option that's actually
+# broken shows up as a miss here before a visitor ever sees it.
+#
+# Not chained into deploy-imgproxy or deploy-frontend — a full sweep can
+# take several minutes (2-way concurrency, matching the droplet's 2 vCPUs;
+# there's no cache to make repeat runs fast). Run it yourself when you want
+# it, and it's safe to re-run any time — a fresh invocation kills whatever
+# previous one is still going first, so back-to-back deploys never stack:
+#   make warm-cache            # foreground, watch it work
+#   make warm-cache &          # background, keep using this shell
+#   nohup make warm-cache > warm-cache.log 2>&1 &   # detached, survives closing the terminal
 warm-cache:
-	$(LOAD_DOTENV) IMGPROXY_ORIGIN=$(IMGPROXY_ORIGIN) bun run warm.js
-
-# Runs warm.js ON the droplet, talking to imgproxy over the internal
-# imgproxy-net Docker network (container name, plain HTTP, no TLS) instead
-# of over the public internet — every one of the ~1300 combos skips the
-# round-trip latency + TLS handshake that made running this from a laptop
-# take the better part of ten minutes. Only the actual CPU-bound encode
-# time remains, so a full cold-cache warm now takes well under a minute,
-# and it's safe to run synchronously on every deploy-imgproxy.
-warm-remote:
-	doctl compute ssh $(DROPLET) --ssh-command "mkdir -p /root/warm"
-	scp warm.js content.js imgproxy.js content.md root@$(DROPLET_IP):/root/warm/
-	doctl compute ssh $(DROPLET) --ssh-command "\
-		docker pull oven/bun:1; \
-		docker run --rm --network imgproxy-net \
-			-v /root/warm:/warm -w /warm \
-			-v /data/art_sources:/progapanda_art_sources:ro \
-			--env-file /root/imgproxy.env \
-			-e IMGPROXY_ORIGIN=http://imgproxy:8080 \
-			-e SOURCES_DIR=/progapanda_art_sources \
-			oven/bun:1 bun warm.js"
+	pkill -f "bun run warm.js" 2>/dev/null || true
+	$(LOAD_DOTENV) IMGPROXY_ENDPOINT=$(PROD_IMGPROXY) bun run warm.js
 
 # imgproxy lives on the droplet, run directly via doctl/docker — not Kamal.
 # First run only: tear down the leftover Kamal-managed containers (traefik,
@@ -110,18 +105,15 @@ deploy-imgproxy: sync-sources
 		docker pull darthsim/imgproxy:v4; \
 		docker pull caddy:2; \
 		docker rm -f imgproxy caddy 2>/dev/null; \
-		mkdir -p /data/imgproxy-cache; \
 		docker run -d --name imgproxy --network imgproxy-net --restart unless-stopped \
 			--env-file /root/imgproxy.env \
 			-v /data/art_sources:/progapanda_art_sources:ro \
-			-v /data/imgproxy-cache:/imgproxy-cache \
 			darthsim/imgproxy:v4; \
 		docker run -d --name caddy --network imgproxy-net --restart unless-stopped \
 			-p 80:80 -p 443:443 \
 			-v /root/Caddyfile:/etc/caddy/Caddyfile:ro \
 			-v caddy_data:/data \
 			caddy:2"
-	$(MAKE) warm-remote
 
 clean:
 	rm -rf dist

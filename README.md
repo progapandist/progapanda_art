@@ -16,6 +16,13 @@ a deleted one automatically. Fill in a stub by hand.
 `about.md` is site-wide copy (artist name, bio) — one file, not per-work,
 rendered at `/artist/`.
 
+Renaming a file is not the same as add+edit: content.md's reconciliation
+matches purely by filename, so a rename looks identical to "delete the old
+work, add a new one" — the old section (title, description, everything
+written for it) gets dropped and a blank stub appears under the new name.
+To keep it, rename the `## old-name` heading in content.md yourself to
+match, before running `make dist`/`make deploy`.
+
 ## Local dev
 
 ```
@@ -38,6 +45,15 @@ make deploy-imgproxy    # droplet: rsync the sources folder, restart imgproxy + 
 imgproxy signs every URL at build time (`IMGPROXY_KEY`/`IMGPROXY_SALT` in
 `.env`, gitignored) — the salt never ships to the browser, only finished
 signed URLs do.
+
+imgproxy itself has no result cache (that's a Pro-only feature, not on the
+open-source build this runs) — every request is a real encode. The only
+cache that helps is Cloudflare's edge cache in front of the public `/i/`
+proxy, and it only activates for requests that actually go through that
+path. `make warm-cache` hits every URL the site generates through that
+exact path — not chained into deploy, since a full sweep can take several
+minutes; run it yourself when you want to (safe to re-run any time, a new
+run kills a still-running previous one first).
 
 Images don't hit the droplet directly in production: `functions/i/[[path]].js`
 is a Cloudflare Pages Function that reverse-proxies + edge-caches
