@@ -4,7 +4,10 @@ DROPLET_IP := 165.232.72.204
 IMGPROXY_ENV_FILE := imgproxy.env
 SOURCES_DIR := /Users/progapandist/progapanda_art_sources
 LOCAL_IMGPROXY := http://localhost:8080
-PROD_IMGPROXY := https://imgproxy.progapanda.org
+# Not the droplet directly — a Workers reverse proxy in front of it, giving
+# imgproxy Cloudflare's edge cache even though progapanda.org's DNS isn't on
+# Cloudflare (see cdn-worker/). Deploy that worker first if this ever moves.
+PROD_IMGPROXY := https://progapanda-art-imgproxy-cdn.andrey-956.workers.dev
 LOAD_DOTENV := set -a; [ -f .env ] && . ./.env; set +a;
 export SOURCES_DIR
 
@@ -45,9 +48,11 @@ deploy: deploy-imgproxy deploy-frontend
 # Mirrors $(SOURCES_DIR) onto the droplet's /data/art_sources — --delete so a
 # file removed locally (the same "editing the folder" workflow as content.md's
 # reconciliation) actually disappears from production too, not just from the
-# local build.
+# local build. --chmod=F644 overrides whatever local permissions a file has
+# (a couple of the source files are owner-only on disk) — imgproxy's
+# container process needs to read every file here regardless.
 sync-sources:
-	rsync -av --delete $(SOURCES_DIR)/ root@$(DROPLET_IP):/data/art_sources/
+	rsync -av --delete --chmod=F644 $(SOURCES_DIR)/ root@$(DROPLET_IP):/data/art_sources/
 
 # imgproxy lives on the droplet, run directly via doctl/docker — not Kamal.
 # First run only: tear down the leftover Kamal-managed containers (traefik,
