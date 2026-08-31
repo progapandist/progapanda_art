@@ -117,12 +117,36 @@ export function serializeContentFile(sections, order) {
 
 // The list of works is whatever is actually in the sources folder — adding
 // or removing a file there is the whole editing step, `make dist` picks it
-// up. Sorted, so file order is stable (matches the old sqlite insertion
-// order, which sorted the same directory listing the same way).
+// up. Alphabetical here on purpose, even though the site itself displays a
+// shuffled order (see shuffledBySeed below) — this order is what
+// content.md gets written in, and alphabetical is what makes it easy for a
+// human to find a given work in that file by hand.
 export function scanSources(dir) {
   return readdirSync(dir)
     .filter((f) => !f.startsWith(".") && statSync(join(dir, f)).isFile())
     .sort();
+}
+
+// A fixed, deliberately-chosen seed — not "the current date" or anything
+// that would silently reshuffle the site on its own. Change this constant
+// only when an actual reshuffle is wanted; the same seed always produces
+// the same order. Sorting by hash(seed + slug) rather than doing a
+// Fisher-Yates pass over the array means adding or removing one work only
+// slots that one work in or out — it doesn't perturb every other work's
+// relative position the way a length-dependent shuffle algorithm would.
+const SHUFFLE_SEED = "progapanda-42";
+
+function seededHash(str) {
+  let h = 2166136261; // FNV-1a
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+export function shuffledBySeed(slugs) {
+  return [...slugs].sort((a, b) => seededHash(SHUFFLE_SEED + a) - seededHash(SHUFFLE_SEED + b));
 }
 
 function toWork(slug, section) {
@@ -142,7 +166,8 @@ function toWork(slug, section) {
 
 // Reconciles content.md against the sources folder: appends a stub section
 // for a source file that has none yet, drops a section whose file is gone.
-// Rewrites content.md when anything changed, and returns the merged works.
+// Rewrites content.md when anything changed, and returns the merged works
+// in the site's display order (seeded-shuffled, not alphabetical).
 export function loadWorks(sourcesDir, contentPath) {
   const files = scanSources(sourcesDir);
   const sections = parseContentFile(readFileSync(contentPath, "utf8"));
@@ -159,5 +184,8 @@ export function loadWorks(sourcesDir, contentPath) {
     console.log(`content.md: +${added.length} -${removed.length}${added.length ? ` (added: ${added.join(", ")})` : ""}`);
   }
 
-  return files.map((f) => toWork(f, sections.get(f)));
+  // content.md is written in the alphabetical `files` order above (easy to
+  // find a work by hand); the site itself displays this seeded-shuffled
+  // order instead — grid order and prev/next both follow it.
+  return shuffledBySeed(files).map((f) => toWork(f, sections.get(f)));
 }

@@ -1,9 +1,3 @@
-## all_eyes_freestyle_render
-year: 2024
-location: Berlin
-
-A scanned studio chair carries a clipped pink painting, turning furniture into a stage for restless marks and collage-like memory.
-
 ## all_those_good_people_down_the_jubilee_street.jpeg
 year: 2026
 location: Berlin
@@ -44,29 +38,25 @@ price: 1000
 
 A monochrome floral mass unfolds like carved smoke, balancing softness and geological weight.
 
-## color_suite_on_the_easel
-year: 2023
+## capital m.png
 location: Berlin
+year: 2026
 
-A dark field pierced by ember-like color, as if a hidden fire were breathing beneath matte black paint.
-
-## crow
-year: 2024
+## color suite
 location: Berlin
+year: 2026
 
-A floating paper-body marked with gestural black strokes, suspended in space like a torn drawing come alive.
-
-## date_line
-year: 2024
+## color suite ii.jpg
 location: Berlin
+year: 2026
 
-A nocturnal scan-fragment where chalk-white forms and red linework read like scattered witnesses caught in a flash of memory.
-
-## echo_chamber
-year: 2023
+## color suite iii.jpg
 location: Berlin
+year: 2026
 
-A blurred procession of figures in ink-blue and black, evoking public movement as a collective shadow.
+## color suite iv.jpg
+location: Berlin
+year: 2026
 
 ## faces of depression.jpeg
 year: 2026
@@ -78,33 +68,15 @@ location: Berlin
 
 A domestic interior pulled through scan turbulence, where ordinary space buckles into memory and distortion.
 
-## glass_boy
-year: 2024
+## flat_08.png
 location: Berlin
-
-A glass-like seated figure, stripped of detail and presence at once, poised between icon and artifact.
+year: 2026
 
 ## golden_pinkboy
 year: 2024
 location: Berlin
 
 A headless street statue recast in warm pink-gold tones, where monumentality bends toward tenderness.
-
-## headless_01
-year: 2023
-location: Berlin
-medium: [print, Dibond]
-dimensions: [90, 60, 0.5]
-availability: for sale
-price: 1000
-
-A molten bust in orange on cobalt, balancing softness and fracture in a single unresolved profile.
-
-## interpretation_of_symbols
-year: 2024
-location: Berlin
-
-A cap series becomes wearable mythology, each badge suggesting private symbols and invented affiliations.
 
 ## ix.jpg
 year: 2026
@@ -150,12 +122,6 @@ location: Berlin
 year: 2026
 location: Berlin
 
-## red squares
-year: 2023
-location: Berlin
-
-A body lit from within by red panels, transforming anatomy into architecture and intimacy into signal.
-
 ## red_lipstick
 year: 2024
 location: Berlin
@@ -167,12 +133,6 @@ year: 2023
 location: Berlin
 
 A soft-focus red-haired apparition, painted as memory rather than likeness.
-
-## sasha_1
-year: 2023
-location: Berlin
-
-A faceted crimson portrait partly eclipsed by another form, staging identity as obstruction and reveal.
 
 ## self_portrait.jpeg
 year: 2026
@@ -189,18 +149,6 @@ location: Berlin
 ## sleep.jpeg
 year: 2026
 location: Berlin
-
-## spam
-year: 2024
-location: Berlin
-
-A subway interior dissolved by scan drift, where public infrastructure warps into cinematic abstraction.
-
-## sparrow
-year: 2024
-location: Berlin
-
-A crow carcass electrified with neon traces, turning decay into signal and omen into ornament.
 
 ## subcu_01
 year: 2024
@@ -225,12 +173,6 @@ year: 2023
 location: Berlin
 
 A spectral white drape stretched over void, like a ghost-architecture caught mid-collapse.
-
-## the_fall
-year: 2023
-location: Berlin
-
-A synthetic-green chamber with violet bodies in free fall, turning desire into color-field physics.
 
 ## truecolor_01
 year: 2024

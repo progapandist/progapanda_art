@@ -68,8 +68,13 @@ function currentTheme() {
   return document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 }
 
+// Plain geometric glyphs, not emoji — filled circle shows when light (click
+// to go dark), hollow circle shows when dark (click to go light).
 function labelToggle() {
-  if (toggle) toggle.textContent = currentTheme() === "dark" ? "light mode" : "dark mode";
+  if (!toggle) return;
+  const dark = currentTheme() === "dark";
+  toggle.textContent = dark ? "○" : "●";
+  toggle.setAttribute("aria-label", dark ? "switch to light" : "switch to dark");
 }
 
 if (toggle) {

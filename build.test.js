@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize } from "./content.js";
+import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed } from "./content.js";
 import { imgproxyUrl } from "./imgproxy.js";
 
 describe("parseFrontmatter", () => {
@@ -41,6 +41,27 @@ describe("humanize", () => {
   test("strips a real image extension before humanizing", () => {
     expect(humanize("ix.jpg")).toBe("Ix");
     expect(humanize("rage masquerading as cheer.jpeg")).toBe("Rage masquerading as cheer");
+  });
+});
+
+describe("shuffledBySeed", () => {
+  const slugs = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"];
+
+  test("is deterministic — same input, same order, every call", () => {
+    expect(shuffledBySeed(slugs)).toEqual(shuffledBySeed(slugs));
+  });
+
+  test("is not just the input order (sanity check it actually shuffles)", () => {
+    expect(shuffledBySeed(slugs)).not.toEqual(slugs);
+  });
+
+  test("contains exactly the same slugs, just reordered", () => {
+    expect([...shuffledBySeed(slugs)].sort()).toEqual([...slugs].sort());
+  });
+
+  test("adding one slug doesn't reorder the others relative to each other", () => {
+    const withOneMore = shuffledBySeed([...slugs, "golf"]).filter((s) => s !== "golf");
+    expect(withOneMore).toEqual(shuffledBySeed(slugs));
   });
 });
 
@@ -86,12 +107,18 @@ describe("loadWorks", () => {
 
       const works = loadWorks(sourcesDir, contentPath);
 
-      expect(works.map((w) => w.slug)).toEqual(["bloom", "crow"]);
-      expect(works[0].description).toBe("Already described.");
-      expect(works[1].title).toBe("Crow"); // stub section, title falls back to humanize
+      // Display order is seeded-shuffled, not file order — check membership,
+      // not position.
+      expect(works.map((w) => w.slug).sort()).toEqual(["bloom", "crow"]);
+      const bloom = works.find((w) => w.slug === "bloom");
+      const crow = works.find((w) => w.slug === "crow");
+      expect(bloom.description).toBe("Already described.");
+      expect(crow.title).toBe("Crow"); // stub section, title falls back to humanize
 
+      // content.md itself is still written in plain alphabetical file order —
+      // that one's for a human editing it, not for display.
       const rewritten = readFileSync(contentPath, "utf8");
-      expect(rewritten).toContain("## crow");
+      expect(rewritten.indexOf("## bloom")).toBeLessThan(rewritten.indexOf("## crow"));
       expect(rewritten).not.toContain("## gone");
     } finally {
       rmSync(sourcesDir, { recursive: true, force: true });

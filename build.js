@@ -86,7 +86,7 @@ function layout({ title, description, canonical, ogImage, body, active, preload 
   const links = [
     `<a class="contrib" href="/artist/">artist</a>`,
     active !== "home" && `<a class="contrib" href="/">all works</a>`,
-    `<button class="theme-toggle" type="button">dark mode</button>`,
+    `<button class="theme-toggle" type="button" aria-label="switch to dark">&#9679;</button>`,
   ]
     .filter(Boolean)
     .join("");

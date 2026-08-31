@@ -57,7 +57,11 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; }
+/* Nothing on this site ever needs horizontal panning — this is specifically
+   what lets nav.js's custom swipe (prev/next on a work page) work on iOS
+   Safari without also triggering the browser's own horizontal touch
+   handling (edge-swipe back/forward, rubber-band scroll) at the same time. */
+html, body { margin: 0; touch-action: pan-y; }
 
 body {
   background: var(--paper);
@@ -120,16 +124,20 @@ h1.wordmark a { text-decoration: none; }
 
 .contrib:hover { color: var(--ink); }
 
+/* A single geometric glyph, not a text link — sized for legibility/tap
+   target rather than matching the .contrib links' font-size, and no
+   underline-style box-shadow (that's a text-link affordance, doesn't read
+   as one under a small circle). */
 .theme-toggle {
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
+  line-height: 1;
   color: var(--dim);
   background: none;
   border: none;
-  padding: 0;
+  padding: 4px;
+  margin: -4px;
   cursor: pointer;
-  box-shadow: inset 0 -6px 0 var(--paper-2);
-  white-space: nowrap;
 }
 
 .theme-toggle:hover { color: var(--ink); }
