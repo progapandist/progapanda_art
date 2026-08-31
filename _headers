@@ -1,0 +1,18 @@
+# Every asset URL that isn't HTML carries a content hash, so a URL that
+# resolves today never means anything else. HTML stays on Cloudflare's
+# default (revalidates every load). img-src is scoped to imgproxy — that's
+# the only place image bytes on this site ever come from.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'self'; img-src 'self' https://imgproxy.progapanda.org; style-src 'self'; script-src 'self'; base-uri 'none'; frame-ancestors 'none'
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+/robots.txt
+  Cache-Control: public, max-age=86400

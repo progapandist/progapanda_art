@@ -1,24 +1,39 @@
-# README
+# progapanda_art
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A static site for Andy Barnow's paintings. No framework, no bundler, no
+database — Bun for local dev, a small Bun script that generates static HTML,
+imgproxy for on-the-fly image resizing, Cloudflare Pages for hosting.
 
-Things you may want to cover:
+## Editing a work
 
-* Ruby version
+Add, remove, or replace a file in the sources folder (`SOURCES_DIR` in the
+Makefile) and run `make dist` — the list of works is scraped from that
+folder every build. `content.md` holds the copy (year, location, medium,
+dimensions, availability, description) as one `## <filename>` section per
+work; the build adds a stub section for a new file and drops the section for
+a deleted one automatically. Fill in a stub by hand.
 
-* System dependencies
+`about.md` is site-wide copy (artist name, credit line, bio) — one file, not
+per-work.
 
-* Configuration
+## Local dev
 
-* Database creation
+```
+make run-imgproxy   # imgproxy container, in one terminal
+make dev            # build --watch + dev server, in another
+```
 
-* Database initialization
+`make preview` does the same but points the build at the local imgproxy
+container instead of production, so newly-added images that haven't been
+deployed yet still render.
 
-* How to run the test suite
+## Deploy
 
-* Services (job queues, cache servers, search engines, etc.)
+```
+make deploy            # frontend: tests, build, wrangler pages deploy
+make deploy-imgproxy    # droplet: rsync the sources folder, restart imgproxy + caddy
+```
 
-* Deployment instructions
-
-* ...
+imgproxy signs every URL at build time (`IMGPROXY_KEY`/`IMGPROXY_SALT` in
+`.env`, gitignored) — the salt never ships to the browser, only finished
+signed URLs do.

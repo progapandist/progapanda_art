@@ -1,0 +1,163 @@
+// content.md is the single file for every work's copy — one "## slug" section
+// per source image. The build reconciles it against the sources folder: a
+// new file gets a stub section appended, a deleted file's section is
+// dropped. Editing content.md by hand is the only authoring step; nothing
+// else needs to be kept in sync by hand.
+import { readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+
+function coerce(value) {
+  if (value === "") return "";
+  return Number.isNaN(Number(value)) ? value : Number(value);
+}
+
+// Frontmatter reader for a single "---" block — used for about.md, which is
+// site-wide copy, not a per-work section.
+export function parseFrontmatter(text) {
+  const m = text.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  if (!m) return { data: {}, body: text.trim() };
+  const [, front, body] = m;
+  const data = {};
+  for (const line of front.split("\n")) {
+    if (!line.trim()) continue;
+    const i = line.indexOf(":");
+    data[line.slice(0, i).trim()] = coerceValue(line.slice(i + 1).trim());
+  }
+  return { data, body: body.trim() };
+}
+
+function coerceValue(raw) {
+  return raw.startsWith("[") && raw.endsWith("]")
+    ? raw
+        .slice(1, -1)
+        .split(",")
+        .map((v) => coerce(v.trim()))
+        .filter((v) => v !== "")
+    : coerce(raw);
+}
+
+export function loadAbout(path) {
+  return parseFrontmatter(readFileSync(path, "utf8"));
+}
+
+// Same transform as Rails' String#humanize on these slugs: underscores to
+// spaces, first letter capitalised, rest lowercased. Some source files carry
+// a real image extension — strip it before humanizing so a title never ends
+// up reading "Ix.jpg".
+function stripExt(slug) {
+  return slug.replace(/\.(jpe?g|png|webp|avif|tiff?|heic)$/i, "");
+}
+
+export function humanize(slug) {
+  const s = stripExt(slug).replace(/_id$/, "").replace(/_/g, " ").trim();
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
+// ---- content.md: "## slug" sections ----------------------------------------
+
+// A section is key:value lines, a blank line, then a free-text body — the
+// same shape as frontmatter, just introduced by a heading instead of a file.
+export function parseContentFile(text) {
+  const sections = new Map();
+  let slug = null,
+    data = {},
+    bodyLines = [],
+    inBody = false;
+
+  const flush = () => {
+    if (slug !== null) sections.set(slug, { data, body: bodyLines.join("\n").trim() });
+  };
+
+  for (const line of text.split("\n")) {
+    const heading = line.match(/^## (.+)$/);
+    if (heading) {
+      flush();
+      slug = heading[1].trim();
+      data = {};
+      bodyLines = [];
+      inBody = false;
+      continue;
+    }
+    if (slug === null) continue; // ignore anything before the first heading
+    if (!inBody) {
+      if (line.trim() === "") {
+        inBody = true;
+        continue;
+      }
+      const i = line.indexOf(":");
+      if (i === -1) {
+        inBody = true;
+        bodyLines.push(line);
+        continue;
+      }
+      data[line.slice(0, i).trim()] = coerceValue(line.slice(i + 1).trim());
+      continue;
+    }
+    bodyLines.push(line);
+  }
+  flush();
+  return sections;
+}
+
+export function serializeContentFile(sections, order) {
+  return (
+    order
+      .map((slug) => {
+        const { data, body } = sections.get(slug);
+        const lines = [`## ${slug}`];
+        for (const [k, v] of Object.entries(data)) {
+          lines.push(`${k}: ${Array.isArray(v) ? `[${v.join(", ")}]` : v}`);
+        }
+        if (body) lines.push("", body);
+        return lines.join("\n");
+      })
+      .join("\n\n") + "\n"
+  );
+}
+
+// The list of works is whatever is actually in the sources folder — adding
+// or removing a file there is the whole editing step, `make dist` picks it
+// up. Sorted, so file order is stable (matches the old sqlite insertion
+// order, which sorted the same directory listing the same way).
+export function scanSources(dir) {
+  return readdirSync(dir)
+    .filter((f) => !f.startsWith(".") && statSync(join(dir, f)).isFile())
+    .sort();
+}
+
+function toWork(slug, section) {
+  const data = section?.data || {};
+  return {
+    slug,
+    title: data.title || humanize(slug),
+    year: data.year || null,
+    location: data.location || "",
+    medium: data.medium || [],
+    dimensions: data.dimensions || [],
+    availability: data.availability || "",
+    price: data.price || null,
+    description: section?.body || "",
+  };
+}
+
+// Reconciles content.md against the sources folder: appends a stub section
+// for a source file that has none yet, drops a section whose file is gone.
+// Rewrites content.md when anything changed, and returns the merged works.
+export function loadWorks(sourcesDir, contentPath) {
+  const files = scanSources(sourcesDir);
+  const sections = parseContentFile(readFileSync(contentPath, "utf8"));
+
+  const added = files.filter((f) => !sections.has(f));
+  const removed = [...sections.keys()].filter((s) => !files.includes(s));
+  for (const slug of added) {
+    sections.set(slug, { data: { location: "Berlin", year: new Date().getFullYear() }, body: "" });
+  }
+  for (const slug of removed) sections.delete(slug);
+
+  if (added.length || removed.length) {
+    writeFileSync(contentPath, serializeContentFile(sections, files));
+    console.log(`content.md: +${added.length} -${removed.length}${added.length ? ` (added: ${added.join(", ")})` : ""}`);
+  }
+
+  return files.map((f) => toWork(f, sections.get(f)));
+}

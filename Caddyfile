@@ -1,0 +1,3 @@
+imgproxy.progapanda.org {
+	reverse_proxy imgproxy:8080
+}

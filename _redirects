@@ -1,0 +1,3 @@
+# /grid was the old Rails route for the "all works" view. The home page is
+# the grid now, so the old URL just goes there.
+/grid  /  301

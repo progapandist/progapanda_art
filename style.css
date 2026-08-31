@@ -1,0 +1,276 @@
+/* Bauhaus by way of brutalism, greyscale: a paper ground, heavy rules, no
+   colour anywhere — the image supplies the only colour on the page. Forked
+   from github.com/progapandist/tja-web's style.css; every place that used a
+   hue to distinguish something here uses weight, border or invert instead. */
+:root {
+  --paper: #fafaf8;
+  --paper-2: #eeede8;
+  --ink: #1a1917;
+  --dim: #706a5e;
+  --hairline: rgba(26, 25, 23, 0.14);
+  --shadow: rgba(26, 25, 23, 0.9);
+
+  --rule: 3px solid var(--ink);
+  --hair: 1px solid var(--hairline);
+  --pad: clamp(14px, 2.4vw, 28px);
+
+  --sans: Futura, "Century Gothic", "URW Gothic", "Avenir Next", ui-sans-serif, system-ui, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #15151a;
+    --paper-2: #1d1d21;
+    --ink: #e9e6dd;
+    --dim: #8b867c;
+    --hairline: rgba(233, 230, 221, 0.16);
+    --shadow: rgba(0, 0, 0, 0.85);
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.6 var(--sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+a { color: inherit; }
+
+.labels,
+.forms dt,
+.chips {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ---- header ---- */
+header {
+  display: flex;
+  align-items: center;
+  gap: var(--pad);
+  padding: 14px var(--pad);
+  border-bottom: var(--rule);
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 5;
+}
+
+h1.wordmark {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+h1.wordmark a { text-decoration: none; }
+
+.header-nav {
+  margin-left: auto;
+  display: flex;
+  gap: 20px;
+}
+
+.contrib {
+  color: var(--dim);
+  font-size: 13px;
+  text-decoration: none;
+  box-shadow: inset 0 -6px 0 var(--paper-2);
+  white-space: nowrap;
+}
+
+.contrib:hover { color: var(--ink); }
+
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---- the grid / home page ---- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.tile {
+  position: relative;
+  display: block;
+  border-right: var(--hair);
+  border-bottom: var(--hair);
+  text-decoration: none;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.tile img {
+  display: block;
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.tile:hover img { transform: scale(1.03); }
+
+.tile-info {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 10px 12px;
+  background: linear-gradient(to top, var(--shadow), transparent);
+  color: var(--paper);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tile:hover .tile-info { opacity: 1; transform: translateY(0); }
+
+.tile-title { display: block; font-weight: 700; font-size: 14px; }
+.tile-meta { font-size: 12px; opacity: 0.85; }
+
+.grid-foot {
+  padding: 22px var(--pad) 40px;
+  border-top: var(--rule);
+  font-size: 13px;
+  color: var(--dim);
+  font-family: var(--mono);
+}
+
+.grid-foot p { margin: 0 0 6px; }
+.grid-foot p:last-child { margin-bottom: 0; }
+
+/* ---- the work page ---- */
+main.work { max-width: 1180px; margin: 0 auto; padding-bottom: 60px; }
+
+/* The about/404 pages reuse .work-body but have no .frame above them, so
+   they need their own top air instead of the frame's border providing it. */
+.work-body-solo { padding-top: clamp(24px, 4vw, 52px); }
+
+/* Fixed height, not fit-to-content — the box is settled by CSS alone before
+   any image request starts, so there's nothing for the image arriving to
+   shift. object-fit does the rest regardless of the source's aspect ratio. */
+.frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-2);
+  border-bottom: var(--rule);
+  height: min(82vh, 900px);
+}
+
+.frame picture, .frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.work-body { padding: clamp(24px, 4vw, 52px) var(--pad) 0; }
+
+h2.title {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+}
+
+.forms {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 28px;
+  margin: 26px 0 0;
+  padding: 22px 0 0;
+  border-top: var(--rule);
+  max-width: 46rem;
+}
+
+.forms dt { padding-top: 3px; }
+
+.forms dd {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+ul.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+}
+
+ul.chips li {
+  padding: 4px 10px;
+  border: var(--hair);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--dim);
+}
+
+.chip-block { border-top: var(--hair); padding-top: 18px; margin-top: 18px; }
+.chip-block:first-of-type { border-top: none; margin-top: 0; }
+
+.availability {
+  display: inline-block;
+  padding: 4px 10px;
+  border: var(--hair);
+  font-family: var(--mono);
+  font-size: 11px;
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+p.description {
+  margin: 26px 0 0;
+  max-width: 60ch;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+/* ---- prev/next footer ---- */
+.pager {
+  display: flex;
+  border-top: var(--rule);
+  margin-top: 40px;
+}
+
+.pager a, .pager span {
+  flex: 1;
+  padding: 16px var(--pad);
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+.pager a { color: var(--ink); }
+.pager a:hover { background: var(--paper-2); }
+.pager .next { justify-content: flex-end; text-align: right; border-left: var(--hair); }
+.pager span { color: var(--dim); }
+
+@media (max-width: 640px) {
+  .pager .next { text-align: right; }
+  .tile img { height: 200px; }
+}
