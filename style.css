@@ -153,7 +153,11 @@ a:focus-visible, button:focus-visible {
 .grid-foot p:last-child { margin-bottom: 0; }
 
 /* ---- the work page ---- */
-main.work { max-width: 1180px; margin: 0 auto; padding-bottom: 60px; }
+/* No max-width/centering here: the frame below is full-bleed, and text
+   sections carry their own var(--pad) inset, so everything lines up flush
+   against the same edges instead of the text floating in a centered column
+   under a full-width image. */
+main.work { padding-bottom: 60px; }
 
 /* The about/404 pages reuse .work-body but have no .frame above them, so
    they need their own top air instead of the frame's border providing it. */
