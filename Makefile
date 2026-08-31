@@ -66,10 +66,11 @@ sync-sources:
 # the first real visitor never pays a cold multi-second AVIF encode — that
 # cost lands here instead. An already-warm URL is just a cache-hit fetch
 # (fast); it's the whole ~1300-combo catalog on an empty cache that takes
-# minutes. Not chained into deploy-imgproxy — run it yourself:
+# minutes. deploy-imgproxy fires this automatically in the background (see
+# below) after every restart; run it directly yourself if you want to:
 #   make warm-cache            # foreground, watch it work
 #   make warm-cache &          # background, keep using this shell
-#   nohup make warm-cache > warm.log 2>&1 &   # detached, survives closing the terminal
+#   nohup make warm-cache > warm-cache.log 2>&1 &   # detached, survives closing the terminal
 warm-cache:
 	$(LOAD_DOTENV) IMGPROXY_ORIGIN=$(IMGPROXY_ORIGIN) bun run warm.js
 
@@ -101,7 +102,8 @@ deploy-imgproxy: sync-sources
 			-v /root/Caddyfile:/etc/caddy/Caddyfile:ro \
 			-v caddy_data:/data \
 			caddy:2"
-	@echo "imgproxy restarted — run 'make warm-cache' (foreground or backgrounded) if the cache needs warming."
+	nohup $(MAKE) warm-cache > warm-cache.log 2>&1 & disown
+	@echo "imgproxy restarted — cache warm running in the background (tail -f warm-cache.log to watch it)."
 
 clean:
 	rm -rf dist
