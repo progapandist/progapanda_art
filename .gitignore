@@ -45,3 +45,6 @@
 # Kamal secret files
 /.kamal/secrets*
 /_scratchpad
+
+# Mac
+.DS_Store
