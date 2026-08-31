@@ -4,10 +4,15 @@ DROPLET_IP := 165.232.72.204
 IMGPROXY_ENV_FILE := imgproxy.env
 SOURCES_DIR := /Users/progapandist/progapanda_art_sources
 LOCAL_IMGPROXY := http://localhost:8080
-# Not the droplet directly — a Workers reverse proxy in front of it, giving
-# imgproxy Cloudflare's edge cache even though progapanda.org's DNS isn't on
-# Cloudflare (see cdn-worker/). Deploy that worker first if this ever moves.
-PROD_IMGPROXY := https://progapanda-art-imgproxy-cdn.andrey-956.workers.dev
+# The public URL is same-origin (functions/i/[[path]].js proxies+caches to
+# the droplet) — not the droplet directly, and not a separate *.workers.dev
+# domain either: a shared third-party-looking CDN domain is exactly the kind
+# of thing Safari's tracking/fingerprinting protection reacts to. IMGPROXY_ORIGIN
+# is where the build itself fetches placeholder bytes from — always the real
+# origin, since the /i/ proxy doesn't exist to fetch from until this deploy
+# finishes.
+PROD_IMGPROXY := https://art.progapanda.org/i
+IMGPROXY_ORIGIN := https://imgproxy.progapanda.org
 LOAD_DOTENV := set -a; [ -f .env ] && . ./.env; set +a;
 export SOURCES_DIR
 
@@ -40,7 +45,7 @@ dist:
 # ---- deploy: always against the PRODUCTION imgproxy ------------------------
 
 deploy-frontend: test
-	$(LOAD_DOTENV) IMGPROXY_ENDPOINT=$(PROD_IMGPROXY) bun run build.js
+	$(LOAD_DOTENV) IMGPROXY_ENDPOINT=$(PROD_IMGPROXY) IMGPROXY_ORIGIN=$(IMGPROXY_ORIGIN) bun run build.js
 	wrangler pages deploy dist --project-name $(PROJECT)
 
 deploy: deploy-imgproxy deploy-frontend

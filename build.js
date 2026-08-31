@@ -13,6 +13,11 @@ const SITE = process.env.SITE || "https://art.progapanda.org";
 // up silently would mean shipping localhost URLs or previewing 404s. The
 // Makefile sets this explicitly for every target — see dev/dist/deploy.
 const ENDPOINT = process.env.IMGPROXY_ENDPOINT;
+// Placeholder bytes are fetched by this machine at build time, never by a
+// visitor's browser, so they can always go straight to the real imgproxy
+// origin — bypassing the same-origin /i/ proxy production URLs use, which
+// doesn't exist to fetch from until *this* deploy finishes anyway.
+const ORIGIN = process.env.IMGPROXY_ORIGIN || ENDPOINT;
 const SOURCES_DIR = process.env.SOURCES_DIR || "/Users/progapandist/progapanda_art_sources";
 const CONTENT_PATH = "content.md";
 const KEY = process.env.IMGPROXY_KEY;
@@ -60,7 +65,7 @@ async function loadPlaceholders(works) {
     if (!placeholderCache.has(w.slug)) {
       placeholderCache.set(
         w.slug,
-        await placeholder({ endpoint: ENDPOINT, key: KEY, salt: SALT, slug: w.slug }).catch(() => null),
+        await placeholder({ endpoint: ORIGIN, key: KEY, salt: SALT, slug: w.slug }).catch(() => null),
       );
     }
     placeholders.set(w.slug, placeholderCache.get(w.slug));

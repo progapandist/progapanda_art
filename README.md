@@ -39,9 +39,11 @@ imgproxy signs every URL at build time (`IMGPROXY_KEY`/`IMGPROXY_SALT` in
 `.env`, gitignored) — the salt never ships to the browser, only finished
 signed URLs do.
 
-Images don't hit the droplet directly in production: `cdn-worker/` is a tiny
-Cloudflare Worker reverse proxy in front of `imgproxy.progapanda.org`, giving
-it Cloudflare's edge cache even though `progapanda.org`'s DNS isn't on
-Cloudflare. Redeploy it with `cd cdn-worker && wrangler deploy` if it ever
-changes; the frontend build points at its URL (`PROD_IMGPROXY` in the
-Makefile), not at the droplet.
+Images don't hit the droplet directly in production: `functions/i/[[path]].js`
+is a Cloudflare Pages Function that reverse-proxies + edge-caches
+`imgproxy.progapanda.org`, deployed automatically alongside the static site
+(same `wrangler pages deploy`, no separate step). It's same-origin
+(`art.progapanda.org/i/...`) rather than a separate `*.workers.dev` domain —
+a shared, third-party-looking CDN domain is exactly what Safari's
+tracking/fingerprinting protection reacts to; same-origin sidesteps that
+entirely and lets the CSP stay a plain `img-src 'self'`.
