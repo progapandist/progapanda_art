@@ -16,7 +16,7 @@ IMGPROXY_ORIGIN := https://imgproxy.progapanda.org
 LOAD_DOTENV := set -a; [ -f .env ] && . ./.env; set +a;
 export SOURCES_DIR
 
-.PHONY: run-imgproxy stop-imgproxy dev test dist deploy deploy-frontend deploy-imgproxy sync-sources clean
+.PHONY: run-imgproxy stop-imgproxy dev test dist deploy deploy-frontend deploy-imgproxy sync-sources warm-cache clean
 
 # ---- local dev: always against the LOCAL imgproxy container ---------------
 
@@ -53,11 +53,25 @@ deploy: deploy-imgproxy deploy-frontend
 # Mirrors $(SOURCES_DIR) onto the droplet's /data/art_sources — --delete so a
 # file removed locally (the same "editing the folder" workflow as content.md's
 # reconciliation) actually disappears from production too, not just from the
-# local build. --chmod=F644 overrides whatever local permissions a file has
-# (a couple of the source files are owner-only on disk) — imgproxy's
-# container process needs to read every file here regardless.
+# local build. The chmod afterward (not an rsync --chmod flag — macOS ships
+# openrsync, which doesn't support the GNU F644 syntax) makes every file
+# world-readable regardless of local permissions (a couple of the source
+# files are owner-only on disk) — imgproxy's container process needs to read
+# every file here regardless.
 sync-sources:
-	rsync -av --delete --chmod=F644 $(SOURCES_DIR)/ root@$(DROPLET_IP):/data/art_sources/
+	rsync -av --delete $(SOURCES_DIR)/ root@$(DROPLET_IP):/data/art_sources/
+	doctl compute ssh $(DROPLET) --ssh-command "chmod a+r /data/art_sources/*"
+
+# Pre-warms imgproxy's origin cache with every URL the site generates, so
+# the first real visitor never pays a cold multi-second AVIF encode — that
+# cost lands here instead. An already-warm URL is just a cache-hit fetch
+# (fast); it's the whole ~1300-combo catalog on an empty cache that takes
+# minutes. Not chained into deploy-imgproxy — run it yourself:
+#   make warm-cache            # foreground, watch it work
+#   make warm-cache &          # background, keep using this shell
+#   nohup make warm-cache > warm.log 2>&1 &   # detached, survives closing the terminal
+warm-cache:
+	$(LOAD_DOTENV) IMGPROXY_ORIGIN=$(IMGPROXY_ORIGIN) bun run warm.js
 
 # imgproxy lives on the droplet, run directly via doctl/docker — not Kamal.
 # First run only: tear down the leftover Kamal-managed containers (traefik,
@@ -87,6 +101,7 @@ deploy-imgproxy: sync-sources
 			-v /root/Caddyfile:/etc/caddy/Caddyfile:ro \
 			-v caddy_data:/data \
 			caddy:2"
+	@echo "imgproxy restarted — run 'make warm-cache' (foreground or backgrounded) if the cache needs warming."
 
 clean:
 	rm -rf dist

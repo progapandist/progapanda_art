@@ -69,7 +69,9 @@ header {
 
 h1.wordmark {
   margin: 0;
-  font-size: 20px;
+  /* "Andy Barnow / Progapanda" is a longer lockup than a bare name — scales
+     down on narrow viewports so it doesn't crowd the nav links. */
+  font-size: clamp(15px, 4.2vw, 20px);
   font-weight: 700;
   letter-spacing: 0.01em;
   text-transform: lowercase;
@@ -286,5 +288,6 @@ p.description {
 
 @media (max-width: 640px) {
   .pager .next { text-align: right; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
   .tile img { height: 200px; }
 }

@@ -24,6 +24,9 @@ const KEY = process.env.IMGPROXY_KEY;
 const SALT = process.env.IMGPROXY_SALT;
 const about = loadAbout("about.md");
 const ARTIST = about.data.artist || "Andy Barnow";
+// The header brand lockup — can read differently from ARTIST, which is
+// still what page titles, OG tags and the artist page heading use.
+const WORDMARK = about.data.wordmark || ARTIST;
 const dist = "dist/";
 
 if (!ENDPOINT) throw new Error("IMGPROXY_ENDPOINT must be set — see Makefile (dev/dist target local, deploy target production).");
@@ -104,7 +107,7 @@ ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitte
 </head>
 <body>
 <header>
-  <h1 class="wordmark"><a href="/">${escape(ARTIST)}</a></h1>
+  <h1 class="wordmark"><a href="/">${escape(WORDMARK)}</a></h1>
   <nav class="header-nav">${links}</nav>
 </header>
 ${body}
