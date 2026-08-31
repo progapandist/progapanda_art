@@ -49,6 +49,11 @@ deploy-frontend: test
 	wrangler pages deploy dist --project-name $(PROJECT)
 
 deploy: deploy-imgproxy deploy-frontend
+	@echo ""
+	@echo "deployed. imgproxy has no result cache (see warm-cache below), so a"
+	@echo "new or changed image is live immediately but slow-ish (real encode) for"
+	@echo "whoever hits it first. Optional: make warm-cache (backgroundable, several"
+	@echo "minutes) to pre-warm Cloudflare's edge cache instead of leaving that to visitors."
 
 # Mirrors $(SOURCES_DIR) onto the droplet's /data/art_sources — --delete so a
 # file removed locally (the same "editing the folder" workflow as content.md's
