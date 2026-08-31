@@ -23,12 +23,18 @@ export function imgproxyUrl({ endpoint, key, salt, slug, width, format = "avif",
   return `${endpoint}/${sign(path, key, salt)}${path}`;
 }
 
-// A tiny, heavily blurred, low-quality fetch — small enough to embed as a
-// base64 data URI directly in the page, so something paints in the frame
-// before the real (often multi-megabyte source, AVIF-encoded-on-first-
-// request) image arrives.
+// A tiny, blurred, low-quality fetch — small enough to embed as a base64
+// data URI directly in the page, so something paints in the frame before
+// the real (often multi-megabyte source, AVIF-encoded-on-first-request)
+// image arrives. Less blur than a "proper" LQIP and a touch more real
+// detail — a very light-toned or white-wall work blurred hard enough looks
+// nearly identical to the empty background it's covering, which reads as
+// "nothing is happening" even though it technically rendered. (Saturation
+// boosting would help further, but imgproxy's `sa:` option is Pro-only —
+// not available on the open-source build this runs; style.css's
+// .placeholder filter does that instead.)
 export async function placeholder({ endpoint, key, salt, slug }) {
-  const url = imgproxyUrl({ endpoint, key, salt, slug, width: 24, format: "jpg", blur: 20, quality: 35 });
+  const url = imgproxyUrl({ endpoint, key, salt, slug, width: 40, format: "jpg", blur: 10, quality: 40 });
   const res = await fetch(url);
   if (!res.ok) return null;
   const bytes = Buffer.from(await res.arrayBuffer());

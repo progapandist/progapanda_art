@@ -171,25 +171,40 @@ main.work { padding-bottom: 60px; }
    any image request starts, so there's nothing for the image arriving to
    shift. object-fit does the rest regardless of the source's aspect ratio. */
 .frame {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   background-color: var(--paper-2);
-  /* A blurred placeholder (inline style, per-work) covers this — it stays
-     visible in the letterboxed margins around the contained image even
-     after it loads, the same idea the old gallery's blurred backdrop had. */
-  background-size: cover;
-  background-position: center;
   border-bottom: var(--rule);
   height: min(82vh, 900px);
 }
 
-.frame picture, .frame img {
+/* The placeholder and the real picture occupy the identical box — same
+   inset, same object-fit — so loading is "this exact image, blurred, then
+   sharp," not a differently-cropped backdrop that jumps once the real
+   image (contain-fit) pops in on top of it. picture stacks above the
+   placeholder in DOM order; the real <img> naturally paints over it once
+   loaded, no JS required. */
+.frame .placeholder,
+.frame picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.frame picture { z-index: 1; }
+
+.frame .placeholder,
+.frame picture img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
+
+/* imgproxy's saturation option is Pro-only, so the boost happens here
+   instead — a very light/white-wall work blurred hard enough is otherwise
+   almost indistinguishable from the empty frame it's covering. */
+.frame .placeholder { filter: saturate(1.6) contrast(1.08); }
 
 .work-body { padding: clamp(24px, 4vw, 52px) var(--pad) 0; }
 
@@ -257,7 +272,11 @@ ul.chips li {
 
 p.description {
   margin: 26px 0 0;
-  max-width: 60ch;
+  /* A hard 60ch read as an arbitrary sliver of text on a very wide monitor,
+     with nothing else on the page explaining why it stopped there. Scaling
+     with viewport width (capped at 75ch so a line never gets too long to
+     read comfortably) keeps it proportional instead of fixed. */
+  max-width: min(75ch, 65vw);
   font-size: 17px;
   line-height: 1.55;
 }

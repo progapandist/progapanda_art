@@ -82,7 +82,7 @@ async function loadPlaceholders(works) {
 // ---- shared page shell -----------------------------------------------------
 // "home" drops the "all works" link (it would just point at itself); every
 // other page carries both.
-function layout({ title, description, canonical, ogImage, body, active }) {
+function layout({ title, description, canonical, ogImage, body, active, preload }) {
   const links = [
     `<a class="contrib" href="/artist/">artist</a>`,
     active !== "home" && `<a class="contrib" href="/">all works</a>`,
@@ -97,6 +97,7 @@ function layout({ title, description, canonical, ogImage, body, active }) {
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="${escape(description)}">
+${preload || ""}
 <link rel="canonical" href="${canonical}">
 <title>${escape(title)}</title>
 <meta property="og:type" content="website">
@@ -208,9 +209,14 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     ${next ? `<a class="next" rel="next" href="/works/${encodeURIComponent(urlSlug(next.slug))}/">${escape(next.title)} &rarr;</a>` : `<span></span>`}
   </nav>`;
 
-  const frameStyle = ph ? ` style="background-image:url('${ph}')"` : "";
+  // Same object-fit: contain box as the real image, layered directly
+  // underneath it — not a cover-cropped background peeking around the
+  // letterbox edges. The real <img> naturally paints over it once loaded;
+  // no JS needed to hide it.
+  const placeholderImg = ph ? `<img class="placeholder" src="${ph}" alt="" aria-hidden="true">` : "";
   const body = `<main class="work">
-  <div class="frame"${frameStyle}>
+  <div class="frame">
+    ${placeholderImg}
     <picture>
       <source type="image/avif" srcset="${srcset(work, "avif")}" sizes="100vw">
       <source type="image/webp" srcset="${srcset(work, "webp")}" sizes="100vw">
@@ -231,6 +237,11 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
 </main>
 <script type="module" src="${STAMPED.nav}"></script>`;
 
+  // The hero image is the LCP element on this page — a preload hint lets the
+  // browser start fetching it while still parsing <head>, instead of only
+  // discovering the URL once it reaches the <picture> in the body.
+  const preload = `<link rel="preload" as="image" imagesrcset="${srcset(work, "avif")}" imagesizes="100vw" fetchpriority="high" type="image/avif">`;
+
   return layout({
     title: `${escape(work.title)} — ${ARTIST}`,
     description: work.description || `${work.title}, ${[work.location, work.year].filter(Boolean).join(", ")}.`,
@@ -238,6 +249,7 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     ogImage: img(work, 1200, "jpg"),
     body,
     active: "work",
+    preload,
   });
 }
 

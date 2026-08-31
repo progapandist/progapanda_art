@@ -5,7 +5,7 @@
 // (new works, or a config change like IMGPROXY_JPEG_PROGRESSIVE that makes
 // every previously-cached result stale) — not on every routine deploy.
 import { loadWorks } from "./content.js";
-import { imgproxyUrl, BREAKPOINTS, FORMATS } from "./imgproxy.js";
+import { imgproxyUrl, BREAKPOINTS } from "./imgproxy.js";
 
 const ORIGIN = process.env.IMGPROXY_ORIGIN;
 const SOURCES_DIR = process.env.SOURCES_DIR || "/Users/progapandist/progapanda_art_sources";
@@ -17,12 +17,20 @@ if (!KEY || !SALT) throw new Error("IMGPROXY_KEY and IMGPROXY_SALT must be set (
 
 const works = loadWorks(SOURCES_DIR, "content.md");
 
-// Every combination build.js actually embeds in the HTML: the full
-// breakpoint/format grid (picture srcsets + format-download links), plus the
-// one OG width that isn't otherwise in the breakpoint list.
+// Every combination build.js actually embeds in the HTML — not the full
+// cross-product of BREAKPOINTS × FORMATS. The picture srcset only ever asks
+// for avif/webp/jpg (at every breakpoint); png only appears once, in the
+// format-download row, always at the largest width (3200, already one of
+// the breakpoints). Warming png at the other six breakpoints was pure
+// waste — nobody's browser ever requests those URLs — and PNG is by far
+// the slowest, most memory-hungry format to encode at a large size, so
+// those wasted requests were also the ones most likely to blow past
+// imgproxy's write timeout under concurrent load.
+const PICTURE_FORMATS = ["avif", "webp", "jpg"];
 const combos = [];
 for (const w of works) {
-  for (const width of BREAKPOINTS) for (const format of FORMATS) combos.push({ slug: w.slug, width, format });
+  for (const width of BREAKPOINTS) for (const format of PICTURE_FORMATS) combos.push({ slug: w.slug, width, format });
+  combos.push({ slug: w.slug, width: 3200, format: "png" });
   combos.push({ slug: w.slug, width: 1200, format: "jpg" });
 }
 
@@ -42,7 +50,10 @@ let done = 0;
 let misses = 0;
 const started = Date.now();
 
-await mapLimit(combos, 6, async (c) => {
+// The droplet has 2 vCPUs — 6-way concurrency meant 3x oversubscription on
+// CPU-bound encode work, which made each request slower under contention,
+// not faster in aggregate.
+await mapLimit(combos, 2, async (c) => {
   const url = imgproxyUrl({ endpoint: ORIGIN, key: KEY, salt: SALT, ...c });
   // Without a timeout, one genuinely hung connection parks a worker slot
   // forever — with 6 workers, six unlucky hangs stalls the whole run
