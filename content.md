@@ -92,10 +92,6 @@ A white figure emerging from darkness like a half-remembered statue, held betwee
 year: 2026
 location: Berlin
 
-## marina.jpeg
-year: 2026
-location: Berlin
-
 ## maxis_world.jpeg
 year: 2026
 location: Berlin
