@@ -12,37 +12,6 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight" && next) next.click();
 });
 
-// A horizontal swipe does the same thing: short, fast, more sideways than
-// vertical, so a scroll or a slow drag never gets mistaken for one.
-let touchStartX = 0;
-let touchStartY = 0;
-let touchStartTime = 0;
-
-document.addEventListener(
-  "touchstart",
-  (e) => {
-    const t = e.touches[0];
-    touchStartX = t.clientX;
-    touchStartY = t.clientY;
-    touchStartTime = Date.now();
-  },
-  { passive: true },
-);
-
-document.addEventListener(
-  "touchend",
-  (e) => {
-    const t = e.changedTouches[0];
-    const dx = t.clientX - touchStartX;
-    const dy = t.clientY - touchStartY;
-    const dt = Date.now() - touchStartTime;
-    if (Math.abs(dx) < 50 || dt > 300 || Math.abs(dx) < Math.abs(dy)) return;
-    if (dx < 0 && next) next.click();
-    else if (dx > 0 && prev) prev.click();
-  },
-  { passive: true },
-);
-
 // ---- theme toggle -----------------------------------------------------
 
 const toggle = document.querySelector(".theme-toggle");
@@ -79,6 +48,20 @@ if (toggle) {
 
 const lightbox = document.querySelector(".lightbox");
 const firstFormatLink = document.querySelector(".format-link");
+
+// The hero <picture> already made the real avif-vs-webp-vs-jpg call for
+// this browser (via its <source type="image/..."> negotiation) — reuse
+// that instead of re-detecting: whatever format the visible hero image
+// resolved to is the one the lightbox opens at, so avif is the default
+// everywhere it's supported and a browser that can't decode it silently
+// gets webp/jpg instead, no probing required.
+function pickFullResHref() {
+  const heroImg = frame && frame.querySelector("picture img");
+  const currentSrc = (heroImg && (heroImg.currentSrc || heroImg.src)) || "";
+  const format = (currentSrc.match(/@(avif|webp|jpg|png)$/) || [])[1];
+  const link = format && document.querySelector(`.format-link[href$="@${format}"]`);
+  return (link || firstFormatLink)?.href;
+}
 
 if (lightbox) {
   const backdrop = lightbox.querySelector(".lightbox-backdrop");
@@ -164,24 +147,27 @@ if (lightbox) {
 }
 
 // Clicking the hero image itself: on a hover-capable pointer (desktop/
-// trackpad), it opens the same product-style lightbox as a format link,
-// using the first (AVIF) full-resolution link — a mouse already has prev/
-// next via the arrow keys and the footer links, so the image itself is
-// free to mean "zoom" instead of "navigate". On touch, hover doesn't
-// exist, so the image keeps the old tap-zone behavior instead: left ~20%
-// goes back, the rest goes forward, same zones the old gallery view used.
+// trackpad), it opens the same product-style lightbox as a format link — a
+// mouse already has prev/next via the arrow keys and the footer links, so
+// the image itself is free to mean "zoom" instead of "navigate". On touch,
+// hover doesn't exist and there's no swipe gesture any more either, so the
+// image itself carries all the navigation: left ~20% back, right ~20%
+// forward (same edge zones the old gallery view used), the middle opens
+// the lightbox exactly like a desktop click does.
 if (frame) {
   frame.addEventListener("click", (e) => {
     if (matchMedia("(hover: hover)").matches) {
-      if (lightbox && firstFormatLink) openLightbox(firstFormatLink.href);
+      if (lightbox) openLightbox(pickFullResHref());
       return;
     }
     const rect = frame.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x < rect.width * 0.2) {
+    const ratio = (e.clientX - rect.left) / rect.width;
+    if (ratio < 0.2) {
       if (prev) prev.click();
-    } else if (next) {
-      next.click();
+    } else if (ratio > 0.8) {
+      if (next) next.click();
+    } else if (lightbox) {
+      openLightbox(pickFullResHref());
     }
   });
 }
