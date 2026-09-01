@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed } from "./content.js";
+import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed, renderDescription } from "./content.js";
 import { imgproxyUrl } from "./imgproxy.js";
 
 describe("parseFrontmatter", () => {
@@ -186,6 +186,20 @@ describe("loadWorks", () => {
       rmSync(sourcesDir, { recursive: true, force: true });
       rmSync(rootDir, { recursive: true, force: true });
     }
+  });
+});
+
+describe("renderDescription", () => {
+  test("renders a block of \"- \" lines as a list, and everything else as paragraphs", () => {
+    const html = renderDescription("Intro line.\n\n- first\n- second\n\nClosing <b>paragraph</b> & more.");
+    expect(html).toBe(
+      "<p>Intro line.</p>" + "<ul><li>first</li><li>second</li></ul>" + "<p>Closing &lt;b&gt;paragraph&lt;/b&gt; &amp; more.</p>",
+    );
+  });
+
+  test("a block only counts as a list if every line starts with \"- \"", () => {
+    const html = renderDescription("- first\nsecond line, no dash");
+    expect(html).toBe("<p>- first<br>second line, no dash</p>");
   });
 });
 

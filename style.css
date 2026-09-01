@@ -330,7 +330,7 @@ main.work { padding-bottom: 60px; }
   .nav-hint.active { opacity: 1; }
 }
 
-.work-body { padding: clamp(24px, 4vw, 52px) var(--pad) 0; }
+.work-body { padding: clamp(16px, 2vw, 28px) var(--pad) 0; }
 
 h2.title {
   margin: 0;
@@ -342,15 +342,18 @@ h2.title {
 
 .forms {
   display: grid;
-  /* The value column caps itself so a long one doesn't run the page wide;
-     it doesn't need the whole grid narrowed, which previously made the
-     border-top above stop dead in the middle of a wide viewport instead of
-     spanning the same width as the frame and pager. */
-  grid-template-columns: max-content minmax(0, 46rem);
+  /* fit-content(46rem), not minmax(0, 46rem): a minmax() track always
+     contributes its full max bound to the grid's own natural width, even
+     when the actual value text is much shorter — that's exactly what was
+     leaving a wide empty gap between .forms and .side-col next to it now
+     that they sit side by side. fit-content sizes to the content itself
+     and only caps it at 46rem if a value actually runs that long. */
+  grid-template-columns: max-content fit-content(46rem);
   gap: 8px 28px;
-  margin: 26px 0 0;
-  padding: 22px 0 0;
-  border-top: var(--rule);
+  /* <dl> carries a browser-default top margin (~1em) that .side-col, a
+     plain <div>, doesn't — left uncleared, that alone was enough to throw
+     the two columns out of alignment at the top. */
+  margin: 0;
 }
 
 .forms dt { padding-top: 3px; }
@@ -367,7 +370,7 @@ ul.chips {
   flex-wrap: wrap;
   gap: 8px;
   list-style: none;
-  margin: 22px 0 0;
+  margin: 0;
   padding: 0;
 }
 
@@ -380,8 +383,39 @@ ul.chips li {
   color: var(--dim);
 }
 
-.chip-block { border-top: var(--hair); padding-top: 18px; margin-top: 18px; }
-.chip-block:first-of-type { border-top: none; margin-top: 0; }
+/* Location/year/dimensions/availability on the left, medium + full
+   resolution as their own column right next to it — both are .forms
+   dt/dd rows (.side-col reuses .forms wholesale: same label:value layout,
+   same alignment, for free) rather than a separately-designed block, so a
+   work with only one row on the right (no medium) still reads as label
+   next to content, matching the left column, not label above content.
+   Description (if any) runs full-width below this row, since it doesn't
+   pair one-to-one with either column. Flex, not grid: grid's default
+   track sizing stretched .forms to fill all the leftover horizontal space
+   (pushing .side-col to the far edge) and stretched its height to match
+   .side-col's, which blew up the gap between its own rows too. Flex just
+   packs both to natural content size with a gap between them. */
+.work-columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px 48px;
+  margin-top: 22px;
+}
+
+/* auto basis = size to its own content (short label:value rows), not a
+   fixed width that would leave a gap before .side-col; max-width is just
+   a safety cap against an unusually long value. */
+.work-columns .forms { flex: 0 1 auto; max-width: 560px; }
+/* A fixed flex-basis here (260px) was too narrow for "full resolution"'s
+   label plus its 4 format chips on one line — forced them to wrap even on
+   a wide viewport. auto sizes to whatever the widest row actually needs,
+   same treatment as .forms; the container only wraps once the whole
+   .work-columns row genuinely doesn't fit (see the 760px breakpoint). */
+.work-columns .side-col { flex: 0 1 auto; max-width: 480px; }
+
+@media (max-width: 760px) {
+  .work-columns { flex-direction: column; gap: 26px; }
+}
 
 /* ---- lightbox: full-resolution viewer, opened from the format links ---- */
 .lightbox {
@@ -479,7 +513,7 @@ ul.chips li {
   color: var(--paper);
 }
 
-p.description {
+.description {
   margin: 26px 0 0;
   /* A hard 60ch read as an arbitrary sliver of text on a very wide monitor,
      with nothing else on the page explaining why it stopped there. Scaling
@@ -489,6 +523,11 @@ p.description {
   font-size: 17px;
   line-height: 1.55;
 }
+
+.description p, .description ul { margin: 0; }
+.description p + p, .description ul + p, .description p + ul, .description ul + ul { margin-top: 1em; }
+.description ul { padding-left: 1.2em; }
+.description li + li { margin-top: 0.3em; }
 
 /* ---- prev/next footer ---- */
 .pager {
@@ -511,7 +550,7 @@ p.description {
 
 .pager a { color: var(--ink); }
 .pager a:hover { background: var(--paper-2); }
-.pager .next { justify-content: flex-end; text-align: right; border-left: var(--hair); }
+.pager .next { justify-content: flex-end; text-align: right; }
 .pager span { color: var(--dim); }
 
 @media (max-width: 640px) {

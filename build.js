@@ -4,7 +4,7 @@
 // pages, content-hash the assets, done.
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from "node:fs";
-import { loadWorks, loadAbout, urlSlug } from "./content.js";
+import { loadWorks, loadAbout, urlSlug, escape, renderDescription } from "./content.js";
 import { imgproxyUrl, placeholder, BREAKPOINTS, FORMATS } from "./imgproxy.js";
 
 const SITE = process.env.SITE || "https://art.progapanda.org";
@@ -36,9 +36,6 @@ if (!ENDPOINT) throw new Error("IMGPROXY_ENDPOINT must be set — see Makefile (
 if (!KEY || !SALT) {
   throw new Error("IMGPROXY_KEY and IMGPROXY_SALT must be set (see .env) — signing needs both.");
 }
-
-const escape = (s) =>
-  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
 const img = (work, width, format) =>
   imgproxyUrl({ endpoint: ENDPOINT, key: KEY, salt: SALT, slug: work.slug, width, format });
@@ -206,13 +203,25 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     ? `<ul class="chips">${work.medium.map((m) => `<li>${escape(m)}</li>`).join("")}</ul>`
     : "";
 
-  const description = work.description ? `<p class="description">${escape(work.description)}</p>` : "";
+  const description = work.description ? `<div class="description">${renderDescription(work.description)}</div>` : "";
 
   // class="format-link": nav.js intercepts a plain click on these to open
   // the lightbox instead of navigating — href still points straight at the
   // real image, so a modified click (new tab, save-as, no-JS) behaves
   // exactly like a normal link regardless.
   const formats = `<ul class="chips">${FORMATS.map((f) => `<li><a class="format-link" href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul>`;
+
+  // Medium above full resolution, as a column of its own next to the
+  // location/year/dimensions/availability column — not stacked as more
+  // text underneath the form. Description (if any) runs full-width below
+  // this row, since it doesn't pair one-to-one with either column.
+  // Reuses .forms' own dt/dd row layout rather than a separate stacked
+  // label-then-content block — label next to its content, same as
+  // location/year/etc. in the left column, not label above content.
+  const sideCol = `<dl class="forms side-col">
+    ${medium ? `<dt>medium</dt><dd>${medium}</dd>` : ""}
+    <dt>full resolution</dt><dd>${formats}</dd>
+  </dl>`;
 
   const pager = `<nav class="pager">
     ${prev ? `<a rel="prev" href="/works/${encodeURIComponent(urlSlug(prev.slug))}/">&larr; ${escape(prev.title)}</a>` : `<span></span>`}
@@ -240,12 +249,10 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
   </div>
   <div class="work-body">
     <h2 class="title">${escape(work.title)}</h2>
-    ${forms}
-    <div class="chip-block">
-      <span class="labels">full resolution</span>
-      ${formats}
+    <div class="work-columns">
+      ${forms}
+      ${sideCol}
     </div>
-    ${medium ? `<div class="chip-block"><span class="labels">medium</span>${medium}</div>` : ""}
     ${description}
   </div>
   ${pager}

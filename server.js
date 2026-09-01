@@ -22,7 +22,10 @@ const server = Bun.serve({
   port: Number(process.env.PORT) || 3000,
   websocket: { open: (s) => sockets.add(s), close: (s) => sockets.delete(s), message() {} },
   async fetch(req, server) {
-    const path = new URL(req.url).pathname;
+    // pathname is percent-encoded as it came in off the wire (e.g. a space
+    // in a slug is "%20") — dist/ directories are named with the literal,
+    // decoded characters, so this has to match before hitting the filesystem.
+    const path = decodeURIComponent(new URL(req.url).pathname);
     if (path === "/live") return server.upgrade(req) ? undefined : new Response("expected websocket", { status: 400 });
 
     const file = await resolve(path);

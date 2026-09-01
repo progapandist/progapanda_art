@@ -11,6 +11,26 @@ function coerce(value) {
   return Number.isNaN(Number(value)) ? value : Number(value);
 }
 
+export const escape = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+// The only markdown a description body ever needs: paragraphs (separated
+// by a blank line) and a "- " bulleted list. A block renders as a <ul>
+// only if every one of its lines starts with "- "; anything else is a
+// plain paragraph with single newlines kept as <br> (a soft line break
+// inside one paragraph, not a new one).
+export const renderDescription = (text) =>
+  text
+    .split(/\n{2,}/)
+    .map((block) => {
+      const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
+      if (lines.length && lines.every((l) => l.startsWith("- "))) {
+        return `<ul>${lines.map((l) => `<li>${escape(l.slice(2))}</li>`).join("")}</ul>`;
+      }
+      return `<p>${escape(block.trim()).replace(/\n/g, "<br>")}</p>`;
+    })
+    .join("");
+
 // Frontmatter reader for a single "---" block — used for about.md, which is
 // site-wide copy, not a per-work section.
 export function parseFrontmatter(text) {

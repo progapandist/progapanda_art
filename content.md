@@ -3,7 +3,7 @@ year: 2026
 location: Berlin
 hash: h245cccfb1617948b
 
-## annointment_mounted_on_white_wall
+## annointment
 year: 2024
 location: Berlin
 hash: hc710ae8ea7e5838
@@ -136,9 +136,11 @@ year: 2026
 location: Berlin
 hash: h4c6e1b765859b
 
-## self_portrait_outside_depression.jpeg
+## self_portrait_out_of_depression.jpeg
 year: 2026
 location: Berlin
+medium: [paper, oil, oil pastel]
+availability: available
 hash: h8645344a48671f82
 
 ## skorost'.jpeg
@@ -181,20 +183,12 @@ location: Berlin
 year: 2026
 hash: h145b909467d5a91b
 
-## untitled.jpeg
-year: 2026
-location: Berlin
-hash: h9084090707f6a81a
-
-## untitled_on_the_easel.jpeg
+## untitled ii.jpeg
 year: 2026
 location: Berlin
 hash: hc481b5a23f6e12d9
 
-## bloom_print
-year: 2023
+## untitled.jpeg
+year: 2026
 location: Berlin
-medium: [print, Dibond]
-dimensions: [90, 60, 0.5]
-availability: for sale
-warning: source file missing — excluded from the site. Restore a file named "bloom_print", or delete this section.
+hash: h9084090707f6a81a
