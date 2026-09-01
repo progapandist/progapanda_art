@@ -177,6 +177,19 @@ export function shuffledBySeed(slugs) {
   return [...slugs].sort((a, b) => seededHash(SHUFFLE_SEED + a) - seededHash(SHUFFLE_SEED + b));
 }
 
+// `dimensions: [90, 60, 0.5]` is the usual case — numeric measurements,
+// joined and given a unit. It doesn't have to be a bracketed list at all
+// though: `dimensions: scalable on request` parses as a plain string (see
+// coerceValue above), printed exactly as written with no unit appended —
+// for a print or anything else without one fixed size.
+export function dimensionsText(dimensions) {
+  if (Array.isArray(dimensions)) {
+    if (!dimensions.length) return null;
+    return dimensions.filter((n) => n !== null && n !== undefined).join(" × ") + " cm";
+  }
+  return dimensions ? String(dimensions) : null;
+}
+
 function toWork(slug, section) {
   const data = section?.data || {};
   return {

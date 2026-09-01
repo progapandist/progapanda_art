@@ -4,7 +4,7 @@
 // pages, content-hash the assets, done.
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from "node:fs";
-import { loadWorks, loadAbout, urlSlug, escape, renderDescription } from "./content.js";
+import { loadWorks, loadAbout, urlSlug, escape, renderDescription, dimensionsText } from "./content.js";
 import { imgproxyUrl, placeholder, BREAKPOINTS, FORMATS } from "./imgproxy.js";
 
 const SITE = process.env.SITE || "https://art.progapanda.org";
@@ -179,13 +179,8 @@ function artistPage() {
 }
 
 // ---- a work page -------------------------------------------------------------
-function dimensionsText(work) {
-  if (!work.dimensions.length) return null;
-  return work.dimensions.filter((n) => n !== null && n !== undefined).join(" × ") + " cm";
-}
-
 function workPage(work, prev, next, ph) {
-  const dims = dimensionsText(work);
+  const dims = dimensionsText(work.dimensions);
   const rows = [
     work.location && ["location", escape(work.location)],
     work.year && ["year", escape(work.year)],

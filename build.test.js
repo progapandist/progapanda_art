@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed, renderDescription } from "./content.js";
+import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed, renderDescription, dimensionsText } from "./content.js";
 import { imgproxyUrl } from "./imgproxy.js";
 
 describe("parseFrontmatter", () => {
@@ -200,6 +200,21 @@ describe("renderDescription", () => {
   test("a block only counts as a list if every line starts with \"- \"", () => {
     const html = renderDescription("- first\nsecond line, no dash");
     expect(html).toBe("<p>- first<br>second line, no dash</p>");
+  });
+});
+
+describe("dimensionsText", () => {
+  test("joins a numeric array with a cm unit", () => {
+    expect(dimensionsText([90, 60, 0.5])).toBe("90 × 60 × 0.5 cm");
+  });
+
+  test("passes free text through unchanged, no unit appended", () => {
+    expect(dimensionsText("scalable on request")).toBe("scalable on request");
+  });
+
+  test("null for an empty array or no value", () => {
+    expect(dimensionsText([])).toBeNull();
+    expect(dimensionsText(undefined)).toBeNull();
   });
 });
 
