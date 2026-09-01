@@ -32,7 +32,7 @@ year: 2023
 location: Berlin
 medium: [LiDAR, processing, print, Dibond]
 dimensions: [90, 60, 0.5]
-availability: for sale
+availability: available
 hash: h127529ea265ebbf8
 
 ## capital m.png
