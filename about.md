@@ -1,6 +1,6 @@
 ---
 artist: Andy Barnow
-wordmark: Andy Barnow | Progapanda
+wordmark: Andy Barnow
 ---
 
 Born 1984, Berlin.

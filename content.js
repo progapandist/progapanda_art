@@ -162,7 +162,7 @@ function fileHash(path) {
 // Fisher-Yates pass over the array means adding or removing one work only
 // slots that one work in or out — it doesn't perturb every other work's
 // relative position the way a length-dependent shuffle algorithm would.
-const SHUFFLE_SEED = "progapanda-84";
+const SHUFFLE_SEED = "dolboeb";
 
 function seededHash(str) {
   let h = 2166136261; // FNV-1a
