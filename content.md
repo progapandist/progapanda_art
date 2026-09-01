@@ -6,8 +6,6 @@ location: Berlin
 year: 2024
 location: Berlin
 
-A portrait on a white wall is scraped and overpainted into a face that flickers between glamour, damage, and reinvention.
-
 ## beach_body.jpeg
 year: 2026
 location: Berlin
@@ -16,17 +14,12 @@ location: Berlin
 year: 2024
 location: Berlin
 
-A seated, weathered figure emerges from deep black, lit like a relic on the brink of disappearance.
-
 ## bloom
 year: 2023
 location: Berlin
 medium: [print, Dibond]
 dimensions: [90, 60, 0.5]
 availability: for sale
-price: 1000
-
-A domestic scene washed in lilac and blue where couch, books, and hanging artwork become an intimate altar of everyday life.
 
 ## bloom_print
 year: 2023
@@ -34,9 +27,6 @@ location: Berlin
 medium: [print, Dibond]
 dimensions: [90, 60, 0.5]
 availability: for sale
-price: 1000
-
-A monochrome floral mass unfolds like carved smoke, balancing softness and geological weight.
 
 ## capital m.png
 location: Berlin
@@ -66,8 +56,6 @@ location: Berlin
 year: 2024
 location: Berlin
 
-A domestic interior pulled through scan turbulence, where ordinary space buckles into memory and distortion.
-
 ## flat_08.png
 location: Berlin
 year: 2026
@@ -76,8 +64,6 @@ year: 2026
 year: 2024
 location: Berlin
 
-A headless street statue recast in warm pink-gold tones, where monumentality bends toward tenderness.
-
 ## ix.jpg
 year: 2026
 location: Berlin
@@ -85,8 +71,6 @@ location: Berlin
 ## jane_03
 year: 2024
 location: Berlin
-
-A white figure emerging from darkness like a half-remembered statue, held between grace and digital ruin.
 
 ## love_is_a_deer_from_hell.jpeg
 year: 2026
@@ -108,8 +92,6 @@ location: Berlin
 year: 2024
 location: Berlin
 
-An abstract composition of violet vectors and yellow light, sketching motion as layered emotional geometry.
-
 ## portrait_of_a_couple.jpeg
 year: 2026
 location: Berlin
@@ -122,13 +104,9 @@ location: Berlin
 year: 2024
 location: Berlin
 
-A veiled portrait behind horizontal waves, where visibility turns rhythmic and identity becomes frequency.
-
 ## redhead_one
 year: 2023
 location: Berlin
-
-A soft-focus red-haired apparition, painted as memory rather than likeness.
 
 ## self_portrait.jpeg
 year: 2026
@@ -150,31 +128,25 @@ location: Berlin
 year: 2024
 location: Berlin
 
-A diptych of clouded blue and stitched skin, linking atmospheric softness with the sharp index of healing.
-
 ## sunflower_sutra
 year: 2024
 location: Berlin
-
-Two white reliefs on black ground, alternating between volcanic mass and draped membrane.
 
 ## temptation
 year: 2024
 location: Berlin
 
-A baroque figure fragmented by scan interference, where sacred iconography flickers through digital noise.
-
 ## the_drip
 year: 2023
 location: Berlin
-
-A spectral white drape stretched over void, like a ghost-architecture caught mid-collapse.
 
 ## truecolor_01
 year: 2024
 location: Berlin
 
-A portrait remixed with mirrored shards, preserving beauty while breaking the surface into new planes.
+## twins.png
+location: Berlin
+year: 2026
 
 ## untitled.jpeg
 year: 2026
