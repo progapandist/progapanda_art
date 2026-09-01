@@ -1,7 +1,7 @@
 ## all_those_good_people_down_the_jubilee_street.jpeg
 year: 2026
 location: Berlin
-medium: [oil, charcoal, linen]
+medium: [oil, charcoal, acrylic, linen]
 availability: available
 hash: h245cccfb1617948b
 
@@ -82,7 +82,7 @@ medium: [LiDAR, digital, for printing on Dibond]
 availability: available
 hash: h274da906e4b85efe
 
-## golden_pinkboy.jpg
+## golden.jpg
 year: 2024
 location: Berlin
 dimensions: scales on demand
@@ -157,7 +157,7 @@ hash: h647355d010987305
 ## red_lipstick.png
 year: 2024
 location: Berlin
-medium: [print, Dibond]
+medium: [print, oil, Dibond]
 availability: available
 hash: h677bc5d22410d989
 
@@ -168,12 +168,10 @@ medium: [print, Dibond]
 availability: sold
 hash: hc20648f01192f2e7
 
-## self_portrait.jpeg
-year: 2026
+## self_portrait.jpg
 location: Berlin
-medium: [oil, charcoal, paper]
-availability: available
-hash: h4c6e1b765859b
+year: 2026
+hash: h6a6a02cec4493076
 
 ## self_portrait_out_of_depression.jpeg
 year: 2026
@@ -212,7 +210,7 @@ medium: [LiDAR, digital, for printing on Dibond]
 availability: available
 hash: h1ef6e449d04e144b
 
-## temptation
+## temptation.jpg
 year: 2024
 location: Berlin
 dimensions: scales on demand
@@ -257,3 +255,11 @@ location: Berlin
 medium: [oil, ink, nails, metal wire, Dibond]
 availability: available
 hash: h9084090707f6a81a
+
+## self_portrait.jpeg
+year: 2026
+location: Berlin
+medium: [oil, charcoal, paper]
+availability: available
+hash: h4c6e1b765859b
+warning: source file missing — excluded from the site. Restore a file named "self_portrait.jpeg", or delete this section.
