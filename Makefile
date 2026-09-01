@@ -16,7 +16,7 @@ IMGPROXY_ORIGIN := https://imgproxy.progapanda.org
 LOAD_DOTENV := set -a; [ -f .env ] && . ./.env; set +a;
 export SOURCES_DIR
 
-.PHONY: run-imgproxy stop-imgproxy dev test dist deploy deploy-frontend deploy-imgproxy sync-sources warm-cache clean
+.PHONY: run-imgproxy stop-imgproxy dev test dist deploy deploy-commit deploy-frontend deploy-imgproxy sync-sources warm-cache clean
 
 # ---- local dev: always against the LOCAL imgproxy container ---------------
 
@@ -54,6 +54,16 @@ deploy: deploy-imgproxy deploy-frontend
 	@echo "new or changed image is live immediately but slow-ish (real encode) for"
 	@echo "whoever hits it first. Optional: make warm-cache (backgroundable, several"
 	@echo "minutes) to pre-warm Cloudflare's edge cache instead of leaving that to visitors."
+
+# Same as `deploy`, plus commits and pushes whatever changed locally — most
+# often content.md, which the build step itself rewrites (a hash backfilled,
+# a rename detected, a missing file flagged). Message is just a timestamp:
+# this is a "keep the repo in sync with what's live" commit, not one that
+# needs a human-written description.
+deploy-commit: deploy
+	git add -A
+	git diff --cached --quiet || git commit -m "deploy: $$(date -u +"%Y-%m-%d %H:%M UTC")"
+	git push
 
 # Mirrors $(SOURCES_DIR) onto the droplet's /data/art_sources — --delete so a
 # file removed locally (the same "editing the folder" workflow as content.md's
