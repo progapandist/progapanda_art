@@ -277,12 +277,14 @@ main.work { padding-bottom: 60px; }
    almost indistinguishable from the empty frame it's covering. */
 .frame .placeholder { filter: saturate(1.6) contrast(1.08); }
 
-/* One-time hint, played once the hero image finishes loading (see nav.js):
-   a quick flash over each clickable zone of the frame, right then left
-   then center, to suggest there's something to tap without saying so in
-   words. Purely decorative — inset 0/pointer-events none so it never
-   competes with the real click handling in nav.js, which computes these
-   same zone boundaries (20%/60%/20%) itself. */
+/* One-time hint, played once the hero image finishes loading (see nav.js),
+   to suggest there's something to tap/click without saying so in words.
+   Purely decorative — inset 0/pointer-events none so it never competes
+   with the real click handling in nav.js. What it actually shows differs
+   by device below: touch has real left/right edge-tap zones worth
+   flashing individually; desktop's whole image is one click target (opens
+   the lightbox), so it gets a single flash over the full frame instead of
+   implying zones that don't exist there. */
 .nav-hint {
   position: absolute;
   inset: 0;
@@ -308,22 +310,27 @@ main.work { padding-bottom: 60px; }
 
 .hint-left { left: 0; width: 20%; }
 .hint-right { right: 0; width: 20%; }
-.hint-center { left: 20%; width: 60%; }
 
 @keyframes hint-flash {
   0%, 100% { opacity: 0; }
   50% { opacity: 1; }
 }
 
-.frame.hint-play .hint-right { animation: hint-flash 0.9s ease-in-out; }
-.frame.hint-play .hint-left { animation: hint-flash 0.9s ease-in-out 0.8s; }
-.frame.hint-play .hint-center { animation: hint-flash 0.9s ease-in-out 1.6s; }
-
-/* Touch has no separate "center" zone worth flashing — it's most of the
-   image, an obvious tap target already. Only the easy-to-miss edge strips
-   (prev/next) get hinted there. */
+/* Touch: left ~20%/right ~20% really do navigate prev/next there (see
+   nav.js's frame click handler) — no center flash, that's the dominant
+   middle 60% and an obvious tap target already, doesn't need hinting. */
 @media (hover: none) {
-  .frame.hint-play .hint-center { animation: none; }
+  .frame.hint-play .hint-right { animation: hint-flash 0.9s ease-in-out; }
+  .frame.hint-play .hint-left { animation: hint-flash 0.9s ease-in-out 0.8s; }
+}
+
+/* Desktop: clicking anywhere on the image opens the lightbox — one
+   target, not three — so flash the whole frame once instead. */
+@media (hover: hover) {
+  .frame.hint-play .nav-hint {
+    animation: hint-flash 0.9s ease-in-out;
+    background: rgba(0, 0, 0, 0.45);
+  }
 }
 
 .work-body { padding: clamp(24px, 4vw, 52px) var(--pad) 0; }
