@@ -213,12 +213,20 @@ export function loadWorks(sourcesDir, contentPath) {
     sections.set(slug, { data: { location: "Berlin", year: new Date().getFullYear() }, body: "" });
   }
 
-  // Backfill a hash on every current file's section — a no-op after the
-  // first run, since it only fills in what's missing. Also clears a stale
-  // warning if a file reappears under the exact name it was flagged under.
+  // Recompute every current file's hash on every build (cheap: a fraction
+  // of a second even for hundreds of MB) rather than only backfilling a
+  // missing one — otherwise an edited-but-not-renamed file would keep
+  // fingerprinting its old bytes forever, and a *later* rename of that same
+  // file would miss the match. Also clears a stale warning if a file
+  // reappears under the exact name it was flagged under.
+  let rehashed = 0;
   for (const f of files) {
     const data = sections.get(f).data;
-    if (!data.hash) data.hash = fileHash(join(sourcesDir, f));
+    const hash = fileHash(join(sourcesDir, f));
+    if (data.hash !== hash) {
+      data.hash = hash;
+      rehashed++;
+    }
     if (data.warning) delete data.warning;
   }
 
@@ -228,12 +236,13 @@ export function loadWorks(sourcesDir, contentPath) {
   }
 
   const order = [...files, ...stillGone.sort()];
-  if (freshlyAdded.length || renames.size || stillGone.length) {
+  if (freshlyAdded.length || renames.size || stillGone.length || rehashed) {
     writeFileSync(contentPath, serializeContentFile(sections, order));
     const bits = [];
     if (freshlyAdded.length) bits.push(`+${freshlyAdded.length} added (${freshlyAdded.join(", ")})`);
     if (renames.size) bits.push(`${renames.size} renamed (${[...renames].map(([a, b]) => `${a} -> ${b}`).join(", ")})`);
     if (stillGone.length) bits.push(`${stillGone.length} missing, kept as warnings (${stillGone.join(", ")})`);
+    if (rehashed) bits.push(`${rehashed} hash${rehashed === 1 ? "" : "es"} updated`);
     console.log(`content.md: ${bits.join("; ")}`);
   }
 

@@ -159,6 +159,34 @@ describe("loadWorks", () => {
       rmSync(rootDir, { recursive: true, force: true });
     }
   });
+
+  test("re-hashes an edited file so a later rename of it still matches", () => {
+    const sourcesDir = mkdtempSync(join(tmpdir(), "progapanda-art-sources-"));
+    const rootDir = mkdtempSync(join(tmpdir(), "progapanda-art-root-"));
+    try {
+      const contentPath = join(rootDir, "content.md");
+      writeFileSync(join(sourcesDir, "photo"), "original-bytes");
+      writeFileSync(contentPath, "");
+      loadWorks(sourcesDir, contentPath); // records a hash of "original-bytes"
+
+      // Edit in place — same filename, different bytes (e.g. a re-export).
+      writeFileSync(join(sourcesDir, "photo"), "edited-bytes");
+      loadWorks(sourcesDir, contentPath); // must refresh the stored hash
+
+      // Now rename the edited file. If the hash above went stale, this
+      // would be missed and wrongly treated as delete+add.
+      rmSync(join(sourcesDir, "photo"));
+      writeFileSync(join(sourcesDir, "photo_renamed"), "edited-bytes");
+      const works = loadWorks(sourcesDir, contentPath);
+
+      expect(works.map((w) => w.slug)).toEqual(["photo_renamed"]);
+      const rewritten = readFileSync(contentPath, "utf8");
+      expect(rewritten).not.toContain("warning:");
+    } finally {
+      rmSync(sourcesDir, { recursive: true, force: true });
+      rmSync(rootDir, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("imgproxyUrl", () => {
