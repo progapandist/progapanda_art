@@ -193,7 +193,18 @@ a:focus-visible, button:focus-visible {
 
 .tile:hover .tile-info { opacity: 1; transform: translateY(0); }
 
-.tile-title { display: block; font-weight: 700; font-size: 14px; }
+/* Hover doesn't exist on touch — some browsers fake a "sticky hover" after a
+   tap and some don't, either way it's an inconsistent, accidental way to
+   reveal a caption. On a device with no hover capability at all, skip the
+   pretense entirely: no caption, image only. */
+@media (hover: none) {
+  .tile-info { display: none; }
+}
+
+/* Lowercase, matching the wordmark/nav/work-page title elsewhere — the
+   underlying text is still real sentence case (title attribute, alt text,
+   SEO), this is purely how it's drawn. */
+.tile-title { display: block; font-weight: 700; font-size: 14px; text-transform: lowercase; }
 .tile-meta { font-size: 12px; opacity: 0.85; }
 
 .grid-foot {
@@ -318,6 +329,91 @@ ul.chips li {
 
 .chip-block { border-top: var(--hair); padding-top: 18px; margin-top: 18px; }
 .chip-block:first-of-type { border-top: none; margin-top: 0; }
+
+/* ---- lightbox: full-resolution viewer, opened from the format links ---- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+}
+
+.lightbox.open { display: block; }
+
+.lightbox-backdrop {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  background-size: cover;
+  background-position: center;
+  /* "Super blurred" on purpose, well past the frame placeholder's own
+     blur — this is only ever an ambient backdrop, never looked at
+     directly, so any residual JPEG blockiness in the tiny source should
+     wash out completely. Scaled past its container so the heavy blur's
+     own edge falloff never shows at the viewport boundary. */
+  filter: blur(60px) brightness(0.6);
+}
+
+/* overflow: auto + touch-action here is what makes an oversized zoomed
+   image pannable by native touch scroll for free; touch-action overrides
+   the site-wide pan-y-only rule (html, body) specifically inside here,
+   since this is the one place on the site that needs real 2D panning. */
+.lightbox-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lightbox-img {
+  max-width: 92vw;
+  max-height: 92vh;
+  object-fit: contain;
+  cursor: zoom-in;
+  display: block;
+}
+
+/* Zoomed: the image drops its max-width/height cap and renders at its own
+   native size (whatever the clicked format's actual resolution is) —
+   larger than the viewport in practice, so it overflows into the
+   scrollable/pannable viewport instead of being scaled to fit. */
+.lightbox.zoomed .lightbox-viewport {
+  align-items: flex-start;
+  justify-content: flex-start;
+  cursor: grab;
+}
+
+.lightbox.zoomed .lightbox-viewport:active { cursor: grabbing; }
+
+.lightbox.zoomed .lightbox-img {
+  max-width: none;
+  max-height: none;
+  width: auto;
+  height: auto;
+  cursor: zoom-out;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 301;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightbox-close:hover { background: rgba(0, 0, 0, 0.75); }
 
 .availability {
   display: inline-block;

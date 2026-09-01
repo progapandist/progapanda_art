@@ -93,33 +93,67 @@ year: 2024
 });
 
 describe("loadWorks", () => {
-  test("adds a stub section for a new source file and drops one for a deleted file", () => {
+  test("adds a stub section for a new source file and keeps a missing one as a warning, not a deletion", () => {
     // content.md lives outside the sources folder, same as in the real repo
     // (it's at the root, sources are an external folder) — otherwise scanning
     // the folder would pick up content.md itself as a "work".
     const sourcesDir = mkdtempSync(join(tmpdir(), "progapanda-art-sources-"));
     const rootDir = mkdtempSync(join(tmpdir(), "progapanda-art-root-"));
     try {
-      writeFileSync(join(sourcesDir, "bloom"), "");
-      writeFileSync(join(sourcesDir, "crow"), "");
+      writeFileSync(join(sourcesDir, "bloom"), "bloom-bytes");
+      writeFileSync(join(sourcesDir, "crow"), "crow-bytes");
       const contentPath = join(rootDir, "content.md");
-      writeFileSync(contentPath, "## bloom\nyear: 2023\n\nAlready described.\n\n## gone\nyear: 2020\n");
+      writeFileSync(contentPath, "## bloom\nyear: 2023\n\nAlready described.\n\n## gone\nyear: 2020\n\nLost description.\n");
 
       const works = loadWorks(sourcesDir, contentPath);
 
       // Display order is seeded-shuffled, not file order — check membership,
-      // not position.
+      // not position. "gone" has no matching file (and no hash to match a
+      // rename against), so it's excluded from the built works...
       expect(works.map((w) => w.slug).sort()).toEqual(["bloom", "crow"]);
       const bloom = works.find((w) => w.slug === "bloom");
       const crow = works.find((w) => w.slug === "crow");
       expect(bloom.description).toBe("Already described.");
       expect(crow.title).toBe("Crow"); // stub section, title falls back to humanize
 
-      // content.md itself is still written in plain alphabetical file order —
-      // that one's for a human editing it, not for display.
+      // content.md itself is still written in plain alphabetical file order,
+      // with "gone" kept at the end — flagged, not deleted, so the
+      // description survives for a human to act on.
       const rewritten = readFileSync(contentPath, "utf8");
       expect(rewritten.indexOf("## bloom")).toBeLessThan(rewritten.indexOf("## crow"));
-      expect(rewritten).not.toContain("## gone");
+      expect(rewritten).toContain("## gone");
+      expect(rewritten).toContain("warning: source file missing");
+      expect(rewritten).toContain("Lost description.");
+      // Every section for a file that does exist gets a hash backfilled.
+      expect(parseContentFile(rewritten).get("bloom").data.hash).toMatch(/^h[0-9a-f]+$/);
+    } finally {
+      rmSync(sourcesDir, { recursive: true, force: true });
+      rmSync(rootDir, { recursive: true, force: true });
+    }
+  });
+
+  test("retitles a section in place when its file is renamed (matched by content hash)", () => {
+    const sourcesDir = mkdtempSync(join(tmpdir(), "progapanda-art-sources-"));
+    const rootDir = mkdtempSync(join(tmpdir(), "progapanda-art-root-"));
+    try {
+      const contentPath = join(rootDir, "content.md");
+      // First pass just to get a hash recorded under the old name, exactly
+      // like a real content.md would already have from a prior build.
+      writeFileSync(join(sourcesDir, "old_name"), "identical-bytes");
+      writeFileSync(contentPath, "");
+      loadWorks(sourcesDir, contentPath); // writes a stub for old_name with a hash
+
+      // Simulate `mv old_name new_name`: same bytes, new filename.
+      rmSync(join(sourcesDir, "old_name"));
+      writeFileSync(join(sourcesDir, "new_name"), "identical-bytes");
+
+      const works = loadWorks(sourcesDir, contentPath);
+
+      expect(works.map((w) => w.slug)).toEqual(["new_name"]);
+      const rewritten = readFileSync(contentPath, "utf8");
+      expect(rewritten).toContain("## new_name");
+      expect(rewritten).not.toContain("## old_name");
+      expect(rewritten).not.toContain("warning:");
     } finally {
       rmSync(sourcesDir, { recursive: true, force: true });
       rmSync(rootDir, { recursive: true, force: true });

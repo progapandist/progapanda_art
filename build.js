@@ -208,7 +208,11 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
 
   const description = work.description ? `<p class="description">${escape(work.description)}</p>` : "";
 
-  const formats = `<ul class="chips">${FORMATS.map((f) => `<li><a href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul>`;
+  // class="format-link": nav.js intercepts a plain click on these to open
+  // the lightbox instead of navigating — href still points straight at the
+  // real image, so a modified click (new tab, save-as, no-JS) behaves
+  // exactly like a normal link regardless.
+  const formats = `<ul class="chips">${FORMATS.map((f) => `<li><a class="format-link" href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul>`;
 
   const pager = `<nav class="pager">
     ${prev ? `<a rel="prev" href="/works/${encodeURIComponent(urlSlug(prev.slug))}/">&larr; ${escape(prev.title)}</a>` : `<span></span>`}
@@ -233,14 +237,21 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     <h2 class="title">${escape(work.title)}</h2>
     ${forms}
     <div class="chip-block">
-      <span class="labels">formats</span>
+      <span class="labels">full resolution</span>
       ${formats}
     </div>
     ${medium ? `<div class="chip-block"><span class="labels">medium</span>${medium}</div>` : ""}
     ${description}
   </div>
   ${pager}
-</main>`;
+</main>
+<div class="lightbox" aria-hidden="true">
+  <div class="lightbox-backdrop"></div>
+  <div class="lightbox-viewport">
+    <img class="lightbox-img" alt="">
+  </div>
+  <button class="lightbox-close" type="button" aria-label="close">&times;</button>
+</div>`;
 
   // The hero image is the LCP element on this page — a preload hint lets the
   // browser start fetching it while still parsing <head>, instead of only

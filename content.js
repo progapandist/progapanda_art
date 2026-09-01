@@ -127,6 +127,14 @@ export function scanSources(dir) {
     .sort();
 }
 
+// A per-file fingerprint, stored as each section's `hash:` field, used only
+// to recognize a renamed file (same bytes, new name) so its section can be
+// retitled instead of stubbed-and-deleted. "h" prefix keeps an
+// all-digits hash from being coerced into a JS number by coerceValue.
+function fileHash(path) {
+  return "h" + Bun.hash(readFileSync(path)).toString(16);
+}
+
 // A fixed, deliberately-chosen seed — not "the current date" or anything
 // that would silently reshuffle the site on its own. Change this constant
 // only when an actual reshuffle is wanted; the same seed always produces
@@ -165,27 +173,73 @@ function toWork(slug, section) {
 }
 
 // Reconciles content.md against the sources folder: appends a stub section
-// for a source file that has none yet, drops a section whose file is gone.
-// Rewrites content.md when anything changed, and returns the merged works
-// in the site's display order (seeded-shuffled, not alphabetical).
+// for a source file that has none yet, retitles a section in place when its
+// file was only renamed (same bytes, matched by hash — see fileHash), and
+// for a section whose file is genuinely gone, leaves it in content.md with
+// a `warning:` field rather than deleting it — the description survives
+// for a human to either restore the file or delete the section themselves.
+// A `warning:`ed section is simply never in `files`, so it's automatically
+// excluded from the returned works (the image is gone from the build even
+// though its text sticks around). Rewrites content.md when anything
+// changed, and returns the merged works in the site's display order
+// (seeded-shuffled, not alphabetical).
 export function loadWorks(sourcesDir, contentPath) {
   const files = scanSources(sourcesDir);
   const sections = parseContentFile(readFileSync(contentPath, "utf8"));
 
   const added = files.filter((f) => !sections.has(f));
-  const removed = [...sections.keys()].filter((s) => !files.includes(s));
-  for (const slug of added) {
+  // Sections already flagged missing stay out of rename-matching too — once
+  // a human has seen the warning, don't touch that section again on their
+  // behalf; they restore the file (same name) or delete the section.
+  const gone = [...sections.keys()].filter((s) => !files.includes(s) && !sections.get(s).data.warning);
+
+  const renames = new Map(); // oldSlug -> newSlug
+  if (added.length && gone.length) {
+    const addedHashes = new Map(added.map((f) => [fileHash(join(sourcesDir, f)), f]));
+    for (const oldSlug of gone) {
+      const match = addedHashes.get(sections.get(oldSlug).data.hash);
+      if (match) renames.set(oldSlug, match);
+    }
+  }
+  for (const [oldSlug, newSlug] of renames) {
+    const section = sections.get(oldSlug);
+    sections.delete(oldSlug);
+    sections.set(newSlug, section);
+  }
+
+  const stillGone = gone.filter((s) => !renames.has(s));
+  const freshlyAdded = added.filter((f) => ![...renames.values()].includes(f));
+  for (const slug of freshlyAdded) {
     sections.set(slug, { data: { location: "Berlin", year: new Date().getFullYear() }, body: "" });
   }
-  for (const slug of removed) sections.delete(slug);
 
-  if (added.length || removed.length) {
-    writeFileSync(contentPath, serializeContentFile(sections, files));
-    console.log(`content.md: +${added.length} -${removed.length}${added.length ? ` (added: ${added.join(", ")})` : ""}`);
+  // Backfill a hash on every current file's section — a no-op after the
+  // first run, since it only fills in what's missing. Also clears a stale
+  // warning if a file reappears under the exact name it was flagged under.
+  for (const f of files) {
+    const data = sections.get(f).data;
+    if (!data.hash) data.hash = fileHash(join(sourcesDir, f));
+    if (data.warning) delete data.warning;
   }
 
-  // content.md is written in the alphabetical `files` order above (easy to
-  // find a work by hand); the site itself displays this seeded-shuffled
-  // order instead — grid order and prev/next both follow it.
+  for (const slug of stillGone) {
+    sections.get(slug).data.warning =
+      `source file missing — excluded from the site. Restore a file named "${slug}", or delete this section.`;
+  }
+
+  const order = [...files, ...stillGone.sort()];
+  if (freshlyAdded.length || renames.size || stillGone.length) {
+    writeFileSync(contentPath, serializeContentFile(sections, order));
+    const bits = [];
+    if (freshlyAdded.length) bits.push(`+${freshlyAdded.length} added (${freshlyAdded.join(", ")})`);
+    if (renames.size) bits.push(`${renames.size} renamed (${[...renames].map(([a, b]) => `${a} -> ${b}`).join(", ")})`);
+    if (stillGone.length) bits.push(`${stillGone.length} missing, kept as warnings (${stillGone.join(", ")})`);
+    console.log(`content.md: ${bits.join("; ")}`);
+  }
+
+  // content.md is written in the alphabetical `files` order (easy to find a
+  // work by hand), with any missing-file warnings appended after; the site
+  // itself displays the seeded-shuffled order instead — grid order and
+  // prev/next both follow that.
   return shuffledBySeed(files).map((f) => toWork(f, sections.get(f)));
 }

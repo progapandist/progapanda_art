@@ -43,23 +43,6 @@ document.addEventListener(
   { passive: true },
 );
 
-// Tapping/clicking the image itself does the same thing a swipe does —
-// left ~20% goes back, the rest goes forward, same zones the old gallery
-// view used. A real page navigation follows (this is a plain <a>.click(),
-// not a fetch), so the CSS view-transition handles what happens visually;
-// this only decides which direction.
-if (frame) {
-  frame.addEventListener("click", (e) => {
-    const rect = frame.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if (x < rect.width * 0.2) {
-      if (prev) prev.click();
-    } else if (next) {
-      next.click();
-    }
-  });
-}
-
 // ---- theme toggle -----------------------------------------------------
 
 const toggle = document.querySelector(".theme-toggle");
@@ -86,5 +69,119 @@ if (toggle) {
       localStorage.setItem("theme", nextTheme);
     } catch (e) {}
     labelToggle();
+  });
+}
+
+// ---- lightbox: full-resolution viewer ----------------------------------
+// Progressive enhancement here too: every format link's href already points
+// straight at the real image, so a modified click (new tab, save-as) or no
+// JS at all falls through to a completely normal link.
+
+const lightbox = document.querySelector(".lightbox");
+const firstFormatLink = document.querySelector(".format-link");
+
+if (lightbox) {
+  const backdrop = lightbox.querySelector(".lightbox-backdrop");
+  const viewport = lightbox.querySelector(".lightbox-viewport");
+  const lightboxImg = lightbox.querySelector(".lightbox-img");
+  const closeBtn = lightbox.querySelector(".lightbox-close");
+  // The same tiny blurred placeholder already sitting behind the hero
+  // image — no extra fetch needed for the lightbox's own backdrop.
+  const placeholder = document.querySelector(".frame .placeholder");
+
+  var openLightbox = function (src) {
+    lightboxImg.src = src;
+    lightbox.classList.remove("zoomed");
+    if (placeholder) backdrop.style.backgroundImage = `url('${placeholder.src}')`;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  };
+
+  function closeLightbox() {
+    lightbox.classList.remove("open", "zoomed");
+    lightbox.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  document.querySelectorAll(".format-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      openLightbox(link.href);
+    });
+  });
+
+  closeBtn.addEventListener("click", closeLightbox);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lightbox.classList.contains("open")) closeLightbox();
+  });
+
+  // Click (not drag) toggles fit <-> zoomed. Touch panning is native (see
+  // touch-action on .lightbox-viewport in style.css) and a touch drag
+  // already suppresses the browser's own synthetic click afterward, so
+  // only the mouse case needs the "was this a click or a drag" check —
+  // mousemove doubles as the pan itself while a drag is in progress.
+  let mouseDown = false;
+  let dragged = false;
+  let startX = 0, startY = 0, startScrollLeft = 0, startScrollTop = 0;
+
+  viewport.addEventListener("mousedown", (e) => {
+    mouseDown = true;
+    dragged = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    startScrollLeft = viewport.scrollLeft;
+    startScrollTop = viewport.scrollTop;
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    if (!mouseDown) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragged = true;
+    if (dragged) {
+      viewport.scrollLeft = startScrollLeft - dx;
+      viewport.scrollTop = startScrollTop - dy;
+    }
+  });
+
+  window.addEventListener("mouseup", () => {
+    mouseDown = false;
+  });
+
+  viewport.addEventListener("click", () => {
+    if (dragged) {
+      dragged = false;
+      return;
+    }
+    lightbox.classList.toggle("zoomed");
+    if (!lightbox.classList.contains("zoomed")) {
+      viewport.scrollTop = 0;
+      viewport.scrollLeft = 0;
+    }
+  });
+}
+
+// Clicking the hero image itself: on a hover-capable pointer (desktop/
+// trackpad), it opens the same product-style lightbox as a format link,
+// using the first (AVIF) full-resolution link — a mouse already has prev/
+// next via the arrow keys and the footer links, so the image itself is
+// free to mean "zoom" instead of "navigate". On touch, hover doesn't
+// exist, so the image keeps the old tap-zone behavior instead: left ~20%
+// goes back, the rest goes forward, same zones the old gallery view used.
+if (frame) {
+  frame.addEventListener("click", (e) => {
+    if (matchMedia("(hover: hover)").matches) {
+      if (lightbox && firstFormatLink) openLightbox(firstFormatLink.href);
+      return;
+    }
+    const rect = frame.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < rect.width * 0.2) {
+      if (prev) prev.click();
+    } else if (next) {
+      next.click();
+    }
   });
 }
