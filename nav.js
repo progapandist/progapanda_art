@@ -189,11 +189,24 @@ if (frame) {
   // Once the real hero image has fully replaced the placeholder, play a
   // quick one-time flash over each clickable zone (see .nav-hint/.hint-zone
   // in style.css) as a wordless hint that the image itself is interactive.
-  // `complete` covers a cached image whose load event already fired before
-  // this listener was attached. sessionStorage caps it at once per browser
-  // session — the point is to teach the gesture, not repeat it on every
-  // single work page.
+  // Deliberately just setTimeout + a class toggle, not a CSS animation —
+  // simple enough that clearHint() below can always cut it short cleanly.
   const heroImg = frame.querySelector("picture img");
+  const hintTimers = [];
+
+  // If a navigation fires mid-flash, the page's native view transition
+  // (see @view-transition in style.css) snapshots whatever's on screen at
+  // that instant — an unfinished dark overlay gets baked into that
+  // snapshot and can show up as a stuck-looking flash on the next page.
+  // Clearing immediately on pagehide means there's never a mid-flash frame
+  // left for it to capture.
+  function clearHint() {
+    hintTimers.forEach(clearTimeout);
+    hintTimers.length = 0;
+    document.querySelectorAll(".hint-zone.active, .nav-hint.active").forEach((el) => el.classList.remove("active"));
+  }
+  window.addEventListener("pagehide", clearHint);
+
   if (heroImg) {
     const playHint = () => {
       let alreadyShown = false;
@@ -201,7 +214,26 @@ if (frame) {
         alreadyShown = sessionStorage.getItem("nav-hint-shown") === "1";
         if (!alreadyShown) sessionStorage.setItem("nav-hint-shown", "1");
       } catch (e) {}
-      if (!alreadyShown) frame.classList.add("hint-play");
+      if (alreadyShown) return;
+
+      // Desktop: one flash over the whole frame (the whole image is a
+      // single click target there). Touch: right, then left, then center,
+      // matching the frame click handler's own zones above.
+      const targets = matchMedia("(hover: hover)").matches
+        ? [document.querySelector(".nav-hint")]
+        : [frame.querySelector(".hint-right"), frame.querySelector(".hint-left"), frame.querySelector(".hint-center")];
+
+      const hold = 550; // ms each zone stays lit
+      const gap = 250; // ms between one zone fading out and the next lighting up
+      let t = 1000; // initial pause so the flash doesn't read as part of loading
+      for (const el of targets) {
+        if (!el) continue;
+        const onAt = t;
+        const offAt = t + hold;
+        hintTimers.push(setTimeout(() => el.classList.add("active"), onAt));
+        hintTimers.push(setTimeout(() => el.classList.remove("active"), offAt));
+        t = offAt + gap;
+      }
     };
     if (heroImg.complete) playHint();
     else heroImg.addEventListener("load", playHint, { once: true });

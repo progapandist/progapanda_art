@@ -277,14 +277,16 @@ main.work { padding-bottom: 60px; }
    almost indistinguishable from the empty frame it's covering. */
 .frame .placeholder { filter: saturate(1.6) contrast(1.08); }
 
-/* One-time hint, played once the hero image finishes loading (see nav.js),
-   to suggest there's something to tap/click without saying so in words.
+/* One-time hint, played a beat after the hero image finishes loading, to
+   suggest there's something to tap/click without saying so in words.
    Purely decorative — inset 0/pointer-events none so it never competes
-   with the real click handling in nav.js. What it actually shows differs
-   by device below: touch has real left/right edge-tap zones worth
-   flashing individually; desktop's whole image is one click target (opens
-   the lightbox), so it gets a single flash over the full frame instead of
-   implying zones that don't exist there. */
+   with the real click handling in nav.js. Deliberately simple: a plain
+   opacity transition toggled by a JS-added .active class (see nav.js),
+   not a CSS @keyframes animation — an animation still mid-flight at the
+   instant a page navigation fires gets baked into the outgoing page's
+   view-transition snapshot as a stuck-looking overlay; a transition that
+   JS starts and stops with its own timers doesn't have that failure mode,
+   and nav.js also force-clears it on pagehide as a second safety net. */
 .nav-hint {
   position: absolute;
   inset: 0;
@@ -297,40 +299,35 @@ main.work { padding-bottom: 60px; }
    mix-blend-mode's result there turned out to depend on z-index/opacity in
    ways that made it disappear entirely in testing. A plain rgba(0,0,0)
    darkens whatever's underneath by a fixed, predictable amount regardless,
-   photo or letterbox margin alike — which also directly fixes the
-   original complaint (a white flash was invisible on an already-light
-   image; darkening one is not). */
+   photo or letterbox margin alike — which also directly fixes the original
+   complaint about an earlier white/blend version (invisible on an
+   already-light image; darkening one is not). */
 .hint-zone {
   position: absolute;
   top: 0;
   height: 100%;
   opacity: 0;
   background: rgba(0, 0, 0, 0.45);
+  transition: opacity 0.35s ease;
 }
+
+.hint-zone.active { opacity: 1; }
 
 .hint-left { left: 0; width: 20%; }
 .hint-right { right: 0; width: 20%; }
+.hint-center { left: 20%; width: 60%; }
 
-@keyframes hint-flash {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
-}
-
-/* Touch: left ~20%/right ~20% really do navigate prev/next there (see
-   nav.js's frame click handler) — no center flash, that's the dominant
-   middle 60% and an obvious tap target already, doesn't need hinting. */
-@media (hover: none) {
-  .frame.hint-play .hint-right { animation: hint-flash 0.9s ease-in-out; }
-  .frame.hint-play .hint-left { animation: hint-flash 0.9s ease-in-out 0.8s; }
-}
-
-/* Desktop: clicking anywhere on the image opens the lightbox — one
-   target, not three — so flash the whole frame once instead. */
+/* Desktop: clicking anywhere on the image opens the lightbox — one target,
+   not three — so the whole frame flashes once instead of implying zones
+   that don't exist there. Touch uses the individual .hint-zone spans
+   above instead (right, then left, then center — see nav.js). */
 @media (hover: hover) {
-  .frame.hint-play .nav-hint {
-    animation: hint-flash 0.9s ease-in-out;
+  .nav-hint {
     background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    transition: opacity 0.35s ease;
   }
+  .nav-hint.active { opacity: 1; }
 }
 
 .work-body { padding: clamp(24px, 4vw, 52px) var(--pad) 0; }

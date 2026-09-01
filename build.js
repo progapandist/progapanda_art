@@ -235,6 +235,7 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     <div class="nav-hint" aria-hidden="true">
       <span class="hint-zone hint-right"></span>
       <span class="hint-zone hint-left"></span>
+      <span class="hint-zone hint-center"></span>
     </div>
   </div>
   <div class="work-body">
