@@ -41,9 +41,13 @@ const works = loadWorks(SOURCES_DIR, "content.md");
 const PICTURE_FORMATS = ["avif", "webp", "jpg"];
 const combos = [];
 for (const w of works) {
-  for (const width of BREAKPOINTS) for (const format of PICTURE_FORMATS) combos.push({ slug: w.slug, width, format });
-  combos.push({ slug: w.slug, width: 3200, format: "png" });
-  combos.push({ slug: w.slug, width: 1200, format: "jpg" });
+  // version carries the work's content hash through to imgproxyUrl() —
+  // without it these URLs wouldn't match what build.js actually embeds in
+  // the HTML (see imgproxy.js), and this would warm cache entries no
+  // visitor's browser ever requests instead of the real ones.
+  for (const width of BREAKPOINTS) for (const format of PICTURE_FORMATS) combos.push({ slug: w.slug, width, format, version: w.hash });
+  combos.push({ slug: w.slug, width: 3200, format: "png", version: w.hash });
+  combos.push({ slug: w.slug, width: 1200, format: "jpg", version: w.hash });
 }
 
 async function mapLimit(items, limit, fn) {

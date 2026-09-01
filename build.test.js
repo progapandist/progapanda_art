@@ -221,6 +221,27 @@ describe("imgproxyUrl", () => {
     );
   });
 
+  test("appends a version as a query param, outside the signed path", () => {
+    const withVersion = imgproxyUrl({
+      endpoint: "http://localhost:8080",
+      key: "abcd1234",
+      salt: "1234abcd",
+      slug: "testslug",
+      width: 800,
+      format: "avif",
+      version: "h123abc",
+    });
+    const withoutVersion = imgproxyUrl({
+      endpoint: "http://localhost:8080",
+      key: "abcd1234",
+      salt: "1234abcd",
+      slug: "testslug",
+      width: 800,
+      format: "avif",
+    });
+    expect(withVersion).toBe(withoutVersion + "?v=h123abc");
+  });
+
   test("URL-encodes a slug with a space", () => {
     const url = imgproxyUrl({
       endpoint: "http://localhost:8080",
