@@ -7,7 +7,19 @@ import { watch } from "node:fs";
 const sockets = new Set();
 const live = `<script>new WebSocket("ws://"+location.host+"/live").onmessage=()=>location.reload()</script>`;
 
-watch("dist", { recursive: true }, () => {
+// Watches "." rather than "dist" directly: build.js now finishes a rebuild
+// by renaming dist/ out of the way and renaming the freshly-built
+// directory into its place (see build.js for why — an atomic swap instead
+// of a wipe-and-rewrite-in-place, so a request never hits a half-built
+// dist/). A watch rooted at "dist" doesn't survive that — the path it's
+// watching gets replaced out from under it, and reload silently stops
+// firing. Watching the stable parent instead means the watch itself never
+// has to survive anything; only the events crossing it change. dist.tmp/
+// and dist.old/ are excluded so mid-build and about-to-be-deleted files
+// don't trigger a reload for content nobody's looking at.
+watch(".", { recursive: true }, (event, filename) => {
+  if (!filename) return;
+  if (filename !== "dist" && !filename.startsWith("dist/")) return;
   for (const s of sockets) s.send("reload");
 });
 

@@ -3,7 +3,7 @@
 // holds finished, signed URLs. Same idea as tja-web's stamp.js: write the
 // pages, content-hash the assets, done.
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync, cpSync, rmSync, renameSync, existsSync } from "node:fs";
 import { loadWorks, loadAbout, urlSlug, escape, renderDescription, dimensionsText } from "./content.js";
 import { imgproxyUrl, placeholder, BREAKPOINTS, FORMATS } from "./imgproxy.js";
 
@@ -31,6 +31,11 @@ const ARTIST = about.data.artist || "Andy Barnow";
 // still what page titles, OG tags and the artist page heading use.
 const WORDMARK = about.data.wordmark || ARTIST;
 const dist = "dist/";
+// build() writes into this working directory, not dist/ directly, then
+// swaps it into place at the very end (see the bottom of build()) — see
+// that function for why.
+const distTmp = "dist.tmp/";
+const distOld = "dist.old/";
 
 if (!ENDPOINT) throw new Error("IMGPROXY_ENDPOINT must be set — see Makefile (dev/dist target local, deploy target production).");
 if (!KEY || !SALT) {
@@ -291,8 +296,18 @@ function notFoundPage() {
 let STAMPED;
 
 async function build() {
-  rmSync(dist, { recursive: true, force: true });
-  mkdirSync(dist, { recursive: true });
+  // Written into dist.tmp/, not dist/ directly — dist/ previously got
+  // rmSync'd and rebuilt from scratch in place, which left a real window
+  // (the whole build, including per-work imgproxy placeholder fetches —
+  // seconds, not milliseconds) where dist/ was empty or half-written. A
+  // request from server.js landing in that window got ENOENT for the page
+  // it wanted, and — since even dist/404.html was gone during that same
+  // window — a raw crash instead of a real 404 response. Building
+  // somewhere else and swapping it in at the end (see the bottom of this
+  // function) means dist/ is either the complete old build or the
+  // complete new one, never a partial one.
+  rmSync(distTmp, { recursive: true, force: true });
+  mkdirSync(distTmp, { recursive: true });
 
   // Assets first, content-hashed, so the page templates above can reference
   // the stamped URL (computed before any HTML is generated).
@@ -302,23 +317,23 @@ async function build() {
     nav: `/nav.js?v=${hash("nav.js")}`,
     theme: `/theme.js?v=${hash("theme.js")}`,
   };
-  cpSync("style.css", dist + "style.css");
-  cpSync("nav.js", dist + "nav.js");
-  cpSync("theme.js", dist + "theme.js");
-  cpSync("_headers", dist + "_headers");
-  cpSync("_redirects", dist + "_redirects");
-  cpSync("robots.txt", dist + "robots.txt");
+  cpSync("style.css", distTmp + "style.css");
+  cpSync("nav.js", distTmp + "nav.js");
+  cpSync("theme.js", distTmp + "theme.js");
+  cpSync("_headers", distTmp + "_headers");
+  cpSync("_redirects", distTmp + "_redirects");
+  cpSync("robots.txt", distTmp + "robots.txt");
 
   const works = loadWorks(SOURCES_DIR, CONTENT_PATH);
   const placeholders = await loadPlaceholders(works);
 
-  writeFileSync(dist + "index.html", gridPage(works, placeholders));
-  writeFileSync(dist + "404.html", notFoundPage());
-  mkdirSync(dist + "artist/", { recursive: true });
-  writeFileSync(dist + "artist/index.html", artistPage());
+  writeFileSync(distTmp + "index.html", gridPage(works, placeholders));
+  writeFileSync(distTmp + "404.html", notFoundPage());
+  mkdirSync(distTmp + "artist/", { recursive: true });
+  writeFileSync(distTmp + "artist/index.html", artistPage());
 
   for (let i = 0; i < works.length; i++) {
-    const dir = `${dist}works/${urlSlug(works[i].slug)}/`;
+    const dir = `${distTmp}works/${urlSlug(works[i].slug)}/`;
     mkdirSync(dir, { recursive: true });
     writeFileSync(
       dir + "index.html",
@@ -333,13 +348,23 @@ async function build() {
     ...works.map((w) => ({ loc: `${SITE}/works/${encodeURIComponent(urlSlug(w.slug))}/`, priority: "0.8" })),
   ];
   writeFileSync(
-    dist + "sitemap.xml",
+    distTmp + "sitemap.xml",
     `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${today}</lastmod><priority>${u.priority}</priority></url>`).join("\n")}
 </urlset>
 `,
   );
+
+  // The swap itself: a plain directory rename can't land straight on top
+  // of dist/ (POSIX rename() refuses to replace a non-empty directory), so
+  // the old one is moved aside first — two renames back to back, not a
+  // delete-then-rebuild, so the exposed window is a syscall or two instead
+  // of an entire build.
+  rmSync(distOld, { recursive: true, force: true });
+  if (existsSync(dist)) renameSync(dist, distOld);
+  renameSync(distTmp, dist);
+  rmSync(distOld, { recursive: true, force: true });
 
   console.log(`dist: ${works.length} works, endpoint ${ENDPOINT}`);
 }

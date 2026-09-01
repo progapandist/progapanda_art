@@ -1,5 +1,7 @@
 .env
 dist/
+dist.tmp/
+dist.old/
 node_modules/
 .DS_Store
 .wrangler/

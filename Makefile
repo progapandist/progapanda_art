@@ -132,4 +132,4 @@ deploy-imgproxy: sync-sources
 			caddy:2"
 
 clean:
-	rm -rf dist
+	rm -rf dist dist.tmp dist.old
