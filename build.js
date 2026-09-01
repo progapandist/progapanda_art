@@ -38,7 +38,7 @@ if (!KEY || !SALT) {
 }
 
 const img = (work, width, format) =>
-  imgproxyUrl({ endpoint: ENDPOINT, key: KEY, salt: SALT, slug: work.slug, width, format });
+  imgproxyUrl({ endpoint: ENDPOINT, key: KEY, salt: SALT, slug: work.slug, width, format, version: work.hash });
 
 const srcset = (work, format) => BREAKPOINTS.map((w) => `${img(work, w, format)} ${w}w`).join(", ");
 

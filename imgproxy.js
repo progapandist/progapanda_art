@@ -16,11 +16,23 @@ function sign(path, key, salt) {
 // resizing_type "fit" everywhere: never crops, never enlarges past the
 // source's native resolution, so a breakpoint list oversized for a small
 // scan just returns the original — no per-image conditional needed.
-export function imgproxyUrl({ endpoint, key, salt, slug, width, format = "avif", blur, quality }) {
+//
+// `version`, when given, is appended as a `?v=` query param — outside the
+// signed path, so it doesn't touch the signature, but still part of the
+// URL the browser (and Cloudflare's edge cache in front of imgproxy, see
+// functions/i/[[path]].js) requests. It's meant to be a work's content
+// hash: editing a source image in place keeps its filename, so without
+// this its imgproxy URL would stay byte-for-byte identical after the
+// edit, and the CDN — which has no way to know the origin bytes changed —
+// would keep serving the pre-edit version for up to a year. A changed
+// hash gives every edit a URL the edge has never seen, so it's always a
+// fresh fetch; the stale cache entry is simply never requested again.
+export function imgproxyUrl({ endpoint, key, salt, slug, width, format = "avif", blur, quality, version }) {
   const source = encodeURIComponent(slug);
   const opts = [`rs:fit:${width}:0`, blur && `bl:${blur}`, quality && `q:${quality}`].filter(Boolean).join("/");
   const path = `/${opts}/plain/${source}@${format}`;
-  return `${endpoint}/${sign(path, key, salt)}${path}`;
+  const query = version ? `?v=${encodeURIComponent(version)}` : "";
+  return `${endpoint}/${sign(path, key, salt)}${path}${query}`;
 }
 
 // A tiny, low-quality fetch — small enough to embed as a base64 data URI

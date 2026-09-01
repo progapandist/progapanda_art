@@ -11,7 +11,8 @@ LOCAL_IMGPROXY := http://localhost:8080
 # is where the build itself fetches placeholder bytes from — always the real
 # origin, since it's a build-time-only fetch that doesn't need (and during a
 # first-ever deploy, can't reach) the /i/ proxy.
-PROD_IMGPROXY := https://art.progapanda.org/i
+SITE := https://art.progapanda.org
+PROD_IMGPROXY := $(SITE)/i
 IMGPROXY_ORIGIN := https://imgproxy.progapanda.org
 LOAD_DOTENV := set -a; [ -f .env ] && . ./.env; set +a;
 export SOURCES_DIR

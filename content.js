@@ -189,6 +189,12 @@ function toWork(slug, section) {
     availability: data.availability || "",
     price: data.price || null,
     description: section?.body || "",
+    // The stored content hash also doubles as an edge-cache-busting
+    // version tag on every imgproxy URL for this work (see build.js/
+    // imgproxy.js) — editing a source image in place keeps its filename,
+    // so without this its imgproxy URL would stay identical and the CDN
+    // would keep serving pre-edit bytes for up to a year.
+    hash: data.hash || null,
   };
 }
 
