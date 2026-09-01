@@ -290,13 +290,20 @@ main.work { padding-bottom: 60px; }
   pointer-events: none;
 }
 
+/* A flat dark scrim, no blend mode — a portrait-oriented work leaves part
+   of .frame as plain letterboxed background rather than photo, and
+   mix-blend-mode's result there turned out to depend on z-index/opacity in
+   ways that made it disappear entirely in testing. A plain rgba(0,0,0)
+   darkens whatever's underneath by a fixed, predictable amount regardless,
+   photo or letterbox margin alike — which also directly fixes the
+   original complaint (a white flash was invisible on an already-light
+   image; darkening one is not). */
 .hint-zone {
   position: absolute;
   top: 0;
   height: 100%;
   opacity: 0;
-  background: rgba(255, 255, 255, 0.22);
-  mix-blend-mode: overlay;
+  background: rgba(0, 0, 0, 0.45);
 }
 
 .hint-left { left: 0; width: 20%; }
@@ -308,9 +315,9 @@ main.work { padding-bottom: 60px; }
   50% { opacity: 1; }
 }
 
-.frame.hint-play .hint-right { animation: hint-flash 0.5s ease-in-out; }
-.frame.hint-play .hint-left { animation: hint-flash 0.5s ease-in-out 0.45s; }
-.frame.hint-play .hint-center { animation: hint-flash 0.5s ease-in-out 0.9s; }
+.frame.hint-play .hint-right { animation: hint-flash 0.9s ease-in-out; }
+.frame.hint-play .hint-left { animation: hint-flash 0.9s ease-in-out 0.8s; }
+.frame.hint-play .hint-center { animation: hint-flash 0.9s ease-in-out 1.6s; }
 
 /* Touch has no separate "center" zone worth flashing — it's most of the
    image, an obvious tap target already. Only the easy-to-miss edge strips
