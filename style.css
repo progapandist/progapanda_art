@@ -277,6 +277,48 @@ main.work { padding-bottom: 60px; }
    almost indistinguishable from the empty frame it's covering. */
 .frame .placeholder { filter: saturate(1.6) contrast(1.08); }
 
+/* One-time hint, played once the hero image finishes loading (see nav.js):
+   a quick flash over each clickable zone of the frame, right then left
+   then center, to suggest there's something to tap without saying so in
+   words. Purely decorative — inset 0/pointer-events none so it never
+   competes with the real click handling in nav.js, which computes these
+   same zone boundaries (20%/60%/20%) itself. */
+.nav-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hint-zone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.22);
+  mix-blend-mode: overlay;
+}
+
+.hint-left { left: 0; width: 20%; }
+.hint-right { right: 0; width: 20%; }
+.hint-center { left: 20%; width: 60%; }
+
+@keyframes hint-flash {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.frame.hint-play .hint-right { animation: hint-flash 0.5s ease-in-out; }
+.frame.hint-play .hint-left { animation: hint-flash 0.5s ease-in-out 0.45s; }
+.frame.hint-play .hint-center { animation: hint-flash 0.5s ease-in-out 0.9s; }
+
+/* Touch has no separate "center" zone worth flashing — it's most of the
+   image, an obvious tap target already. Only the easy-to-miss edge strips
+   (prev/next) get hinted there. */
+@media (hover: none) {
+  .frame.hint-play .hint-center { animation: none; }
+}
+
 .work-body { padding: clamp(24px, 4vw, 52px) var(--pad) 0; }
 
 h2.title {

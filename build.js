@@ -232,6 +232,11 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
       <source type="image/webp" srcset="${srcset(work, "webp")}" sizes="100vw">
       <img src="${img(work, 1920, "jpg")}" srcset="${srcset(work, "jpg")}" sizes="100vw" alt="${escape(work.title)}" loading="eager" fetchpriority="high">
     </picture>
+    <div class="nav-hint" aria-hidden="true">
+      <span class="hint-zone hint-right"></span>
+      <span class="hint-zone hint-left"></span>
+      <span class="hint-zone hint-center"></span>
+    </div>
   </div>
   <div class="work-body">
     <h2 class="title">${escape(work.title)}</h2>

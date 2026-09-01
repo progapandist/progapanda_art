@@ -10,6 +10,21 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (e.key === "ArrowLeft" && prev) prev.click();
   if (e.key === "ArrowRight" && next) next.click();
+  // Space opens the lightbox, mirroring the desktop click-anywhere-to-zoom
+  // behavior below — but only when nothing else on the page owns Space
+  // already (a focused link/button/input has its own native meaning for
+  // it), and only where a mouse click would do the same thing (hover).
+  if (
+    e.key === " " &&
+    frame &&
+    lightbox &&
+    !lightbox.classList.contains("open") &&
+    (e.target === document.body || e.target === document.documentElement) &&
+    matchMedia("(hover: hover)").matches
+  ) {
+    e.preventDefault();
+    openLightbox(pickFullResHref());
+  }
 });
 
 // ---- theme toggle -----------------------------------------------------
@@ -170,4 +185,25 @@ if (frame) {
       openLightbox(pickFullResHref());
     }
   });
+
+  // Once the real hero image has fully replaced the placeholder, play a
+  // quick one-time flash over each clickable zone (see .nav-hint/.hint-zone
+  // in style.css) as a wordless hint that the image itself is interactive.
+  // `complete` covers a cached image whose load event already fired before
+  // this listener was attached. sessionStorage caps it at once per browser
+  // session — the point is to teach the gesture, not repeat it on every
+  // single work page.
+  const heroImg = frame.querySelector("picture img");
+  if (heroImg) {
+    const playHint = () => {
+      let alreadyShown = false;
+      try {
+        alreadyShown = sessionStorage.getItem("nav-hint-shown") === "1";
+        if (!alreadyShown) sessionStorage.setItem("nav-hint-shown", "1");
+      } catch (e) {}
+      if (!alreadyShown) frame.classList.add("hint-play");
+    };
+    if (heroImg.complete) playHint();
+    else heroImg.addEventListener("load", playHint, { once: true });
+  }
 }
