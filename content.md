@@ -37,7 +37,7 @@ hash: h127529ea265ebbf8
 
 ## capital m.png
 location: Berlin
-year: 2026
+year: 2024
 medium: [digital, for printing on Dibond]
 dimensions: scales on demand
 availability: available
@@ -91,7 +91,7 @@ availability: available
 hash: hc1c80b99d41cfa60
 
 ## ix.jpg
-year: 2026
+year: 2024
 location: Berlin
 medium: [oil, paper, charcoal, ink]
 availability: available
@@ -106,14 +106,14 @@ availability: available
 hash: h26c63e81eb840acb
 
 ## love_is_a_deer_from_hell.jpeg
-year: 2026
+year: 2024
 location: Berlin
 medium: [blood, ink, paper]
 availability: available
 hash: h8705c58533858adb
 
 ## maxis_world.jpeg
-year: 2026
+year: 2024
 location: Berlin
 medium: [oil, oil pastel, charcoal, paper]
 availability: sold
@@ -141,21 +141,21 @@ availability: available
 hash: h9aff147961574e4
 
 ## portrait_of_a_couple.jpeg
-year: 2026
+year: 2024
 location: Berlin
 medium: [oil, сharcoal, ink, paper]
 availability: sold
 hash: hfcccf23e44d8148d
 
 ## rage masquerading as cheer.jpeg
-year: 2026
+year: 2023
 location: Berlin
 medium: [oil, charcoal, linen]
 availability: available
 hash: h647355d010987305
 
 ## red_lipstick.png
-year: 2024
+year: 2023
 location: Berlin
 medium: [print, oil, Dibond]
 availability: available
@@ -170,18 +170,18 @@ hash: hc20648f01192f2e7
 
 ## self_portrait.jpg
 location: Berlin
-year: 2026
+year: 2023
 hash: h6a6a02cec4493076
 
 ## self_portrait_out_of_depression.jpeg
-year: 2026
+year: 2025
 location: Berlin
 medium: [paper, oil, oil pastel]
 availability: available
 hash: h8645344a48671f82
 
 ## skorost'.jpeg
-year: 2026
+year: 2024
 location: Berlin
 medium: [сharcoal, ink, paper]
 availability: available
@@ -236,7 +236,7 @@ hash: h9c4f9933468d9361
 
 ## twins.png
 location: Berlin
-year: 2026
+year: 2024
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
@@ -255,11 +255,3 @@ location: Berlin
 medium: [oil, ink, nails, metal wire, Dibond]
 availability: available
 hash: h9084090707f6a81a
-
-## self_portrait.jpeg
-year: 2026
-location: Berlin
-medium: [oil, charcoal, paper]
-availability: available
-hash: h4c6e1b765859b
-warning: source file missing — excluded from the site. Restore a file named "self_portrait.jpeg", or delete this section.
