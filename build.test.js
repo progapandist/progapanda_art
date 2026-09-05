@@ -94,9 +94,6 @@ year: 2024
 
 describe("loadWorks", () => {
   test("adds a stub section for a new source file and keeps a missing one as a warning, not a deletion", () => {
-    // content.md lives outside the sources folder, same as in the real repo
-    // (it's at the root, sources are an external folder) — otherwise scanning
-    // the folder would pick up content.md itself as a "work".
     const sourcesDir = mkdtempSync(join(tmpdir(), "progapanda-art-sources-"));
     const rootDir = mkdtempSync(join(tmpdir(), "progapanda-art-root-"));
     try {
@@ -106,25 +103,16 @@ describe("loadWorks", () => {
       writeFileSync(contentPath, "## bloom\nyear: 2023\n\nAlready described.\n\n## gone\nyear: 2020\n\nLost description.\n");
 
       const works = loadWorks(sourcesDir, contentPath);
-
-      // Display order is seeded-shuffled, not file order — check membership,
-      // not position. "gone" has no matching file (and no hash to match a
-      // rename against), so it's excluded from the built works...
       expect(works.map((w) => w.slug).sort()).toEqual(["bloom", "crow"]);
       const bloom = works.find((w) => w.slug === "bloom");
       const crow = works.find((w) => w.slug === "crow");
       expect(bloom.description).toBe("Already described.");
       expect(crow.title).toBe("Crow"); // stub section, title falls back to humanize
-
-      // content.md itself is still written in plain alphabetical file order,
-      // with "gone" kept at the end — flagged, not deleted, so the
-      // description survives for a human to act on.
       const rewritten = readFileSync(contentPath, "utf8");
       expect(rewritten.indexOf("## bloom")).toBeLessThan(rewritten.indexOf("## crow"));
       expect(rewritten).toContain("## gone");
       expect(rewritten).toContain("warning: source file missing");
       expect(rewritten).toContain("Lost description.");
-      // Every section for a file that does exist gets a hash backfilled.
       expect(parseContentFile(rewritten).get("bloom").data.hash).toMatch(/^h[0-9a-f]+$/);
     } finally {
       rmSync(sourcesDir, { recursive: true, force: true });
@@ -137,13 +125,9 @@ describe("loadWorks", () => {
     const rootDir = mkdtempSync(join(tmpdir(), "progapanda-art-root-"));
     try {
       const contentPath = join(rootDir, "content.md");
-      // First pass just to get a hash recorded under the old name, exactly
-      // like a real content.md would already have from a prior build.
       writeFileSync(join(sourcesDir, "old_name"), "identical-bytes");
       writeFileSync(contentPath, "");
       loadWorks(sourcesDir, contentPath); // writes a stub for old_name with a hash
-
-      // Simulate `mv old_name new_name`: same bytes, new filename.
       rmSync(join(sourcesDir, "old_name"));
       writeFileSync(join(sourcesDir, "new_name"), "identical-bytes");
 
@@ -168,13 +152,8 @@ describe("loadWorks", () => {
       writeFileSync(join(sourcesDir, "photo"), "original-bytes");
       writeFileSync(contentPath, "");
       loadWorks(sourcesDir, contentPath); // records a hash of "original-bytes"
-
-      // Edit in place — same filename, different bytes (e.g. a re-export).
       writeFileSync(join(sourcesDir, "photo"), "edited-bytes");
       loadWorks(sourcesDir, contentPath); // must refresh the stored hash
-
-      // Now rename the edited file. If the hash above went stale, this
-      // would be missed and wrongly treated as delete+add.
       rmSync(join(sourcesDir, "photo"));
       writeFileSync(join(sourcesDir, "photo_renamed"), "edited-bytes");
       const works = loadWorks(sourcesDir, contentPath);
@@ -190,16 +169,32 @@ describe("loadWorks", () => {
 });
 
 describe("renderDescription", () => {
-  test("renders a block of \"- \" lines as a list, and everything else as paragraphs", () => {
-    const html = renderDescription("Intro line.\n\n- first\n- second\n\nClosing <b>paragraph</b> & more.");
-    expect(html).toBe(
-      "<p>Intro line.</p>" + "<ul><li>first</li><li>second</li></ul>" + "<p>Closing &lt;b&gt;paragraph&lt;/b&gt; &amp; more.</p>",
-    );
+  test("renders paragraphs, emphasis, links and bare email addresses", () => {
+    const html = renderDescription("Based in **Berlin**.\n\nContact andrey@hey.com or [website](https://example.com).");
+    expect(html).toContain("<p>Based in <strong>Berlin</strong>.</p>");
+    expect(html).toContain('href="mailto:andrey@hey.com"');
+    expect(html).toContain('href="https://example.com"');
   });
 
-  test("a block only counts as a list if every line starts with \"- \"", () => {
-    const html = renderDescription("- first\nsecond line, no dash");
-    expect(html).toBe("<p>- first<br>second line, no dash</p>");
+  test("supports headings, nested lists, quotes, tables and fenced code", () => {
+    const html = renderDescription("### Process\n\n1. First\n   - nested\n\n> Quote\n\n| A | B |\n|---|---|\n| x | y |\n\n```js\nconst x = 1;\n```");
+    for (const tag of ["<h3>", "<ol>", "<ul>", "<blockquote>", "<table>", "<pre>"]) expect(html).toContain(tag);
+    expect(html).toContain("const x = 1;");
+  });
+
+  test("escapes raw HTML and renders empty content as empty", () => {
+    expect(renderDescription("<script>alert(1)</script>")).not.toContain("<script>");
+    expect(renderDescription("<b>text</b>")).toContain("&lt;b&gt;");
+    expect(renderDescription("")).toBe("");
+  });
+
+  test("keeps body headings and fenced section-like text when round-tripping", () => {
+    const text = "## work\nyear: 2024\n\n## Process\n\nA paragraph.\n\n```md\n## fake\nyear: 1999\n```\n\n## next\nyear: 2025\n";
+    const sections = parseContentFile(text);
+    expect([...sections.keys()]).toEqual(["work", "next"]);
+    expect(sections.get("work").body).toContain("## Process");
+    expect(sections.get("work").body).toContain("## fake");
+    expect(parseContentFile(serializeContentFile(sections, [...sections.keys()]))).toEqual(sections);
   });
 });
 
@@ -219,9 +214,6 @@ describe("dimensionsText", () => {
 });
 
 describe("imgproxyUrl", () => {
-  // Independently computed with node:crypto directly (HMAC-SHA256 of
-  // salt‖path, base64url) — a regression check on imgproxy.js's path
-  // construction and byte order, not just a snapshot of its own output.
   test("signs the exact path imgproxy expects", () => {
     const url = imgproxyUrl({
       endpoint: "http://localhost:8080",
@@ -267,5 +259,65 @@ describe("imgproxyUrl", () => {
       format: "jpg",
     });
     expect(url).toContain("/plain/red%20squares@jpg");
+  });
+});
+
+describe("content reconciliation regressions", () => {
+  function fixture(run) {
+    const root = mkdtempSync(join(tmpdir(), "art-regression-"));
+    const sources = join(root, "sources");
+    require("node:fs").mkdirSync(sources);
+    const content = join(root, "content.md");
+    writeFileSync(content, "");
+    try { run(sources, content); }
+    finally { rmSync(root, { recursive: true, force: true }); }
+  }
+
+  test("keeps previously missing copy when another source changes", () => fixture((sources, content) => {
+    writeFileSync(content, "## absent\nyear: 2020\n\nKeep this copy.\n");
+    loadWorks(sources, content);
+    writeFileSync(join(sources, "new"), "new image");
+    loadWorks(sources, content);
+    expect(readFileSync(content, "utf8")).toContain("Keep this copy.");
+    expect(parseContentFile(readFileSync(content, "utf8")).get("absent").data.warning).toBeTruthy();
+  }));
+
+  test("clears a missing warning when identical source bytes return", () => fixture((sources, content) => {
+    writeFileSync(join(sources, "work"), "image");
+    loadWorks(sources, content);
+    rmSync(join(sources, "work"));
+    loadWorks(sources, content);
+    writeFileSync(join(sources, "work"), "image");
+    loadWorks(sources, content);
+    expect(readFileSync(content, "utf8")).not.toContain("warning:");
+  }));
+
+  test("preserves both descriptions when a rename is ambiguous", () => fixture((sources, content) => {
+    for (const name of ["one", "two"]) writeFileSync(join(sources, name), "same");
+    writeFileSync(content, "## one\nyear: 2020\n\nFirst copy.\n\n## two\nyear: 2021\n\nSecond copy.\n");
+    loadWorks(sources, content);
+    for (const name of ["one", "two"]) rmSync(join(sources, name));
+    writeFileSync(join(sources, "renamed"), "same");
+    loadWorks(sources, content);
+    expect(readFileSync(content, "utf8")).toContain("First copy.");
+    expect(readFileSync(content, "utf8")).toContain("Second copy.");
+  }));
+
+  test("rejects colliding public URLs before changing content", () => fixture((sources, content) => {
+    writeFileSync(join(sources, "work.jpg"), "one");
+    writeFileSync(join(sources, "work.png"), "two");
+    expect(() => loadWorks(sources, content)).toThrow("duplicate work URL");
+    expect(readFileSync(content, "utf8")).toBe("");
+  }));
+
+  test("accepts a scalar medium", () => fixture((sources, content) => {
+    writeFileSync(join(sources, "work"), "one");
+    writeFileSync(content, "## work\nmedium: oil\n");
+    expect(loadWorks(sources, content)[0].medium).toEqual(["oil"]);
+  }));
+
+  test("parses Windows line endings", () => {
+    expect(parseFrontmatter("---\r\nyear: 2024\r\n---\r\nBio").data.year).toBe(2024);
+    expect(parseContentFile("## work\r\nyear: 2024\r\n\r\nCopy").get("work").body).toBe("Copy");
   });
 });

@@ -3,4 +3,6 @@ artist: Andy Barnow
 wordmark: Andy Barnow
 ---
 
-Born 1984, Berlin.
+Based in Berlin. Contact andrey@hey.com
+
+[instagram.com/progapanda](https://www.instagram.com/progapanda/)

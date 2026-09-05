@@ -82,6 +82,13 @@ medium: [LiDAR, digital, for printing on Dibond]
 availability: available
 hash: h274da906e4b85efe
 
+## gardens of the world.jpg
+location: Berlin
+year: 2024
+medium: [charcoal, oil, paper]
+availability: available
+hash: h97c63e36ff9f70fa
+
 ## golden.jpg
 year: 2024
 location: Berlin

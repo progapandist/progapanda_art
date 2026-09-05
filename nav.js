@@ -1,24 +1,20 @@
-// Progressive enhancement only: every interaction here just clicks a link
-// that already works without JS. Loaded on every page (theme toggle needs
-// to work everywhere); the prev/next/frame bits are no-ops on pages that
-// don't have them.
 const prev = document.querySelector('a[rel="prev"]');
 const next = document.querySelector('a[rel="next"]');
 const frame = document.querySelector(".frame");
 
+document.querySelector(".details-link")?.addEventListener("click", () => {
+  document.querySelector(".work-columns")?.scrollIntoView({ block: "start" });
+});
+
 document.addEventListener("keydown", (e) => {
-  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || e.defaultPrevented) return;
+  if (lightbox?.classList.contains("open") || e.target.closest("input, textarea, select, [contenteditable]")) return;
   if (e.key === "ArrowLeft" && prev) prev.click();
   if (e.key === "ArrowRight" && next) next.click();
-  // Space opens the lightbox, mirroring the desktop click-anywhere-to-zoom
-  // behavior below — but only when nothing else on the page owns Space
-  // already (a focused link/button/input has its own native meaning for
-  // it), and only where a mouse click would do the same thing (hover).
   if (
     e.key === " " &&
     frame &&
     lightbox &&
-    !lightbox.classList.contains("open") &&
     (e.target === document.body || e.target === document.documentElement) &&
     matchMedia("(hover: hover)").matches
   ) {
@@ -27,16 +23,11 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// ---- theme toggle -----------------------------------------------------
-
 const toggle = document.querySelector(".theme-toggle");
 
 function currentTheme() {
   return document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 }
-
-// Plain geometric glyphs, not emoji — filled circle shows when light (click
-// to go dark), hollow circle shows when dark (click to go light).
 function labelToggle() {
   if (!toggle) return;
   const dark = currentTheme() === "dark";
@@ -46,6 +37,7 @@ function labelToggle() {
 
 if (toggle) {
   labelToggle();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", labelToggle);
   toggle.addEventListener("click", () => {
     const nextTheme = currentTheme() === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = nextTheme;
@@ -56,50 +48,46 @@ if (toggle) {
   });
 }
 
-// ---- lightbox: full-resolution viewer ----------------------------------
-// Progressive enhancement here too: every format link's href already points
-// straight at the real image, so a modified click (new tab, save-as) or no
-// JS at all falls through to a completely normal link.
-
 const lightbox = document.querySelector(".lightbox");
 const firstFormatLink = document.querySelector(".format-link");
-
-// The hero <picture> already made the real avif-vs-webp-vs-jpg call for
-// this browser (via its <source type="image/..."> negotiation) — reuse
-// that instead of re-detecting: whatever format the visible hero image
-// resolved to is the one the lightbox opens at, so avif is the default
-// everywhere it's supported and a browser that can't decode it silently
-// gets webp/jpg instead, no probing required.
 function pickFullResHref() {
-  const heroImg = frame && frame.querySelector("picture img");
-  const currentSrc = (heroImg && (heroImg.currentSrc || heroImg.src)) || "";
-  const format = (currentSrc.match(/@(avif|webp|jpg|png)$/) || [])[1];
-  const link = format && document.querySelector(`.format-link[href$="@${format}"]`);
+  const heroImg = frame?.querySelector("picture img");
+  const currentSrc = heroImg?.currentSrc || heroImg?.src || "";
+  const format = (currentSrc.match(/@(avif|webp|jpg|png)(?:\?|$)/) || [])[1];
+  const link = format && document.querySelector(`.format-link[data-format="${format}"]`);
   return (link || firstFormatLink)?.href;
 }
 
+let openLightbox;
 if (lightbox) {
   const backdrop = lightbox.querySelector(".lightbox-backdrop");
   const viewport = lightbox.querySelector(".lightbox-viewport");
   const lightboxImg = lightbox.querySelector(".lightbox-img");
   const closeBtn = lightbox.querySelector(".lightbox-close");
-  // The same tiny blurred placeholder already sitting behind the hero
-  // image — no extra fetch needed for the lightbox's own backdrop.
   const placeholder = document.querySelector(".frame .placeholder");
 
-  var openLightbox = function (src) {
+  let previousFocus;
+  const background = [...document.body.children].filter((el) => el !== lightbox && el.tagName !== "SCRIPT");
+  openLightbox = function (src) {
+    if (!src) return;
+    previousFocus = document.activeElement;
+    background.forEach((el) => { el.inert = true; });
     lightboxImg.src = src;
     lightbox.classList.remove("zoomed");
     if (placeholder) backdrop.style.backgroundImage = `url('${placeholder.src}')`;
     lightbox.classList.add("open");
     lightbox.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    viewport.scrollTo(0, 0);
+    closeBtn.focus();
   };
 
   function closeLightbox() {
     lightbox.classList.remove("open", "zoomed");
     lightbox.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
+    background.forEach((el) => { el.inert = false; });
+    previousFocus?.focus();
   }
 
   document.querySelectorAll(".format-link").forEach((link) => {
@@ -112,14 +100,9 @@ if (lightbox) {
 
   closeBtn.addEventListener("click", closeLightbox);
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Tab" && lightbox.classList.contains("open")) { e.preventDefault(); closeBtn.focus(); }
     if (e.key === "Escape" && lightbox.classList.contains("open")) closeLightbox();
   });
-
-  // Click (not drag) toggles fit <-> zoomed. Touch panning is native (see
-  // touch-action on .lightbox-viewport in style.css) and a touch drag
-  // already suppresses the browser's own synthetic click afterward, so
-  // only the mouse case needs the "was this a click or a drag" check —
-  // mousemove doubles as the pan itself while a drag is in progress.
   let mouseDown = false;
   let dragged = false;
   let startX = 0, startY = 0, startScrollLeft = 0, startScrollTop = 0;
@@ -160,17 +143,9 @@ if (lightbox) {
     }
   });
 }
-
-// Clicking the hero image itself: on a hover-capable pointer (desktop/
-// trackpad), it opens the same product-style lightbox as a format link — a
-// mouse already has prev/next via the arrow keys and the footer links, so
-// the image itself is free to mean "zoom" instead of "navigate". On touch,
-// hover doesn't exist and there's no swipe gesture any more either, so the
-// image itself carries all the navigation: left ~20% back, right ~20%
-// forward (same edge zones the old gallery view used), the middle opens
-// the lightbox exactly like a desktop click does.
 if (frame) {
   frame.addEventListener("click", (e) => {
+    if (e.target.closest("a, button")) return;
     if (matchMedia("(hover: hover)").matches) {
       if (lightbox) openLightbox(pickFullResHref());
       return;
@@ -185,22 +160,12 @@ if (frame) {
       openLightbox(pickFullResHref());
     }
   });
-
-  // Once the real hero image has fully replaced the placeholder, play a
-  // quick one-time flash over each clickable zone (see .nav-hint/.hint-zone
-  // in style.css) as a wordless hint that the image itself is interactive.
-  // Deliberately just setTimeout + a class toggle, not a CSS animation —
-  // simple enough that clearHint() below can always cut it short cleanly.
   const heroImg = frame.querySelector("picture img");
   const hintTimers = [];
-
-  // If a navigation fires mid-flash, the page's native view transition
-  // (see @view-transition in style.css) snapshots whatever's on screen at
-  // that instant — an unfinished dark overlay gets baked into that
-  // snapshot and can show up as a stuck-looking flash on the next page.
-  // Clearing immediately on pagehide means there's never a mid-flash frame
-  // left for it to capture.
+  let hintCancelled = false;
   function clearHint() {
+    hintCancelled = true;
+    frame.classList.remove("show-keyboard-hint");
     hintTimers.forEach(clearTimeout);
     hintTimers.length = 0;
     document.querySelectorAll(".hint-zone.active, .nav-hint.active").forEach((el) => el.classList.remove("active"));
@@ -208,20 +173,29 @@ if (frame) {
   window.addEventListener("pagehide", clearHint);
 
   if (heroImg) {
-    const playHint = () => {
+    const playHint = async () => {
+      try { await heroImg.decode(); } catch { return; }
+      if (hintCancelled) return;
+      if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        if (!frame.querySelector(".keyboard-hint")) return;
+        try {
+          if (sessionStorage.getItem("keyboard-hint-shown") === "1") return;
+        } catch {}
+        hintTimers.push(setTimeout(() => {
+          frame.classList.add("show-keyboard-hint");
+          try { sessionStorage.setItem("keyboard-hint-shown", "1"); } catch {}
+        }, 150));
+        hintTimers.push(setTimeout(() => frame.classList.remove("show-keyboard-hint"), 2150));
+        return;
+      }
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let alreadyShown = false;
       try {
         alreadyShown = sessionStorage.getItem("nav-hint-shown") === "1";
         if (!alreadyShown) sessionStorage.setItem("nav-hint-shown", "1");
       } catch (e) {}
       if (alreadyShown) return;
-
-      // Desktop: one flash over the whole frame (the whole image is a
-      // single click target there). Touch: right, then left, then center,
-      // matching the frame click handler's own zones above.
-      const targets = matchMedia("(hover: hover)").matches
-        ? [document.querySelector(".nav-hint")]
-        : [frame.querySelector(".hint-right"), frame.querySelector(".hint-left"), frame.querySelector(".hint-center")];
+      const targets = [frame.querySelector(".hint-right"), frame.querySelector(".hint-left"), frame.querySelector(".hint-center")];
 
       const hold = 550; // ms each zone stays lit
       const gap = 250; // ms between one zone fading out and the next lighting up

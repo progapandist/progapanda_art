@@ -1,7 +1,3 @@
-/* Bauhaus by way of brutalism, greyscale: a paper ground, heavy rules, no
-   colour anywhere — the image supplies the only colour on the page. Forked
-   from github.com/progapandist/tja-web's style.css; every place that used a
-   hue to distinguish something here uses weight, border or invert instead. */
 :root {
   --paper: #fafaf8;
   --paper-2: #eeede8;
@@ -20,9 +16,6 @@
   color-scheme: light;
 }
 
-/* System preference, unless the reader has picked a theme explicitly (the
-   button in the header nav) — :not([data-theme="light"]) lets an explicit
-   light choice win even when the system is dark. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #15151a;
@@ -35,7 +28,6 @@
   }
 }
 
-/* The explicit choice, so it wins regardless of system preference. */
 :root[data-theme="dark"] {
   --paper: #15151a;
   --paper-2: #1d1d21;
@@ -46,22 +38,12 @@
   color-scheme: dark;
 }
 
-/* Native cross-document view transitions: a plain <a> navigation between
-   two pages on this site cross-fades instead of hard-cutting, with zero
-   JS — this is a full page load every time (no SPA router), so without
-   this there's no way to animate between "old page" and "new page" at
-   all. Chromium/Safari apply it automatically; browsers that don't
-   support it just navigate instantly, same as before this existed. */
 @view-transition {
   navigation: auto;
 }
 
 * { box-sizing: border-box; }
-/* Nothing on this site ever needs horizontal panning — this is specifically
-   what lets nav.js's custom swipe (prev/next on a work page) work on iOS
-   Safari without also triggering the browser's own horizontal touch
-   handling (edge-swipe back/forward, rubber-band scroll) at the same time. */
-html, body { margin: 0; touch-action: pan-y; }
+html, body { margin: 0; touch-action: auto; }
 
 body {
   background: var(--paper);
@@ -71,6 +53,12 @@ body {
 }
 
 a { color: inherit; }
+
+/* Keep accessible alt text from flashing over placeholders while images load. */
+.tile img, .frame picture img, .lightbox-img {
+  color: transparent;
+  font-size: 0;
+}
 
 .labels,
 .forms dt,
@@ -82,11 +70,11 @@ a { color: inherit; }
   color: var(--dim);
 }
 
-/* ---- header ---- */
 header {
   display: flex;
   align-items: center;
-  gap: var(--pad);
+  flex-wrap: wrap;
+  gap: 8px var(--pad);
   padding: 14px var(--pad);
   border-bottom: var(--rule);
   position: sticky;
@@ -97,13 +85,11 @@ header {
 
 h1.wordmark {
   margin: 0;
-  /* "Andy Barnow / Progapanda" is a longer lockup than a bare name — scales
-     down on narrow viewports so it doesn't crowd the nav links. */
   font-size: clamp(15px, 4.2vw, 20px);
   font-weight: 700;
   letter-spacing: 0.01em;
   text-transform: lowercase;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 h1.wordmark a { text-decoration: none; }
@@ -124,10 +110,6 @@ h1.wordmark a { text-decoration: none; }
 
 .contrib:hover { color: var(--ink); }
 
-/* A single geometric glyph, not a text link — sized for legibility/tap
-   target rather than matching the .contrib links' font-size, and no
-   underline-style box-shadow (that's a text-link affordance, doesn't read
-   as one under a small circle). */
 .theme-toggle {
   font: inherit;
   font-size: 15px;
@@ -147,10 +129,9 @@ a:focus-visible, button:focus-visible {
   outline-offset: 2px;
 }
 
-/* ---- the grid / home page ---- */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
 }
 
 .tile {
@@ -179,11 +160,6 @@ a:focus-visible, button:focus-visible {
   position: absolute;
   inset: auto 0 0 0;
   padding: 10px 12px;
-  /* Fixed, not theme tokens — this sits on top of an arbitrary photograph,
-     not the page background, so it can't flip with light/dark mode the way
-     --paper/--ink do. var(--paper) here meant near-white text in light mode
-     but near-BLACK text in dark mode (paper flips dark), on a scrim that's
-     dark in both — illegible in dark mode specifically. */
   background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
   color: #fff;
   opacity: 0;
@@ -191,19 +167,12 @@ a:focus-visible, button:focus-visible {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.tile:hover .tile-info { opacity: 1; transform: translateY(0); }
+.tile:hover .tile-info, .tile:focus-visible .tile-info { opacity: 1; transform: translateY(0); }
 
-/* Hover doesn't exist on touch — some browsers fake a "sticky hover" after a
-   tap and some don't, either way it's an inconsistent, accidental way to
-   reveal a caption. On a device with no hover capability at all, skip the
-   pretense entirely: no caption, image only. */
 @media (hover: none) {
   .tile-info { display: none; }
 }
 
-/* Lowercase, matching the wordmark/nav/work-page title elsewhere — the
-   underlying text is still real sentence case (title attribute, alt text,
-   SEO), this is purely how it's drawn. */
 .tile-title { display: block; font-weight: 700; font-size: 14px; text-transform: lowercase; }
 .tile-meta { font-size: 12px; opacity: 0.85; }
 
@@ -218,20 +187,9 @@ a:focus-visible, button:focus-visible {
 .grid-foot p { margin: 0 0 6px; }
 .grid-foot p:last-child { margin-bottom: 0; }
 
-/* ---- the work page ---- */
-/* No max-width/centering here: the frame below is full-bleed, and text
-   sections carry their own var(--pad) inset, so everything lines up flush
-   against the same edges instead of the text floating in a centered column
-   under a full-width image. */
 main.work { padding-bottom: 60px; }
 
-/* The about/404 pages reuse .work-body but have no .frame above them, so
-   they need their own top air instead of the frame's border providing it. */
-.work-body-solo { padding-top: clamp(24px, 4vw, 52px); }
 
-/* Fixed height, not fit-to-content — the box is settled by CSS alone before
-   any image request starts, so there's nothing for the image arriving to
-   shift. object-fit does the rest regardless of the source's aspect ratio. */
 .frame {
   position: relative;
   background-color: var(--paper-2);
@@ -240,20 +198,11 @@ main.work { padding-bottom: 60px; }
   cursor: pointer;
 }
 
-/* Instant tap feedback that doesn't depend on the View Transition below —
-   works in every browser, registers before the page navigation even
-   starts, so a tap never feels like it did nothing. */
 .frame:active .placeholder,
 .frame:active picture img {
   opacity: 0.85;
 }
 
-/* The placeholder and the real picture occupy the identical box — same
-   inset, same object-fit — so loading is "this exact image, blurred, then
-   sharp," not a differently-cropped backdrop that jumps once the real
-   image (contain-fit) pops in on top of it. picture stacks above the
-   placeholder in DOM order; the real <img> naturally paints over it once
-   loaded, no JS required. */
 .frame .placeholder,
 .frame picture {
   position: absolute;
@@ -272,21 +221,8 @@ main.work { padding-bottom: 60px; }
   object-fit: contain;
 }
 
-/* imgproxy's saturation option is Pro-only, so the boost happens here
-   instead — a very light/white-wall work blurred hard enough is otherwise
-   almost indistinguishable from the empty frame it's covering. */
 .frame .placeholder { filter: saturate(1.6) contrast(1.08); }
 
-/* One-time hint, played a beat after the hero image finishes loading, to
-   suggest there's something to tap/click without saying so in words.
-   Purely decorative — inset 0/pointer-events none so it never competes
-   with the real click handling in nav.js. Deliberately simple: a plain
-   opacity transition toggled by a JS-added .active class (see nav.js),
-   not a CSS @keyframes animation — an animation still mid-flight at the
-   instant a page navigation fires gets baked into the outgoing page's
-   view-transition snapshot as a stuck-looking overlay; a transition that
-   JS starts and stops with its own timers doesn't have that failure mode,
-   and nav.js also force-clears it on pagehide as a second safety net. */
 .nav-hint {
   position: absolute;
   inset: 0;
@@ -294,14 +230,6 @@ main.work { padding-bottom: 60px; }
   pointer-events: none;
 }
 
-/* A flat dark scrim, no blend mode — a portrait-oriented work leaves part
-   of .frame as plain letterboxed background rather than photo, and
-   mix-blend-mode's result there turned out to depend on z-index/opacity in
-   ways that made it disappear entirely in testing. A plain rgba(0,0,0)
-   darkens whatever's underneath by a fixed, predictable amount regardless,
-   photo or letterbox margin alike — which also directly fixes the original
-   complaint about an earlier white/blend version (invisible on an
-   already-light image; darkening one is not). */
 .hint-zone {
   position: absolute;
   top: 0;
@@ -317,18 +245,62 @@ main.work { padding-bottom: 60px; }
 .hint-right { right: 0; width: 20%; }
 .hint-center { left: 20%; width: 60%; }
 
-/* Desktop: clicking anywhere on the image opens the lightbox — one target,
-   not three — so the whole frame flashes once instead of implying zones
-   that don't exist there. Touch uses the individual .hint-zone spans
-   above instead (right, then left, then center — see nav.js). */
-@media (hover: hover) {
-  .nav-hint {
-    background: rgba(0, 0, 0, 0.45);
-    opacity: 0;
-    transition: opacity 0.35s ease;
-  }
-  .nav-hint.active { opacity: 1; }
+.hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s ease;
 }
+
+.hero-arrow svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.hero-prev { left: 0; }
+.hero-next { right: 0; }
+.hero-arrow:hover, .hero-arrow:focus-visible { background: rgba(0, 0, 0, 0.75); }
+.hero-arrow:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
+
+.keyboard-hint { display: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-arrow { display: grid; }
+  .keyboard-hint {
+    display: block;
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    margin: 0;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font: 11px/1.5 var(--mono);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .keyboard-hint kbd { font: inherit; }
+  .frame.show-keyboard-hint .keyboard-hint { opacity: 1; }
+}
+
 
 .work-body { padding: clamp(16px, 2vw, 28px) var(--pad) 0; }
 
@@ -342,17 +314,8 @@ h2.title {
 
 .forms {
   display: grid;
-  /* fit-content(46rem), not minmax(0, 46rem): a minmax() track always
-     contributes its full max bound to the grid's own natural width, even
-     when the actual value text is much shorter — that's exactly what was
-     leaving a wide empty gap between .forms and .side-col next to it now
-     that they sit side by side. fit-content sizes to the content itself
-     and only caps it at 46rem if a value actually runs that long. */
-  grid-template-columns: max-content fit-content(46rem);
+  grid-template-columns: max-content minmax(0, 1fr);
   gap: 8px 28px;
-  /* <dl> carries a browser-default top margin (~1em) that .side-col, a
-     plain <div>, doesn't — left uncleared, that alone was enough to throw
-     the two columns out of alignment at the top. */
   margin: 0;
 }
 
@@ -383,41 +346,21 @@ ul.chips li {
   color: var(--dim);
 }
 
-/* Location/year/dimensions/availability on the left, medium + full
-   resolution as their own column right next to it — both are .forms
-   dt/dd rows (.side-col reuses .forms wholesale: same label:value layout,
-   same alignment, for free) rather than a separately-designed block, so a
-   work with only one row on the right (no medium) still reads as label
-   next to content, matching the left column, not label above content.
-   Description (if any) runs full-width below this row, since it doesn't
-   pair one-to-one with either column. Flex, not grid: grid's default
-   track sizing stretched .forms to fill all the leftover horizontal space
-   (pushing .side-col to the far edge) and stretched its height to match
-   .side-col's, which blew up the gap between its own rows too. Flex just
-   packs both to natural content size with a gap between them. */
 .work-columns {
   display: flex;
   align-items: flex-start;
-  gap: 8px 48px;
+  flex-wrap: wrap;
+  gap: 26px 48px;
   margin-top: 22px;
 }
 
-/* auto basis = size to its own content (short label:value rows), not a
-   fixed width that would leave a gap before .side-col; max-width is just
-   a safety cap against an unusually long value. */
-.work-columns .forms { flex: 0 1 auto; max-width: 560px; }
-/* A fixed flex-basis here (260px) was too narrow for "full resolution"'s
-   label plus its 4 format chips on one line — forced them to wrap even on
-   a wide viewport. auto sizes to whatever the widest row actually needs,
-   same treatment as .forms; the container only wraps once the whole
-   .work-columns row genuinely doesn't fit (see the 760px breakpoint). */
-.work-columns .side-col { flex: 0 1 auto; max-width: 480px; }
+.work-columns .forms { flex: 0 1 auto; max-width: min(560px, 100%); min-width: 0; }
+.work-columns .side-col { flex: 0 1 auto; max-width: 480px; min-width: 0; }
 
 @media (max-width: 760px) {
   .work-columns { flex-direction: column; gap: 26px; }
 }
 
-/* ---- lightbox: full-resolution viewer, opened from the format links ---- */
 .lightbox {
   position: fixed;
   inset: 0;
@@ -434,18 +377,9 @@ ul.chips li {
   height: 120%;
   background-size: cover;
   background-position: center;
-  /* "Super blurred" on purpose, well past the frame placeholder's own
-     blur — this is only ever an ambient backdrop, never looked at
-     directly, so any residual JPEG blockiness in the tiny source should
-     wash out completely. Scaled past its container so the heavy blur's
-     own edge falloff never shows at the viewport boundary. */
   filter: blur(60px) brightness(0.6);
 }
 
-/* overflow: auto + touch-action here is what makes an oversized zoomed
-   image pannable by native touch scroll for free; touch-action overrides
-   the site-wide pan-y-only rule (html, body) specifically inside here,
-   since this is the one place on the site that needs real 2D panning. */
 .lightbox-viewport {
   position: absolute;
   inset: 0;
@@ -465,10 +399,6 @@ ul.chips li {
   display: block;
 }
 
-/* Zoomed: the image drops its max-width/height cap and renders at its own
-   native size (whatever the clicked format's actual resolution is) —
-   larger than the viewport in practice, so it overflows into the
-   scrollable/pannable viewport instead of being scaled to fit. */
 .lightbox.zoomed .lightbox-viewport {
   align-items: flex-start;
   justify-content: flex-start;
@@ -515,11 +445,7 @@ ul.chips li {
 
 .description {
   margin: 26px 0 0;
-  /* A hard 60ch read as an arbitrary sliver of text on a very wide monitor,
-     with nothing else on the page explaining why it stopped there. Scaling
-     with viewport width (capped at 75ch so a line never gets too long to
-     read comfortably) keeps it proportional instead of fixed. */
-  max-width: min(75ch, 65vw);
+  max-width: 75ch;
   font-size: 17px;
   line-height: 1.55;
 }
@@ -529,7 +455,6 @@ ul.chips li {
 .description ul { padding-left: 1.2em; }
 .description li + li { margin-top: 0.3em; }
 
-/* ---- prev/next footer ---- */
 .pager {
   display: flex;
   border-top: var(--rule);
@@ -538,6 +463,7 @@ ul.chips li {
 
 .pager a, .pager span {
   flex: 1;
+  min-width: 0;
   padding: 16px var(--pad);
   min-height: 54px;
   display: flex;
@@ -558,3 +484,38 @@ ul.chips li {
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .tile img { height: 200px; }
 }
+
+.work-body, .pager { overflow-wrap: anywhere; }
+.forms dd { min-width: 0; }
+.work-body.work-body-solo { padding-top: clamp(24px, 4vw, 52px); }
+.lightbox { overflow: hidden; }
+.lightbox-img { flex-shrink: 0; }
+@media (max-width: 380px) {
+  .forms { grid-template-columns: 1fr; gap: 4px; }
+  .forms dd + dt { margin-top: 10px; }
+  .tile img { height: 160px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+.work-heading { display: flex; align-items: baseline; gap: 16px; }
+.work-heading .title { min-width: 0; overflow-wrap: anywhere; }
+.details-link { display: none; flex-shrink: 0; margin-left: auto; padding: 0; border: 0; background: none; font-family: inherit; cursor: pointer; }
+.work-columns { scroll-margin-top: 100px; }
+@media (hover: hover) and (pointer: fine) {
+  .details-link { display: inline-block; }
+}
+
+.description > * { margin: 0; }
+.description > * + * { margin-top: 1em; }
+.description :is(h1, h2, h3, h4, h5, h6) { line-height: 1.2; }
+.description :is(ul, ol) { padding-left: 1.4em; }
+.description blockquote { padding-left: 1em; border-left: var(--rule); }
+.description :is(code, pre) { font-family: var(--mono); font-size: 0.85em; }
+.description pre { overflow-x: auto; padding: 1em; background: var(--paper-2); }
+.description pre code { font-size: inherit; }
+.description table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.description :is(th, td) { padding: 6px 12px; border: var(--hair); text-align: left; }
+.description img { max-width: 100%; height: auto; }
