@@ -164,7 +164,7 @@ hash: h647355d010987305
 ## red_lipstick.png
 year: 2023
 location: Berlin
-medium: [print, oil, Dibond]
+medium: [print, lipstick, Dibond]
 availability: available
 hash: h677bc5d22410d989
 
