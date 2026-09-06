@@ -399,11 +399,7 @@ ul.chips li {
   display: block;
 }
 
-.lightbox.zoomed .lightbox-viewport {
-  align-items: flex-start;
-  justify-content: flex-start;
-  cursor: grab;
-}
+.lightbox.zoomed .lightbox-viewport { cursor: grab; }
 
 .lightbox.zoomed .lightbox-viewport:active { cursor: grabbing; }
 
@@ -412,6 +408,8 @@ ul.chips li {
   max-height: none;
   width: auto;
   height: auto;
+  /* ponytail: auto margins centre the image and keep both scroll ends reachable, unlike flex centring */
+  margin: auto;
   cursor: zoom-out;
 }
 
