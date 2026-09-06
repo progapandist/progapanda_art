@@ -321,3 +321,21 @@ describe("content reconciliation regressions", () => {
     expect(parseContentFile("## work\r\nyear: 2024\r\n\r\nCopy").get("work").body).toBe("Copy");
   });
 });
+
+// The zoomed lightbox has been broken twice by "centring" it with flex alone:
+// auto margins only take positive free space, so an overflowing image falls back
+// to justify-content and its left/top edge becomes unreachable.
+describe("lightbox zoom CSS", () => {
+  const css = readFileSync(new URL("./style.css", import.meta.url), "utf8");
+  const rule = (selector) => css.split(selector)[1].split("}")[0];
+
+  test("zoomed viewport aligns from the start so the image never clips", () => {
+    const viewport = rule(".lightbox.zoomed .lightbox-viewport {");
+    expect(viewport).toContain("align-items: flex-start");
+    expect(viewport).toContain("justify-content: flex-start");
+  });
+
+  test("zoomed image centres itself with auto margins", () => {
+    expect(rule(".lightbox.zoomed .lightbox-img {")).toContain("margin: auto");
+  });
+});

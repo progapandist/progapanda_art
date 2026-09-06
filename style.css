@@ -399,7 +399,13 @@ ul.chips li {
   display: block;
 }
 
-.lightbox.zoomed .lightbox-viewport { cursor: grab; }
+.lightbox.zoomed .lightbox-viewport {
+  /* ponytail: flex-start + auto margins on the image = centred when it fits,
+     no clipped left/top edge when it overflows. Plain centring clips. */
+  align-items: flex-start;
+  justify-content: flex-start;
+  cursor: grab;
+}
 
 .lightbox.zoomed .lightbox-viewport:active { cursor: grabbing; }
 
