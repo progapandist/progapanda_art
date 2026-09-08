@@ -1,7 +1,9 @@
 import { watch } from "node:fs";
 
 const sockets = new Set();
-const live = `<script>new WebSocket("ws://"+location.host+"/live").onmessage=()=>location.reload()</script>`;
+// Reconnects after a dev-server restart, and reloads once it is back — otherwise
+// an open tab goes silent the moment `make dev` is restarted.
+const live = `<script>(function connect(restarted){const s=new WebSocket("ws://"+location.host+"/live");s.onmessage=()=>location.reload();s.onopen=()=>{if(restarted)location.reload()};s.onclose=()=>setTimeout(()=>connect(true),500)})(false)</script>`;
 watch(".", { recursive: true }, (event, filename) => {
   if (!filename) return;
   if (filename !== "dist" && !filename.startsWith("dist/")) return;
