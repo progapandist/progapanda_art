@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, renderDescription, dimensionsText, toWork } from "./content.js";
+import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, urlSlug, renderDescription, dimensionsText, toWork } from "./content.js";
 import { imgproxyUrl } from "./imgproxy.js";
 
 describe("parseFrontmatter", () => {
@@ -421,4 +421,10 @@ test("cut a block, let the watcher rebuild, paste it back — the work survives 
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+test("a multi-word source name becomes an underscored URL, not %20", () => {
+  expect(urlSlug("color suite.png")).toBe("color_suite");
+  expect(urlSlug("rage masquerading as cheer.jpeg")).toBe("rage_masquerading_as_cheer");
+  expect(humanize("color suite.png")).toBe("Color suite"); // titles still read as words
 });

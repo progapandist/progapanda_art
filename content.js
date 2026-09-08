@@ -44,7 +44,7 @@ export function loadAbout(path) {
   return parseFrontmatter(readFileSync(path, "utf8"));
 }
 export function urlSlug(slug) {
-  return slug.replace(/\.(jpe?g|png|webp|avif|tiff?|heic)$/i, "");
+  return slug.replace(/\.(jpe?g|png|webp|avif|tiff?|heic)$/i, "").replace(/\s+/g, "_");
 }
 
 export function humanize(slug) {
