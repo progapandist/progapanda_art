@@ -250,10 +250,10 @@ hash: h1ef6e449d04e144b
 ## temptation.jpg
 year: 2024
 location: Berlin
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
+dimensions: [100, 100]
+medium: [LiDAR, digital, print on Dibond]
 availability: available
-editions: 
+editions: 10
 hash: hc587fc452994cefe
 
 ## the_drip.png
