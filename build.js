@@ -146,7 +146,7 @@ function workPage(work, prev, next, ph) {
     dims && ["dimensions", escape(dims)],
     (work.availability || edition) && [
       work.availability ? "availability" : "edition",
-      `${work.availability ? `<span class="availability">${escape(work.availability)}${work.price ? ` &middot; €${escape(work.price)}` : ""}</span>` : ""}${edition}`,
+      `<span class="badge-row">${work.availability ? `<span class="availability">${escape(work.availability)}${work.price ? ` &middot; €${escape(work.price)}` : ""}</span>` : ""}${edition}</span>`,
     ],
   ].filter(Boolean);
 

@@ -445,7 +445,12 @@ ul.chips li,
 
 .lightbox-close:hover { background: rgba(0, 0, 0, 0.75); }
 
-.availability + .edition { margin-left: 8px; }
+/* A wrapped badge has to line up with the first one, not sit 8px in — hence gap, not margin. */
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
 .availability,
 .edition {
