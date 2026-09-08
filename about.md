@@ -1,5 +1,5 @@
 ---
-wordmark: Andy Barnow
+wordmark: Andy Barnow 1984
 ---
 
 # Andy Barnow
