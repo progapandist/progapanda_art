@@ -12,7 +12,7 @@ const SOURCES_DIR = process.env.SOURCES_DIR || "/Users/progapandist/progapanda_a
 const CONTENT_PATH = "content.md";
 const KEY = process.env.IMGPROXY_KEY;
 const SALT = process.env.IMGPROXY_SALT;
-let about, ARTIST, WORDMARK;
+let about, ARTIST;
 const dist = "dist/";
 const distTmp = "dist.tmp/";
 const distOld = "dist.old/";
@@ -74,7 +74,7 @@ ${ogImage ? `<meta property="og:image" content="${ogImage}">\n<meta name="twitte
 </head>
 <body>
 <header>
-  <h1 class="wordmark"><a href="/">${escape(WORDMARK)}</a></h1>
+  <h1 class="wordmark"><a href="/">${escape(ARTIST)}</a></h1>
   <nav class="header-nav">${links}</nav>
 </header>
 ${body}
@@ -123,7 +123,6 @@ ${tiles}
 function artistPage() {
   const body = `<main class="work">
   <div class="work-body work-body-solo">
-    <h2 class="title">${escape(ARTIST)}</h2>
     <div class="description">${renderDescription(about.body)}</div>
   </div>
 </main>`;
@@ -239,8 +238,7 @@ let STAMPED;
 
 async function build() {
   about = loadAbout("about.md");
-  ARTIST = about.data.artist || "Andy Barnow";
-  WORDMARK = about.data.wordmark || ARTIST;
+  ARTIST = about.data.wordmark || "Andy Barnow"; // the wordmark names the site everywhere
   // Keep the previous build available until every page is ready.
   rmSync(distTmp, { recursive: true, force: true });
   mkdirSync(distTmp, { recursive: true });

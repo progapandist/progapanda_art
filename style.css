@@ -480,9 +480,6 @@ ul.chips li,
   line-height: 1.55;
 }
 
-.description p, .description ul { margin: 0; }
-.description p + p, .description ul + p, .description p + ul, .description ul + ul { margin-top: 1em; }
-.description ul { padding-left: 1.2em; }
 .description li + li { margin-top: 0.3em; }
 
 .pager {
@@ -542,6 +539,8 @@ ul.chips li,
 .description > * { margin: 0; }
 .description > * + * { margin-top: 1em; }
 .description :is(h1, h2, h3, h4, h5, h6) { line-height: 1.2; }
+.description :is(h1, h2, h3, h4, h5, h6) + * { margin-top: 0.5em; }
+.description * + :is(h1, h2, h3, h4, h5, h6) { margin-top: 1.6em; }
 .description :is(ul, ol) { padding-left: 1.4em; }
 .description blockquote { padding-left: 1em; border-left: var(--rule); }
 .description :is(code, pre) { font-family: var(--mono); font-size: 0.85em; }
