@@ -146,9 +146,11 @@ function workPage(work, prev, next, ph) {
     work.availability && ["availability", `<span class="availability">${escape(work.availability)}${work.price ? ` &middot; €${escape(work.price)}` : ""}</span>`],
   ].filter(Boolean);
 
-  const forms = rows.length
+  const edition = work.editions ? `<div class="edition">edition of ${work.editions}, signed</div>` : "";
+  const forms = rows.length || edition
     ? `<dl class="forms">
 ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
+    ${edition}
   </dl>`
     : "";
 

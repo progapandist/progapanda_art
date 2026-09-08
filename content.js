@@ -64,7 +64,7 @@ export function parseContentFile(text) {
 
   const lines = text.replace(/\r\n/g, "\n").split("\n");
   let fence = null;
-  const metadata = /^(title|year|location|medium|dimensions|availability|price|hash|warning):/;
+  const metadata = /^(title|year|location|medium|dimensions|availability|price|editions|hash|warning):/;
   for (const [index, line] of lines.entries()) {
     if (fence) {
       bodyLines.push(line);
@@ -156,7 +156,7 @@ export function dimensionsText(dimensions) {
   return dimensions ? String(dimensions) : null;
 }
 
-function toWork(slug, section) {
+export function toWork(slug, section) {
   const data = section?.data || {};
   return {
     slug,
@@ -167,6 +167,7 @@ function toWork(slug, section) {
     dimensions: data.dimensions || [],
     availability: data.availability || "",
     price: data.price || null,
+    editions: Number(data.editions) || null,
     description: section?.body || "",
     hash: data.hash || null,
   };

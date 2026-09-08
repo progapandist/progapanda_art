@@ -3,6 +3,7 @@ year: 2026
 location: Berlin
 medium: [oil, charcoal, acrylic, linen]
 availability: available
+editions: 
 hash: h245cccfb1617948b
 
 ## annointment.jpg
@@ -10,6 +11,7 @@ year: 2024
 location: Berlin
 medium: [print, oil, Dibond]
 availability: available
+editions: 
 hash: hc710ae8ea7e5838
 
 ## beach_body.jpeg
@@ -17,6 +19,7 @@ year: 2024
 medium: [oil, charcoal, paper]
 location: Berlin
 availability: available
+editions: 
 hash: hd330124f03b47db5
 
 ## beton.jpg
@@ -25,6 +28,7 @@ medium: [LiDAR, processing, digital, for printing on Dibond]
 dimensions: scales on demand
 availability: available
 location: Berlin
+editions: 
 hash: hbf1281ee8ec3e5ee
 
 ## bloom
@@ -33,6 +37,7 @@ location: Berlin
 medium: [LiDAR, processing, print, Dibond]
 dimensions: [90, 60, 0.5]
 availability: available
+editions: 
 hash: h127529ea265ebbf8
 
 ## capital m.png
@@ -41,6 +46,7 @@ year: 2024
 medium: [digital, for printing on Dibond]
 dimensions: scales on demand
 availability: available
+editions: 
 hash: h8b63a8edd837cc24
 
 ## color suite iii.jpg
@@ -49,6 +55,7 @@ year: 2023
 dimensions: scales on demand
 medium: [LiDAR, processing, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: hf3c6797ec1c6f293
 
 ## color suite.png
@@ -57,6 +64,7 @@ year: 2026
 medium: [LiDAR, processing, print, oil, Dibond]
 dimensions: [100, 100]
 availability: sold
+editions: 
 hash: h5177b00232d4371f
 
 ## faces of depression.jpeg
@@ -64,6 +72,7 @@ year: 2026
 location: Berlin
 medium: [oil, charcoal, linen]
 availability: available
+editions: 
 hash: hd5c0f2d11809ec81
 
 ## flat.png
@@ -72,6 +81,7 @@ year: 2026
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: h7fb3ad39c4601632
 
 ## flat2.png
@@ -80,6 +90,7 @@ location: Berlin
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: h274da906e4b85efe
 
 ## gardens of the world.jpg
@@ -87,6 +98,7 @@ location: Berlin
 year: 2024
 medium: [charcoal, oil, paper]
 availability: available
+editions: 
 hash: h97c63e36ff9f70fa
 
 ## golden.jpg
@@ -95,6 +107,7 @@ location: Berlin
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: hc1c80b99d41cfa60
 
 ## ix.jpg
@@ -102,6 +115,7 @@ year: 2024
 location: Berlin
 medium: [oil, paper, charcoal, ink]
 availability: available
+editions: 
 hash: h44b9d81de287bd01
 
 ## jane_03.png
@@ -110,6 +124,7 @@ location: Berlin
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: h26c63e81eb840acb
 
 ## love_is_a_deer_from_hell.jpeg
@@ -117,6 +132,7 @@ year: 2024
 location: Berlin
 medium: [blood, ink, paper]
 availability: available
+editions: 
 hash: h8705c58533858adb
 
 ## maxis_world.jpeg
@@ -124,6 +140,7 @@ year: 2024
 location: Berlin
 medium: [oil, oil pastel, charcoal, paper]
 availability: sold
+editions: 
 hash: hb19f829aa2b8ecf7
 
 ## mountain_view.jpeg
@@ -131,6 +148,7 @@ year: 2026
 location: Berlin
 medium: [oil, acrylic, linen board]
 availability: available
+editions: 
 hash: h7f9053f232a72c4e
 
 ## nadiza.jpeg
@@ -138,6 +156,7 @@ year: 2026
 location: Berlin
 medium: [oil, acrylic, linen board]
 availability: available
+editions: 
 hash: h85edac30fd6b18e7
 
 ## part_eight.jpg
@@ -145,6 +164,7 @@ year: 2024
 location: Berlin
 medium: [oil, paper, charcoal, ink]
 availability: available
+editions: 
 hash: h9aff147961574e4
 
 ## portrait_of_a_couple.jpeg
@@ -152,6 +172,7 @@ year: 2024
 location: Berlin
 medium: [oil, сharcoal, ink, paper]
 availability: sold
+editions: 
 hash: hfcccf23e44d8148d
 
 ## rage masquerading as cheer.jpeg
@@ -159,6 +180,7 @@ year: 2023
 location: Berlin
 medium: [oil, charcoal, linen]
 availability: available
+editions: 
 hash: h647355d010987305
 
 ## red_lipstick.png
@@ -166,6 +188,7 @@ year: 2023
 location: Berlin
 medium: [print, lipstick, Dibond]
 availability: available
+editions: 
 hash: h677bc5d22410d989
 
 ## redhead_one.tiff
@@ -173,11 +196,13 @@ year: 2023
 location: Berlin
 medium: [print, Dibond]
 availability: sold
+editions: 
 hash: hc20648f01192f2e7
 
 ## self_portrait.jpg
 location: Berlin
 year: 2023
+editions: 
 hash: h6a6a02cec4493076
 
 ## self_portrait_out_of_depression.jpeg
@@ -185,6 +210,7 @@ year: 2025
 location: Berlin
 medium: [paper, oil, oil pastel]
 availability: available
+editions: 
 hash: h8645344a48671f82
 
 ## skorost'.jpeg
@@ -192,6 +218,7 @@ year: 2024
 location: Berlin
 medium: [сharcoal, ink, paper]
 availability: available
+editions: 
 hash: h826e7cd4b2261f84
 
 ## sleep.jpeg
@@ -199,6 +226,7 @@ year: 2026
 location: Berlin
 medium: [oil, oil pastel, Dibond]
 dimensions: [90, 60]
+editions: 
 hash: hdf6791c096fccdff
 
 ## subcu_01.png
@@ -207,6 +235,7 @@ location: Berlin
 dimensions: scales on demand
 medium: [photography, for printing on Dibond]
 availability: available
+editions: 
 hash: haadda33cb9caab7c
 
 ## sunflower_sutra.png
@@ -215,6 +244,7 @@ location: Berlin
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: h1ef6e449d04e144b
 
 ## temptation.jpg
@@ -223,6 +253,7 @@ location: Berlin
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: hc587fc452994cefe
 
 ## the_drip.png
@@ -231,6 +262,7 @@ location: Berlin
 dimensions: [60, 60]
 medium: [LiDAR, digital, print, Dibond]
 availability: sold
+editions: 
 hash: h99f18a447e7d9ec8
 
 ## truecolor_01.jpg
@@ -239,6 +271,7 @@ location: Berlin
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: h9c4f9933468d9361
 
 ## twins.png
@@ -247,6 +280,7 @@ year: 2024
 dimensions: scales on demand
 medium: [LiDAR, digital, for printing on Dibond]
 availability: available
+editions: 
 hash: h145b909467d5a91b
 
 ## untitled ii.jpeg
@@ -254,6 +288,7 @@ year: 2026
 location: Berlin
 medium: [oil, acrylic, linen board]
 availability: available
+editions: 
 hash: hc481b5a23f6e12d9
 
 ## untitled.jpeg
@@ -261,4 +296,5 @@ year: 2026
 location: Berlin
 medium: [oil, ink, nails, metal wire, Dibond]
 availability: available
+editions: 
 hash: h9084090707f6a81a

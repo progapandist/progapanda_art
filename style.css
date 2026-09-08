@@ -62,6 +62,7 @@ a { color: inherit; }
 
 .labels,
 .forms dt,
+.edition,
 .chips {
   font-size: 10px;
   font-weight: 500;
@@ -321,6 +322,8 @@ h2.title {
 
 .forms dt { padding-top: 3px; }
 
+.edition { grid-column: 1 / -1; }
+
 .forms dd {
   margin: 0;
   font-family: var(--mono);
@@ -499,6 +502,7 @@ ul.chips li {
 }
 
 .work-body, .pager { overflow-wrap: anywhere; }
+
 .forms dd { min-width: 0; }
 .work-body.work-body-solo { padding-top: clamp(24px, 4vw, 52px); }
 .lightbox { overflow: hidden; }

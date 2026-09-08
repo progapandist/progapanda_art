@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed, renderDescription, dimensionsText } from "./content.js";
+import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed, renderDescription, dimensionsText, toWork } from "./content.js";
 import { imgproxyUrl } from "./imgproxy.js";
 
 describe("parseFrontmatter", () => {
@@ -337,5 +337,15 @@ describe("lightbox zoom CSS", () => {
 
   test("zoomed image centres itself with auto margins", () => {
     expect(rule(".lightbox.zoomed .lightbox-img {")).toContain("margin: auto");
+  });
+});
+
+describe("editions", () => {
+  test("a numeric editions key becomes a label, anything else is a no-op", () => {
+    const editions = (v) => toWork("work.jpg", { data: v === undefined ? {} : { editions: v }, body: "" }).editions;
+    expect(editions(5)).toBe(5);
+    expect(editions("5")).toBe(5);
+    expect(editions(undefined)).toBe(null);
+    expect(editions("many")).toBe(null);
   });
 });
