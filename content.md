@@ -65,14 +65,13 @@ editions: 1
 year: 2026
 hash: h63fbf8c1fac3bbe1
 
-## bloom
-year: 2023
+## untitled ii.jpeg
+year: 2026
 location: Berlin
-medium: [LiDAR, processing, print, Dibond]
-dimensions: [90, 60]
+medium: [oil, acrylic, linen board]
 availability: available
 editions: 
-hash: h127529ea265ebbf8
+hash: hc481b5a23f6e12d9
 
 ## capital m.png
 location: Berlin
@@ -143,6 +142,14 @@ availability: available
 editions: 
 hash: h44b9d81de287bd01
 
+## Self-Portrait in despair.jpeg
+location: Berlin
+year: 2023
+medium: [oil, paper, charcoal, ink]
+dimensions: [30, 30]
+availability: sold
+hash: h73f941376a058ef2
+
 ## jane_03.png
 year: 2024
 location: Berlin
@@ -175,6 +182,15 @@ medium: [oil, acrylic, linen board]
 availability: available
 editions: 
 hash: h7f9053f232a72c4e
+
+## bloom
+year: 2023
+location: Berlin
+medium: [LiDAR, processing, print, Dibond]
+dimensions: [90, 60]
+availability: available
+editions: 1
+hash: h127529ea265ebbf8
 
 ## nadiza.jpeg
 year: 2026
@@ -258,10 +274,10 @@ hash: h826e7cd4b2261f84
 ## subcu_01.png
 year: 2024
 location: Berlin
-dimensions: scales on demand
-medium: [photography, for printing on Dibond]
+dimensions: [90, 60]
+medium: [photography, digital, print on Dibond]
 availability: available
-editions: 
+editions: 1
 hash: haadda33cb9caab7c
 
 ## sunflower_sutra.png
@@ -290,17 +306,3 @@ medium: [LiDAR, digital, print, Dibond]
 availability: sold
 editions: 
 hash: h99f18a447e7d9ec8
-
-## untitled ii.jpeg
-year: 2026
-location: Berlin
-medium: [oil, acrylic, linen board]
-availability: available
-editions: 
-hash: hc481b5a23f6e12d9
-
-## the bed.pxd
-location: Berlin
-year: 2026
-hash: hf2a8df005c1b6f9
-warning: source file missing — excluded from the site. Restore a file named "the bed.pxd", or delete this section.
