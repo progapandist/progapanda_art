@@ -331,7 +331,7 @@ h2.title {
 
 .formats-row {
   display: flex;
-  align-items: center;
+  align-items: stretch; /* the note's border lines up with the chips' */
   flex-wrap: wrap;
   gap: 6px 14px;
 }
@@ -355,7 +355,11 @@ ul.chips li,
   color: var(--dim);
 }
 
-.format-note { font-size: 5.5px; }
+.format-note {
+  display: flex;
+  align-items: center;
+  font-size: 7.3px;
+}
 
 .work-columns {
   display: flex;
