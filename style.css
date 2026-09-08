@@ -481,6 +481,7 @@ ul.chips li,
 }
 
 .description li + li { margin-top: 0.3em; }
+.description:first-child { margin-top: 0; } /* nothing above it to clear */
 
 .pager {
   display: flex;

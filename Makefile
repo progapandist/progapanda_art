@@ -22,7 +22,7 @@ stop-imgproxy:
 	docker stop imgproxy
 
 dev:
-	$(LOAD_DOTENV) IMGPROXY_ENDPOINT=$(LOCAL_IMGPROXY) bun run build.js --watch & builder=$$!; trap 'kill $$builder 2>/dev/null' EXIT INT TERM; bun run server.js
+	$(LOAD_DOTENV) IMGPROXY_ENDPOINT=$(LOCAL_IMGPROXY) bun --watch build.js --watch & builder=$$!; trap 'kill $$builder 2>/dev/null' EXIT INT TERM; bun run server.js
 
 test:
 	bun test

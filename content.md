@@ -290,3 +290,9 @@ medium: [oil, acrylic, linen board]
 availability: available
 editions: 
 hash: hc481b5a23f6e12d9
+
+## the bed.pxd
+location: Berlin
+year: 2026
+hash: hf2a8df005c1b6f9
+warning: source file missing — excluded from the site. Restore a file named "the bed.pxd", or delete this section.
