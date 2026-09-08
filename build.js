@@ -2,7 +2,7 @@ import { mapLimit } from "./utils.js";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync, cpSync, rmSync, renameSync, existsSync } from "node:fs";
 import { loadWorks, loadAbout, urlSlug, escape, renderDescription, dimensionsText } from "./content.js";
-import { imgproxyUrl, placeholder, BREAKPOINTS, FORMATS } from "./imgproxy.js";
+import { imgproxyUrl, placeholder, BREAKPOINTS, DOWNLOAD_FORMATS } from "./imgproxy.js";
 
 const SITE = process.env.SITE || "https://art.progapanda.org";
 const CF_ANALYTICS_TOKEN = "7ea997cc094c44ff95757e808d509065";
@@ -157,7 +157,8 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     : "";
 
   const description = work.description ? `<div class="description">${renderDescription(work.description)}</div>` : "";
-  const formats = `<ul class="chips">${FORMATS.map((f) => `<li><a class="format-link" data-format="${f}" href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul>`;
+  const formats = `<ul class="chips">${DOWNLOAD_FORMATS.map((f) => `<li><a class="format-link" download="${escape(urlSlug(work.slug))}.${f}" href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul>
+  <p class="format-note">for use in publications only</p>`;
   const sideCol = `<dl class="forms side-col">
     ${medium ? `<dt>medium</dt><dd>${medium}</dd>` : ""}
     <dt>full resolution</dt><dd>${formats}</dd>
@@ -173,7 +174,7 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
   ].filter(Boolean).join("\n");
   const placeholderImg = ph ? `<img class="placeholder" src="${ph}" alt="" aria-hidden="true">` : "";
   const body = `<main class="work">
-  <div class="frame">
+  <div class="frame" data-full-avif="${img(work, 3200, "avif")}" data-full-webp="${img(work, 3200, "webp")}" data-full-jpg="${img(work, 3200, "jpg")}">
     ${placeholderImg}
     <picture>
       <source type="image/avif" srcset="${srcset(work, "avif")}" sizes="100vw">

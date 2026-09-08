@@ -49,13 +49,11 @@ if (toggle) {
 }
 
 const lightbox = document.querySelector(".lightbox");
-const firstFormatLink = document.querySelector(".format-link");
 function pickFullResHref() {
   const heroImg = frame?.querySelector("picture img");
   const currentSrc = heroImg?.currentSrc || heroImg?.src || "";
-  const format = (currentSrc.match(/@(avif|webp|jpg|png)(?:\?|$)/) || [])[1];
-  const link = format && document.querySelector(`.format-link[data-format="${format}"]`);
-  return (link || firstFormatLink)?.href;
+  const format = (currentSrc.match(/@(avif|webp|jpg)(?:\?|$)/) || [])[1];
+  return frame?.getAttribute(`data-full-${format || "avif"}`) || frame?.dataset.fullJpg;
 }
 
 let openLightbox;
@@ -89,14 +87,6 @@ if (lightbox) {
     background.forEach((el) => { el.inert = false; });
     previousFocus?.focus();
   }
-
-  document.querySelectorAll(".format-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-      e.preventDefault();
-      openLightbox(link.href);
-    });
-  });
 
   closeBtn.addEventListener("click", closeLightbox);
   document.addEventListener("keydown", (e) => {

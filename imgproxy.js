@@ -2,7 +2,8 @@
 import { createHmac } from "node:crypto";
 
 export const BREAKPOINTS = [480, 768, 1024, 1440, 1920, 2560, 3200];
-export const FORMATS = ["avif", "webp", "jpg", "png"];
+// Offered as downloads on a work page; the lightbox negotiates its own format.
+export const DOWNLOAD_FORMATS = ["jpg", "png"];
 
 function sign(path, key, salt) {
   const hmac = createHmac("sha256", Buffer.from(key, "hex"));
