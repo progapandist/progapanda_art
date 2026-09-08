@@ -31,6 +31,15 @@ dimensions: [90, 60]
 editions: 
 hash: hdf6791c096fccdff
 
+## twins.png
+location: Berlin
+year: 2024
+dimensions: scales on demand
+medium: [LiDAR, digital, for printing on Dibond]
+availability: available
+editions: 
+hash: h145b909467d5a91b
+
 ## beach_body.jpeg
 year: 2024
 medium: [oil, charcoal, paper]
@@ -41,18 +50,18 @@ hash: hd330124f03b47db5
 
 ## beton.jpg
 year: 2024
-medium: [LiDAR, processing, digital, for printing on Dibond]
+medium: [LiDAR, processing, print on Dibond]
 dimensions: scales on demand
 availability: available
 location: Berlin
-editions: 
+editions: 1
 hash: hbf1281ee8ec3e5ee
 
 ## bloom
 year: 2023
 location: Berlin
 medium: [LiDAR, processing, print, Dibond]
-dimensions: [90, 60, 0.5]
+dimensions: [90, 60]
 availability: available
 editions: 
 hash: h127529ea265ebbf8
@@ -60,10 +69,10 @@ hash: h127529ea265ebbf8
 ## capital m.png
 location: Berlin
 year: 2024
-medium: [digital, for printing on Dibond]
-dimensions: scales on demand
+medium: [digital, print on Dibond]
+dimensions: [90, 60]
 availability: available
-editions: 
+editions: 5
 hash: h8b63a8edd837cc24
 
 ## color suite.png
@@ -273,15 +282,6 @@ medium: [LiDAR, digital, print, Dibond]
 availability: sold
 editions: 
 hash: h99f18a447e7d9ec8
-
-## twins.png
-location: Berlin
-year: 2024
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
-availability: available
-editions: 
-hash: h145b909467d5a91b
 
 ## untitled ii.jpeg
 year: 2026
