@@ -134,20 +134,6 @@ export function scanSources(dir) {
 function fileHash(path) {
   return "h" + Bun.hash(readFileSync(path)).toString(16);
 }
-const SHUFFLE_SEED = "dolboeb";
-
-function seededHash(str) {
-  let h = 2166136261; // FNV-1a
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-export function shuffledBySeed(slugs) {
-  return [...slugs].sort((a, b) => seededHash(SHUFFLE_SEED + a) - seededHash(SHUFFLE_SEED + b));
-}
 export function dimensionsText(dimensions) {
   if (Array.isArray(dimensions)) {
     if (!dimensions.length) return null;
@@ -186,9 +172,13 @@ export function loadWorks(sourcesDir, contentPath) {
     routes.add(route);
   }
 
+  // content.md is the running order: edit it to re-sort the site.
+  const order = [...sections.keys()];
+
   // Match only unambiguous renames; duplicate images must not overwrite copy.
   const added = files.filter((file) => !sections.has(file));
   const missing = [...sections.keys()].filter((file) => !hashes.has(file));
+  const fresh = [];
   for (const file of added) {
     const hash = hashes.get(file);
     const matches = missing.filter((old) => !sections.get(old)?.data.warning && sections.get(old)?.data.hash === hash);
@@ -196,22 +186,26 @@ export function loadWorks(sourcesDir, contentPath) {
     if (matches.length === 1 && uniqueSource) {
       sections.set(file, sections.get(matches[0]));
       sections.delete(matches[0]);
+      order[order.indexOf(matches[0])] = file; // a rename keeps the place it had
     } else {
       sections.set(file, { data: { location: "Berlin", year: new Date().getFullYear() }, body: "" });
+      fresh.push(file);
     }
   }
+  order.unshift(...fresh); // new work lands on top until the editor moves it
   for (const file of files) {
     const data = sections.get(file).data;
     data.hash = hashes.get(file);
     delete data.warning;
   }
-  const stillMissing = [...sections.keys()].filter((file) => !hashes.has(file)).sort();
+  const stillMissing = order.filter((file) => !hashes.has(file));
   for (const file of stillMissing) {
     sections.get(file).data.warning =
       `source file missing — excluded from the site. Restore a file named "${file}", or delete this section.`;
   }
-  const content = serializeContentFile(sections, [...files, ...stillMissing]);
+  const present = order.filter((file) => hashes.has(file));
+  const content = serializeContentFile(sections, [...present, ...stillMissing]);
   if (content !== readFileSync(contentPath, "utf8")) writeFileSync(contentPath, content);
 
-  return shuffledBySeed(files).map((f) => toWork(f, sections.get(f)));
+  return present.map((f) => toWork(f, sections.get(f)));
 }

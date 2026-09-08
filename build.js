@@ -161,7 +161,7 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
     : "";
 
   const description = work.description ? `<div class="description">${renderDescription(work.description)}</div>` : "";
-  const formats = `<div class="formats-row"><ul class="chips">${DOWNLOAD_FORMATS.map((f) => `<li><a class="format-link" download="${escape(urlSlug(work.slug))}.${f}" href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul><span class="format-note">for media use only</span></div>`;
+  const formats = `<div class="formats-row"><ul class="chips">${DOWNLOAD_FORMATS.map((f) => `<li><a class="format-link" download="${escape(urlSlug(work.slug))}.${f}" href="${img(work, 3200, f)}">${f}</a></li>`).join("")}</ul><span class="format-note">media use only</span></div>`;
   const sideCol = `<dl class="forms side-col">
     ${medium ? `<dt>medium</dt><dd>${medium}</dd>` : ""}
     <dt>full resolution</dt><dd>${formats}</dd>

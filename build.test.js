@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, shuffledBySeed, renderDescription, dimensionsText, toWork } from "./content.js";
+import { parseFrontmatter, parseContentFile, serializeContentFile, loadWorks, humanize, renderDescription, dimensionsText, toWork } from "./content.js";
 import { imgproxyUrl } from "./imgproxy.js";
 
 describe("parseFrontmatter", () => {
@@ -41,27 +41,6 @@ describe("humanize", () => {
   test("strips a real image extension before humanizing", () => {
     expect(humanize("ix.jpg")).toBe("Ix");
     expect(humanize("rage masquerading as cheer.jpeg")).toBe("Rage masquerading as cheer");
-  });
-});
-
-describe("shuffledBySeed", () => {
-  const slugs = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"];
-
-  test("is deterministic — same input, same order, every call", () => {
-    expect(shuffledBySeed(slugs)).toEqual(shuffledBySeed(slugs));
-  });
-
-  test("is not just the input order (sanity check it actually shuffles)", () => {
-    expect(shuffledBySeed(slugs)).not.toEqual(slugs);
-  });
-
-  test("contains exactly the same slugs, just reordered", () => {
-    expect([...shuffledBySeed(slugs)].sort()).toEqual([...slugs].sort());
-  });
-
-  test("adding one slug doesn't reorder the others relative to each other", () => {
-    const withOneMore = shuffledBySeed([...slugs, "golf"]).filter((s) => s !== "golf");
-    expect(withOneMore).toEqual(shuffledBySeed(slugs));
   });
 });
 
@@ -109,7 +88,7 @@ describe("loadWorks", () => {
       expect(bloom.description).toBe("Already described.");
       expect(crow.title).toBe("Crow"); // stub section, title falls back to humanize
       const rewritten = readFileSync(contentPath, "utf8");
-      expect(rewritten.indexOf("## bloom")).toBeLessThan(rewritten.indexOf("## crow"));
+      expect(rewritten.indexOf("## crow")).toBeLessThan(rewritten.indexOf("## bloom")); // new work on top
       expect(rewritten).toContain("## gone");
       expect(rewritten).toContain("warning: source file missing");
       expect(rewritten).toContain("Lost description.");
@@ -348,4 +327,52 @@ describe("editions", () => {
     expect(editions(undefined)).toBe(null);
     expect(editions("many")).toBe(null);
   });
+});
+
+describe("work order follows content.md", () => {
+  function fixture(run) {
+    const root = mkdtempSync(join(tmpdir(), "art-order-"));
+    const sources = join(root, "sources");
+    require("node:fs").mkdirSync(sources);
+    const content = join(root, "content.md");
+    writeFileSync(content, "");
+    try { run(sources, content); }
+    finally { rmSync(root, { recursive: true, force: true }); }
+  }
+  const slugs = (works) => works.map((w) => w.slug);
+
+  test("keeps the order the editor put the blocks in", () => fixture((sources, content) => {
+    for (const name of ["a", "b", "c"]) writeFileSync(join(sources, name), name);
+    writeFileSync(content, "## c\nyear: 2020\n\n## a\nyear: 2020\n\n## b\nyear: 2020\n");
+    expect(slugs(loadWorks(sources, content))).toEqual(["c", "a", "b"]);
+    // and the rewritten file preserves it, so the next build agrees
+    expect(slugs(loadWorks(sources, content))).toEqual(["c", "a", "b"]);
+  }));
+
+  test("new sources land on top, existing order untouched", () => fixture((sources, content) => {
+    for (const name of ["a", "b"]) writeFileSync(join(sources, name), name);
+    writeFileSync(content, "## b\nyear: 2020\n\n## a\nyear: 2020\n");
+    loadWorks(sources, content);
+    writeFileSync(join(sources, "zebra"), "new");
+    expect(slugs(loadWorks(sources, content))).toEqual(["zebra", "b", "a"]);
+  }));
+
+  test("a renamed source keeps its position", () => fixture((sources, content) => {
+    for (const name of ["a", "b", "c"]) writeFileSync(join(sources, name), name);
+    loadWorks(sources, content);
+    writeFileSync(content, readFileSync(content, "utf8"));
+    rmSync(join(sources, "b"));
+    writeFileSync(join(sources, "b_renamed"), "b");
+    expect(slugs(loadWorks(sources, content))).toEqual(["a", "b_renamed", "c"]);
+  }));
+
+  test("a removed source drops to the bottom with a warning, still in the file", () => fixture((sources, content) => {
+    for (const name of ["a", "b", "c"]) writeFileSync(join(sources, name), name);
+    loadWorks(sources, content);
+    rmSync(join(sources, "a"));
+    expect(slugs(loadWorks(sources, content))).toEqual(["b", "c"]);
+    const text = readFileSync(content, "utf8");
+    expect(text.indexOf("## a")).toBeGreaterThan(text.indexOf("## c"));
+    expect(text).toContain("source file missing");
+  }));
 });
