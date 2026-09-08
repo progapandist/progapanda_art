@@ -34,10 +34,9 @@ hash: hdf6791c096fccdff
 ## twins.png
 location: Berlin
 year: 2024
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
+medium: [LiDAR, digital, print on Dibond]
 availability: available
-editions: 
+editions: 1
 hash: h145b909467d5a91b
 
 ## beach_body.jpeg
@@ -56,6 +55,15 @@ availability: available
 location: Berlin
 editions: 1
 hash: hbf1281ee8ec3e5ee
+
+## the bed.png
+location: Berlin
+medium: [photograpgy, digital, print on Dibond]
+dimensions: [60, 90]
+availability: available
+editions: 1
+year: 2026
+hash: h63fbf8c1fac3bbe1
 
 ## bloom
 year: 2023
