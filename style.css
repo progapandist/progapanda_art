@@ -355,6 +355,8 @@ ul.chips li,
   color: var(--dim);
 }
 
+.format-note { font-size: 5.5px; }
+
 .work-columns {
   display: flex;
   align-items: flex-start;

@@ -18,9 +18,18 @@ hash: h8645344a48671f82
 year: 2024
 location: Berlin
 medium: [print, oil, Dibond]
+dimensions: [60, 60]
 availability: available
 editions: 
 hash: hc710ae8ea7e5838
+
+## sleep.jpeg
+year: 2026
+location: Berlin
+medium: [oil, oil pastel, Dibond]
+dimensions: [90, 60]
+editions: 
+hash: hdf6791c096fccdff
 
 ## beach_body.jpeg
 year: 2024
@@ -228,14 +237,6 @@ medium: [сharcoal, ink, paper]
 availability: available
 editions: 
 hash: h826e7cd4b2261f84
-
-## sleep.jpeg
-year: 2026
-location: Berlin
-medium: [oil, oil pastel, Dibond]
-dimensions: [90, 60]
-editions: 
-hash: hdf6791c096fccdff
 
 ## subcu_01.png
 year: 2024
