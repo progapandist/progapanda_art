@@ -213,7 +213,7 @@ year: 2023
 location: Berlin
 medium: [print, Dibond]
 availability: sold
-editions: 
+editions: 1
 hash: hc20648f01192f2e7
 
 ## untitled.jpeg
