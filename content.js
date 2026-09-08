@@ -51,6 +51,11 @@ export function humanize(slug) {
   const s = urlSlug(slug).replace(/_id$/, "").replace(/_/g, " ").trim();
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }
+// Exactly what loadWorks writes for a source it has never seen: no copy, no
+// hand-written metadata. Anything more than this is the editor's own work.
+const STUB_KEYS = new Set(["location", "year", "hash"]);
+const isStub = (section) => !section.body && Object.keys(section.data).every((key) => STUB_KEYS.has(key));
+
 export function parseContentFile(text) {
   const sections = new Map();
   let slug = null,
@@ -58,8 +63,18 @@ export function parseContentFile(text) {
     bodyLines = [],
     inBody = false;
 
+  // Cutting a block to move it elsewhere briefly removes it from the file, and the
+  // rebuild that lands in between writes a fresh stub for it — so after the paste the
+  // file holds both. Keep whichever section actually carries the work's content.
   const flush = () => {
-    if (slug !== null) sections.set(slug, { data, body: bodyLines.join("\n").trim() });
+    if (slug === null) return;
+    const section = { data, body: bodyLines.join("\n").trim() };
+    const existing = sections.get(slug);
+    if (!existing) return void sections.set(slug, section);
+    if (isStub(existing)) sections.delete(slug); // the paste decides where it sits
+    else if (isStub(section)) return;
+    else throw new Error(`Duplicate content section: ${slug}`);
+    sections.set(slug, section);
   };
 
   const lines = text.replace(/\r\n/g, "\n").split("\n");
@@ -84,7 +99,6 @@ export function parseContentFile(text) {
     if (heading && (slug === null || metadata.test(lines[index + 1] || ""))) {
       flush();
       slug = heading[1].trim();
-      if (sections.has(slug)) throw new Error(`Duplicate content section: ${slug}`);
       data = {};
       bodyLines = [];
       inBody = false;

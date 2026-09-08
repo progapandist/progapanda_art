@@ -376,3 +376,49 @@ describe("work order follows content.md", () => {
     expect(text).toContain("source file missing");
   }));
 });
+
+describe("duplicate sections", () => {
+  const stub = "## work.jpg\nlocation: Berlin\nyear: 2026\nhash: h1\n";
+  const real = "## work.jpg\nyear: 2024\nlocation: Berlin\nmedium: [oil]\nhash: h1\n\nThe copy.\n";
+
+  test("a build-written stub loses to the block the editor pasted back", () => {
+    for (const text of [stub + "\n" + real, real + "\n" + stub]) {
+      const section = parseContentFile(text).get("work.jpg");
+      expect(section.body).toBe("The copy.");
+      expect(section.data.medium).toEqual(["oil"]);
+    }
+  });
+
+  test("the pasted block decides where the work sits", () => {
+    const other = "## other.jpg\nyear: 2024\nhash: h2\n";
+    expect([...parseContentFile(stub + "\n" + other + "\n" + real).keys()]).toEqual(["other.jpg", "work.jpg"]);
+  });
+
+  test("two real blocks with the same name are still an error", () => {
+    expect(() => parseContentFile(real + "\n" + real.replace("The copy.", "Other copy."))).toThrow("Duplicate content section");
+  });
+});
+
+test("cut a block, let the watcher rebuild, paste it back — the work survives intact", () => {
+  const root = mkdtempSync(join(tmpdir(), "art-cutpaste-"));
+  const sources = join(root, "sources");
+  require("node:fs").mkdirSync(sources);
+  const content = join(root, "content.md");
+  try {
+    for (const name of ["a", "b"]) writeFileSync(join(sources, name), name);
+    writeFileSync(content, "## a\nyear: 2019\nmedium: [oil]\n\nThe copy.\n\n## b\nyear: 2020\n");
+    loadWorks(sources, content);
+    const cut = readFileSync(content, "utf8").split(/(?=^## b)/m);
+    writeFileSync(content, cut[1]); // block "a" is on the clipboard, not in the file
+    loadWorks(sources, content); // the rebuild that lands mid-edit writes a stub for it
+    writeFileSync(content, readFileSync(content, "utf8") + "\n" + cut[0].trim() + "\n"); // pasted at the end
+    const works = loadWorks(sources, content);
+    expect(works.map((w) => w.slug)).toEqual(["b", "a"]);
+    const a = works.find((w) => w.slug === "a");
+    expect(a.description).toBe("The copy.");
+    expect(a.medium).toEqual(["oil"]);
+    expect(a.year).toBe(2019);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
