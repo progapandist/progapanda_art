@@ -1,3 +1,12 @@
+## lipstick.jpeg
+location: Berlin
+year: 2023
+medium: [print, lipstick, Dibond]
+dimensions: [60, 40]
+availability: available
+editions: 
+hash: h26ec4b5849460471
+
 ## all_those_good_people_down_the_jubilee_street.jpeg
 year: 2026
 location: Berlin
@@ -35,6 +44,7 @@ hash: hdf6791c096fccdff
 location: Berlin
 year: 2024
 medium: [LiDAR, digital, print on Dibond]
+dimensions: [100, 100]
 availability: available
 editions: 1
 hash: h145b909467d5a91b
@@ -232,14 +242,6 @@ medium: [oil, charcoal, linen]
 availability: available
 editions: 
 hash: h647355d010987305
-
-## red_lipstick.png
-year: 2023
-location: Berlin
-medium: [print, lipstick, Dibond]
-availability: available
-editions: 
-hash: h677bc5d22410d989
 
 ## redhead_one.tiff
 year: 2023
