@@ -11,12 +11,20 @@ if (!ENDPOINT) throw new Error("IMGPROXY_ENDPOINT must be set — the public /i/
 if (!KEY || !SALT) throw new Error("IMGPROXY_KEY and IMGPROXY_SALT must be set (see .env).");
 
 const works = loadWorks(SOURCES_DIR, "content.md");
-const PICTURE_FORMATS = ["avif", "webp", "jpg"];
+// Warm what visitors actually fetch. Every breakpoint in avif — that is what
+// all but a sliver of browsers pick — and the webp/jpg fallbacks only at the
+// widths the pages name directly. A fallback miss costs one visitor one encode.
 const combos = [];
 for (const w of works) {
-  for (const width of BREAKPOINTS) for (const format of PICTURE_FORMATS) combos.push({ slug: w.slug, width, format, version: w.hash });
-  combos.push({ slug: w.slug, width: 3200, format: "png", version: w.hash });
-  combos.push({ slug: w.slug, width: 1200, format: "jpg", version: w.hash });
+  const add = (width, format) => combos.push({ slug: w.slug, width, format, version: w.hash });
+  for (const width of BREAKPOINTS) add(width, "avif");
+  for (const format of ["webp", "jpg"]) {
+    add(480, format); // grid tile
+    add(1920, format); // hero <img> src
+    add(3200, format); // lightbox, and the jpg download
+  }
+  add(1200, "jpg"); // og:image
+  add(3200, "png"); // download
 }
 
 console.log(`warming ${combos.length} urls (${works.length} works) through ${ENDPOINT}...`);
