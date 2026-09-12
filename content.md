@@ -1,3 +1,12 @@
+## bed ii.png
+location: Berlin
+year: 2026
+medium: [photography, digital, print, Dibond]
+dimensions: [100, 100]
+availability: available
+editions: 1
+hash: h9362591020d9fddd
+
 ## lipstick.jpeg
 location: Berlin
 year: 2023
@@ -60,15 +69,14 @@ hash: hd330124f03b47db5
 ## beton.jpg
 year: 2024
 medium: [LiDAR, processing, print on Dibond]
-dimensions: scales on demand
 availability: available
 location: Berlin
 editions: 1
 hash: hbf1281ee8ec3e5ee
 
-## the bed.png
+## bed.png
 location: Berlin
-medium: [photograpgy, digital, print on Dibond]
+medium: [photography, digital, print on Dibond]
 dimensions: [60, 90]
 availability: available
 editions: 1
@@ -101,7 +109,7 @@ availability: sold
 editions: 
 hash: h5177b00232d4371f
 
-## faces of depression.jpeg
+## pale.jpeg
 year: 2026
 location: Berlin
 medium: [oil, charcoal, linen]
@@ -112,10 +120,10 @@ hash: hd5c0f2d11809ec81
 ## flat.png
 location: Berlin
 year: 2026
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
+dimensions: [100, 100]
+medium: [LiDAR, digital, print, Dibond]
 availability: available
-editions: 
+editions: 1
 hash: h7fb3ad39c4601632
 
 ## gardens of the world.jpg
@@ -129,19 +137,17 @@ hash: h97c63e36ff9f70fa
 ## golden.jpg
 year: 2024
 location: Berlin
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
+medium: [LiDAR, digital, print, Dibond]
 availability: available
-editions: 
+editions: 1
 hash: hc1c80b99d41cfa60
 
 ## flat2.png
 year: 2024
 location: Berlin
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
+medium: [LiDAR, digital, print, Dibond]
 availability: available
-editions: 
+editions: 1
 hash: h274da906e4b85efe
 
 ## ix.jpg
@@ -163,10 +169,9 @@ hash: h73f941376a058ef2
 ## jane_03.png
 year: 2024
 location: Berlin
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
+medium: [LiDAR, digital, print, Dibond]
 availability: available
-editions: 
+editions: 1
 hash: h26c63e81eb840acb
 
 ## love_is_a_deer_from_hell.jpeg
@@ -213,10 +218,10 @@ hash: h85edac30fd6b18e7
 ## color suite iii.jpg
 location: Berlin
 year: 2023
-dimensions: scales on demand
-medium: [LiDAR, processing, digital, for printing on Dibond]
+dimensions: [100, 100]
+medium: [LiDAR, processing, digital, print, Dibond]
 availability: available
-editions: 
+editions: 1
 hash: hf3c6797ec1c6f293
 
 ## part_eight.jpg
@@ -277,7 +282,7 @@ hash: h826e7cd4b2261f84
 year: 2024
 location: Berlin
 dimensions: [90, 60]
-medium: [photography, digital, print on Dibond]
+medium: [photography, digital, print, Dibond]
 availability: available
 editions: 1
 hash: haadda33cb9caab7c
@@ -285,17 +290,16 @@ hash: haadda33cb9caab7c
 ## sunflower_sutra.png
 year: 2024
 location: Berlin
-dimensions: scales on demand
-medium: [LiDAR, digital, for printing on Dibond]
+medium: [LiDAR, digital, print, Dibond]
 availability: available
-editions: 
+editions: 1
 hash: h1ef6e449d04e144b
 
 ## temptation.jpg
 year: 2024
 location: Berlin
 dimensions: [100, 100]
-medium: [LiDAR, digital, print on Dibond]
+medium: [LiDAR, digital, print, Dibond]
 availability: available
 editions: 10
 hash: hc587fc452994cefe
