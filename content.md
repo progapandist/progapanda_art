@@ -1,3 +1,11 @@
+## how to disappear completely.jpeg
+location: Berlin
+year: 2026
+dimensions: [60, 90]
+medium: [oil, spray paint, acrylics, linen]
+availability: available
+hash: hada2ba6b93541cc2
+
 ## lipstick.jpeg
 location: Berlin
 year: 2023
