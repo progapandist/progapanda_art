@@ -83,7 +83,7 @@ ${body}
 </html>
 `;
 }
-function gridPage(works, placeholders) {
+function gridPage(works, placeholders, ogCard) {
   const tiles = works
     .map((w) => {
       const ph = placeholders.get(w.slug);
@@ -112,13 +112,46 @@ ${tiles}
 
   return layout({
     title: `${ARTIST} — paintings`,
-    description: `Paintings by ${ARTIST}, Berlin. ${works.length} works.`,
+    description: `Paintings by ${ARTIST}, Berlin.`,
     canonical: `${SITE}/`,
-    ogImage: works.length ? img(works[0], 1200, "jpg") : null,
+    ogImage: ogCard,
     body,
     active: "home",
   });
 }
+
+// The link preview: the six works at the top of the grid, tiled 3x2 at OG size.
+// vips is a local tool, so a machine without it just falls back to a single work.
+const OG = { cols: 3, rows: 2, cell: [400, 315] };
+async function ogCardImage(works) {
+  const six = works.slice(0, OG.cols * OG.rows);
+  if (!six.length) return null;
+  const version = createHash("md5").update(six.map((w) => w.hash).join()).digest("hex").slice(0, 8);
+  const vips = (args) => {
+    const proc = Bun.spawnSync(["vips", ...args], { stderr: "pipe" });
+    // libvips warns about unrelated broken format modules on stderr; only failures matter.
+    if (!proc.success) throw new Error(`vips ${args[0]}: ${new TextDecoder().decode(proc.stderr).trim()}`);
+  };
+  const cells = [];
+  try {
+    await Promise.all(six.map(async (w, i) => {
+      const res = await fetch(img(w, 480, "jpg"), { signal: AbortSignal.timeout(30_000) });
+      if (!res.ok) throw new Error(`og cell ${w.slug}: ${res.status}`);
+      const source = `${distTmp}og-src-${i}.jpg`;
+      writeFileSync(source, Buffer.from(await res.arrayBuffer()));
+      vips(["thumbnail", source, (cells[i] = `${distTmp}og-cell-${i}.jpg`), String(OG.cell[0]), "--height", String(OG.cell[1]), "--crop", "centre"]);
+      rmSync(source, { force: true });
+    }));
+    vips(["arrayjoin", cells.join(" "), `${distTmp}og.jpg[Q=82]`, "--across", String(OG.cols)]);
+    return `${SITE}/og.jpg?v=${version}`;
+  } catch (error) {
+    console.warn("og card: falling back to a single work —", error.message);
+    return img(six[0], 1200, "jpg");
+  } finally {
+    for (const path of cells) rmSync(path, { force: true });
+  }
+}
+
 function artistPage() {
   const body = `<main class="work">
   <div class="work-body work-body-solo">
@@ -256,7 +289,8 @@ async function build() {
   const works = loadWorks(SOURCES_DIR, CONTENT_PATH);
   const placeholders = await loadPlaceholders(works);
 
-  writeFileSync(distTmp + "index.html", gridPage(works, placeholders));
+  const ogCard = await ogCardImage(works);
+  writeFileSync(distTmp + "index.html", gridPage(works, placeholders, ogCard));
   writeFileSync(distTmp + "404.html", notFoundPage());
   mkdirSync(distTmp + "artist/", { recursive: true });
   writeFileSync(distTmp + "artist/index.html", artistPage());
