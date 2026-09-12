@@ -1,12 +1,3 @@
-## bed ii.png
-location: Berlin
-year: 2026
-medium: [photography, digital, print, Dibond]
-dimensions: [100, 100]
-availability: available
-editions: 1
-hash: h9362591020d9fddd
-
 ## lipstick.jpeg
 location: Berlin
 year: 2023
@@ -173,6 +164,15 @@ medium: [LiDAR, digital, print, Dibond]
 availability: available
 editions: 1
 hash: h26c63e81eb840acb
+
+## bed ii.png
+location: Berlin
+year: 2026
+medium: [photography, digital, print, Dibond]
+dimensions: [100, 100]
+availability: available
+editions: 1
+hash: h9362591020d9fddd
 
 ## love_is_a_deer_from_hell.jpeg
 year: 2024
