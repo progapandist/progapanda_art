@@ -52,7 +52,7 @@ const lightbox = document.querySelector(".lightbox");
 function pickFullResHref() {
   const heroImg = frame?.querySelector("picture img");
   const currentSrc = heroImg?.currentSrc || heroImg?.src || "";
-  const format = (currentSrc.match(/@(avif|webp|jpg)(?:\?|$)/) || [])[1];
+  const format = (currentSrc.match(/@(avif|jpg)(?:\?|$)/) || [])[1];
   return frame?.getAttribute(`data-full-${format || "avif"}`) || frame?.dataset.fullJpg;
 }
 

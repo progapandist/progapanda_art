@@ -91,7 +91,6 @@ function gridPage(works, placeholders) {
       return `  <a class="tile" href="/works/${encodeURIComponent(urlSlug(w.slug))}/"${style}>
     <picture>
       <source type="image/avif" srcset="${img(w, 480, "avif")}">
-      <source type="image/webp" srcset="${img(w, 480, "webp")}">
       <img src="${img(w, 480, "jpg")}" alt="${escape(w.title)}" loading="lazy">
     </picture>
     <span class="tile-info">
@@ -176,11 +175,10 @@ ${rows.map(([k, v]) => `    <dt>${k}</dt><dd>${v}</dd>`).join("\n")}
   ].filter(Boolean).join("\n");
   const placeholderImg = ph ? `<img class="placeholder" src="${ph}" alt="" aria-hidden="true">` : "";
   const body = `<main class="work">
-  <div class="frame" data-full-avif="${img(work, 3200, "avif")}" data-full-webp="${img(work, 3200, "webp")}" data-full-jpg="${img(work, 3200, "jpg")}">
+  <div class="frame" data-full-avif="${img(work, 3200, "avif")}" data-full-jpg="${img(work, 3200, "jpg")}">
     ${placeholderImg}
     <picture>
       <source type="image/avif" srcset="${srcset(work, "avif")}" sizes="100vw">
-      <source type="image/webp" srcset="${srcset(work, "webp")}" sizes="100vw">
       <img src="${img(work, 1920, "jpg")}" srcset="${srcset(work, "jpg")}" sizes="100vw" alt="${escape(work.title)}" loading="eager" fetchpriority="high">
     </picture>
     ${heroNavigation}

@@ -12,13 +12,13 @@ if (!KEY || !SALT) throw new Error("IMGPROXY_KEY and IMGPROXY_SALT must be set (
 
 const works = loadWorks(SOURCES_DIR, "content.md");
 // Warm what visitors actually fetch. Every breakpoint in avif — that is what
-// all but a sliver of browsers pick — and the webp/jpg fallbacks only at the
-// widths the pages name directly. A fallback miss costs one visitor one encode.
+// all but a sliver of browsers pick — and the jpg fallback only at the widths
+// the pages name directly. A fallback miss costs one visitor one encode.
 const combos = [];
 for (const w of works) {
   const add = (width, format) => combos.push({ slug: w.slug, width, format, version: w.hash });
   for (const width of BREAKPOINTS) add(width, "avif");
-  for (const format of ["webp", "jpg"]) {
+  for (const format of ["jpg"]) {
     add(480, format); // grid tile
     add(1920, format); // hero <img> src
     add(3200, format); // lightbox, and the jpg download
