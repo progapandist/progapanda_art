@@ -18,6 +18,7 @@ hash: h26ec4b5849460471
 ## all_those_good_people_down_the_jubilee_street.jpeg
 year: 2026
 location: Berlin
+dimensions: [70, 50]
 medium: [oil, charcoal, acrylic, linen]
 availability: available
 editions: 
