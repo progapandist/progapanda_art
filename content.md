@@ -31,14 +31,14 @@ availability: available
 editions: 
 hash: h26ec4b5849460471
 
-## all_those_good_people_down_the_jubilee_street.jpeg
+## all_those_good_people_down_the_jubilee_street.JPG
 year: 2026
 location: Berlin
 dimensions: [70, 50]
 medium: [oil, charcoal, acrylic, linen]
 availability: available
 editions: 
-hash: h245cccfb1617948b
+hash: h20c2ff4a69845f6c
 
 ## self_portrait_out_of_depression.jpeg
 year: 2025
