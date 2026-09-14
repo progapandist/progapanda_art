@@ -1,3 +1,19 @@
+## nadiza.JPG
+year: 2026
+location: Berlin
+medium: [oil, acrylic, linen board]
+availability: available
+editions: 
+hash: h28b8686af5be824b
+
+## mountain_view.JPG
+year: 2026
+location: Berlin
+medium: [oil, acrylic, linen board]
+availability: available
+editions: 
+hash: h12f8a501f3aed3a9
+
 ## how to disappear completely.jpeg
 location: Berlin
 year: 2026
@@ -41,13 +57,13 @@ availability: available
 editions: 
 hash: hc710ae8ea7e5838
 
-## sleep.jpeg
+## sleep.JPG
 year: 2026
 location: Berlin
 medium: [oil, oil pastel, Dibond]
 dimensions: [90, 60]
 editions: 
-hash: hdf6791c096fccdff
+hash: ha6568ce2d5e95ba0
 
 ## twins.png
 location: Berlin
@@ -199,14 +215,6 @@ availability: sold
 editions: 
 hash: hb19f829aa2b8ecf7
 
-## mountain_view.jpeg
-year: 2026
-location: Berlin
-medium: [oil, acrylic, linen board]
-availability: available
-editions: 
-hash: h7f9053f232a72c4e
-
 ## bloom
 year: 2023
 location: Berlin
@@ -215,14 +223,6 @@ dimensions: [90, 60]
 availability: available
 editions: 1
 hash: h127529ea265ebbf8
-
-## nadiza.jpeg
-year: 2026
-location: Berlin
-medium: [oil, acrylic, linen board]
-availability: available
-editions: 
-hash: h85edac30fd6b18e7
 
 ## color suite iii.jpg
 location: Berlin
