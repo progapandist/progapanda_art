@@ -90,6 +90,14 @@ location: Berlin
 editions: 1
 hash: hbf1281ee8ec3e5ee
 
+## untitled ii.jpg
+year: 2026
+location: Berlin
+medium: [oil, acrylic, linen board]
+availability: available
+editions: 
+hash: h86af62c001c215fc
+
 ## bed.png
 location: Berlin
 medium: [photography, digital, print on Dibond]
@@ -98,14 +106,6 @@ availability: available
 editions: 1
 year: 2026
 hash: h63fbf8c1fac3bbe1
-
-## untitled ii.jpeg
-year: 2026
-location: Berlin
-medium: [oil, acrylic, linen board]
-availability: available
-editions: 
-hash: hc481b5a23f6e12d9
 
 ## capital m.png
 location: Berlin
