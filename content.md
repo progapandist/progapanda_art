@@ -1,3 +1,11 @@
+## i use up all the black.JPG
+location: Berlin
+year: 2026
+medium: [acrylic, spray paint, linen board]
+availability: available
+dimensions: [60, 60]
+hash: h878fd79032b6e627
+
 ## nadiza.JPG
 year: 2026
 location: Berlin
