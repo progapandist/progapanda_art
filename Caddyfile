@@ -2,8 +2,10 @@ imgproxy.progapanda.org {
 	reverse_proxy imgproxy:8080
 }
 
-# What's for dinner (~/code/whats_for_dinner), deployed with Kamal. kamal-proxy listens on
-# this droplet's private IP only, because this Caddy holds 80/443 and the certificates.
-dinner.progapanda.org {
-	reverse_proxy 10.114.0.2:8090
-}
+# To host another site here: point its DNS at this droplet, add a block like this, and reload Caddy.
+# A Kamal app must publish kamal-proxy on the private IP, because this Caddy holds 80/443:
+#   kamal proxy boot_config set --publish-host-ip 10.114.0.2 --http-port 8090 --https-port 8453
+#
+# example.progapanda.org {
+# 	reverse_proxy 10.114.0.2:8090
+# }
